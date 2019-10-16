@@ -1,0 +1,413 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{Tabbing}
+\usepackage{biblatex}
+\usepackage[affil-it]{authblk}
+\usepackage{lmodern}
+\usepackage{titlesec}
+
+
+%\titlespacing{\paragraph}{1.5em}{0.5em}{0.5em}
+\titlespacing{\paragraph}{\parindent}{0.5em}{0.5em}
+
+\addbibresource{refs.bib}
+\renewcommand{\baselinestretch}{1.05}
+\renewcommand{\familydefault}{\sfdefault}
+
+\lstset{basicstyle=\ttfamily\fontseries{lc}\selectfont,breaklines=true}
+
+
+
+\begin{document}
+
+\title{Compilers - Part 2: Scanner }
+\author{Diogo César Ferreira\\11/0027931}
+\affil{University of Brasília}
+\maketitle
+
+\section{Introduction}
+In this report we will describe the implementation of the scanner, or lexical analyzer,
+which has the responsibility to scan the input text and split it into tokens.
+First we define what patterns are to be recognized by the scanner and then use the Fast Lexical
+Analyzer (FLEX) \cite{FLEX} software to generate the lexical analyzer's main functionality.
+Additional functions for input, output and error handling were also implemented and will be
+explained in detail later.
+
+\subsection{Program usage}
+The program takes one argument which should be a path to the input file.
+
+\begin{lstlisting}
+$ ./a.out <input_file>
+\end{lstlisting}
+
+The program will then output a list of all recognized tokens, their position in the file and their
+value to the standard output. Should there be invalid tokens, the program will instead list the
+encountered errors (invalid tokens) present in the input text.
+
+\subsection{Compilation instructions}
+
+\begin{enumerate}
+\item (Optional) Generate the lexical analyzer .c source code through FLEX
+\begin{lstlisting}
+$ flex -osrc/lex.yy.c --header-file=src/lex.yy.h part2.lex
+\end{lstlisting}
+
+\item Compile the program
+\begin{lstlisting}
+$ gcc src/main.c src/scanner.c src/lex.yy.c -lfl -std=c11 -m64 -O3
+\end{lstlisting}
+
+\item Alternatively, a makefile has also been provided which will run both commands
+\begin{lstlisting}
+$ make part2
+\end{lstlisting}
+\end{enumerate}
+
+\paragraph{Operating system:} Debian GNU/Linux 10 (buster)
+\paragraph{Compiler version:} gcc (Debian 8.3.0-7) 8.3.0
+\paragraph{FLEX version:} flex 2.6.4
+
+\subsection{Attached files}
+
+\begin{lstlisting}
+./a.out               - Precompiled x64 binary
+./makefile            - 
+./part2.lex           - FLEX definitions file
+./report.pdf          - This document
+./src/lex.yy.c        - FLEX generated source file
+./src/lex.yy.h        - FLEX generated header file
+./src/main.c          - Main and I/O functions
+./src/token.c         - Auxiliary data structures source
+./src/token.h         - Auxiliary data structures header
+./tests/              - Sample test files
+./tests/test_error1.c - 
+./tests/test_error2.c - 
+./tests/test_valid1.c - 
+./tests/test_valid2.c - 
+./tests/test_valid3.c - 
+\end{lstlisting}
+
+
+\section{Language grammar}
+The following table summarizes what patterns are part of this language, which
+are combined into an input file for FLEX (see attached file "part2.lex"):
+
+%\paragraph{}
+\begin{tabular}{lccccccccc}
+\textbf{Data types}                      & void & char & int & float &         &      &      &   &   \\
+\textbf{Keywords}                        & if   & else & do  & while & return  &      &      &   &   \\
+\textbf{Arithmetical operators}          & $+$  & $-$  & $*$ & $/$   & $\%$    & $++$ & $--$ &   &   \\
+\textbf{Comparison operators}            & <    & >    & <=  & >=    & ==      & !=   &      &   &   \\
+\textbf{Logical operators}               & \&\& & ||   &     &       &         &      &      &   &   \\
+\textbf{Character/string delimiters}     & '    & "    &     &       &         &      &      &   &   \\
+\textbf{Comment delimiters}              & /*   & */   & //  &       &         &      &      &   &   \\
+\textbf{Other symbols}                   & (    & )    & [   & ]     & \{      & \}   & ;    & , & = \\
+\end{tabular}
+
+\vspace*{1cm}
+
+\begin{tabular}{ll}
+\textbf{Character constants}            & text delimited by single quotation marks (') \\
+\textbf{String literals}                & text delimited by double quotation marks (") \\
+\textbf{Integer decimal constants}      & 1, 2, 100, -5, +7                            \\
+\textbf{Integer hexadecimal constants}  & 0x01, -0xA, +0x123                           \\
+\textbf{Floating-point constants}       & 0.0, -1.234, +3.14                           \\
+\textbf{Comments and whitespace}        & are ignored.                                 \\
+\end{tabular}
+
+\paragraph{}
+We present a corrected version of this symbols and keywords table, where the assignment operator
+($=$) and the ``not equal" comparison operator ($!=$) were mistakenly not listed in the previous report,
+but are actually part of the language. No changes were made in the language's grammar.
+
+\small
+\begin{enumerate}
+\item \begin{tabbing} program \= $\to$ \= function{\_}definition \\
+	\> | \> declaration
+\end{tabbing}
+
+\item \begin{tabbing} function{\_}definition \= $\to$ \= type{\_}specifier IDENTIFIER \textbf{(} parameter{\_}list \textbf{)} compound{\_}statement \\
+	\> | \> type{\_}specifier IDENTIFIER \textbf{(} \textbf{)} compound{\_}statement
+\end{tabbing}
+
+\item \begin{tabbing} parameter{\_}list \= $\to$ \= parameter{\_}declaration \\
+	\> | \> parameter{\_}list \textbf{,} parameter{\_}declaration
+\end{tabbing}
+
+\item \begin{tabbing} parameter{\_}declaration \= $\to$ \= type{\_}specifier declarator
+\end{tabbing}
+
+\item \begin{tabbing} compound{\_}statement \= $\to$ \= \textbf{\{} \textbf{\}} \\
+	\> | \> \textbf{\{} statement{\_}list \textbf{\}} \\
+	\> | \> \textbf{\{} declaration{\_}list \textbf{\}} \\
+	\> | \> \textbf{\{} declaration{\_}list statement{\_}list \textbf{\}}
+\end{tabbing}
+
+\item \begin{tabbing} declaration{\_}list \= $\to$ \= declaration \\
+	\> | \> declaration{\_}list declaration
+\end{tabbing}
+
+\item \begin{tabbing} declaration \= $\to$ \= type{\_}specifier init{\_}declarator{\_}list \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} init{\_}declarator{\_}list \= $\to$ \= init{\_}declarator \\
+	\> | \> init{\_}declarator{\_}list \textbf{,} init{\_}declarator
+\end{tabbing}
+
+\item \begin{tabbing} init{\_}declarator \= $\to$ \= declarator \\
+	\> | \> declarator \textbf{=} initializer
+\end{tabbing}
+
+\item \begin{tabbing} declarator \= $\to$ \= IDENTIFIER \\
+	\> | \> \textbf{(} declarator \textbf{)} \\
+	\> | \> declarator \textbf{[} logical{\_}or{\_}expression \textbf{]} \\
+	\> | \> declarator \textbf{[} \textbf{]} \\
+	\> | \> declarator \textbf{(} identifier{\_}list \textbf{)} \\
+	\> | \> declarator \textbf{(} parameter{\_}list \textbf{)} \\
+	\> | \> declarator \textbf{(} \textbf{)}
+\end{tabbing}
+
+\item \begin{tabbing} statement{\_}list \= $\to$ \= statement \\
+	\> | \> statement{\_}list statement
+\end{tabbing}
+
+\item \begin{tabbing} statement \= $\to$ \= compound{\_}statement \\
+	\> | \> expression{\_}statement \\
+	\> | \> selection{\_}statement \\
+	\> | \> iteration{\_}statement \\
+	\> | \> jump{\_}statement
+\end{tabbing}
+
+\item \begin{tabbing} selection{\_}statement \= $\to$ \= IF \textbf{(} expression \textbf{)} statement \\
+	\> | \> IF \textbf{(} expression \textbf{)} statement ELSE statement
+\end{tabbing}
+
+\item \begin{tabbing} iteration{\_}statement \= $\to$ \= WHILE \textbf{(} expression \textbf{)} statement \\
+	\> | \> DO statement WHILE \textbf{(} expression \textbf{)} \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} jump{\_}statement \= $\to$ \= RETURN \textbf{;} \\
+	\> | \> RETURN expression \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} expression{\_}statement \= $\to$ \= \textbf{;} \\
+	\> | \> expression \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} identifier{\_}list \= $\to$ \= IDENTIFIER \\
+	\> | \> identifier{\_}list \textbf{,} IDENTIFIER
+\end{tabbing}
+
+\item \begin{tabbing} initializer \= $\to$ \= assignment{\_}expression \\
+	\> | \> \textbf{\{} initializer{\_}list \textbf{\}} \\
+	\> | \> \textbf{\{} initializer{\_}list \textbf{,} \textbf{\}}
+\end{tabbing}
+
+\item \begin{tabbing} initializer{\_}list \= $\to$ \= initializer \\
+	\> | \> initializer{\_}list \textbf{,} initializer
+\end{tabbing}
+
+\item \begin{tabbing} expression \= $\to$ \= assignment{\_}expression \\
+	\> | \> expression \textbf{,} assignment{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} argument{\_}expression{\_}list \= $\to$ \= assignment{\_}expression \\
+	\> | \> argument{\_}expression{\_}list \textbf{,} assignment{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} assignment{\_}expression \= $\to$ \= logical{\_}or{\_}expression \\
+	\> | \> postfix{\_}expression \textbf{=} assignment{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} logical{\_}or{\_}expression \= $\to$ \= logical{\_}and{\_}expression \\
+	\> | \> logical{\_}or{\_}expression \textbf{||} logical{\_}and{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} logical{\_}and{\_}expression \= $\to$ \= equality{\_}expression \\
+	\> | \> logical{\_}and{\_}expression \textbf{\&\&} equality{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} equality{\_}expression \= $\to$ \= relational{\_}expression \\
+	\> | \> equality{\_}expression \textbf{==} relational{\_}expression \\
+	\> | \> equality{\_}expression \textbf{!=} relational{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} relational{\_}expression \= $\to$ \= additive{\_}expression \\
+	\> | \> relational{\_}expression \textbf{<}  additive{\_}expression \\
+	\> | \> relational{\_}expression \textbf{>}  additive{\_}expression \\
+	\> | \> relational{\_}expression \textbf{<=} additive{\_}expression \\
+	\> | \> relational{\_}expression \textbf{>=} additive{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} additive{\_}expression \= $\to$ \= multiplicative{\_}expression \\
+	\> | \> additive{\_}expression \textbf{+} multiplicative{\_}expression \\
+	\> | \> additive{\_}expression \textbf{$--$} multiplicative{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} multiplicative{\_}expression \= $\to$ \= postfix{\_}expression \\
+	\> | \> multiplicative{\_}expression \textbf{*} postfix{\_}expression \\
+	\> | \> multiplicative{\_}expression \textbf{/} postfix{\_}expression \\
+	\> | \> multiplicative{\_}expression \textbf{\%} postfix{\_}expression
+\end{tabbing}
+
+%\item \begin{tabbing} multiplicative{\_}expression \= $\to$ \= unary{\_}expression \\
+%	\> | \> multiplicative{\_}expression \textbf{*} unary{\_}expression \\
+%	\> | \> multiplicative{\_}expression \textbf{/} unary{\_}expression \\
+%	\> | \> multiplicative{\_}expression \textbf{\%} unary{\_}expression
+%\end{tabbing}
+%
+%\item \begin{tabbing} unary{\_}expression \= $\to$ \= postfix{\_}expression \\
+%	\> | \> \textbf{!} postfix{\_}expression \\
+%	\> | \> \textbf{++} postfix{\_}expression \\
+%	\> | \> \textbf{$--$} postfix{\_}expression
+%\end{tabbing}
+
+\item \begin{tabbing} postfix{\_}expression \= $\to$ \= primary{\_}expression \\
+	\> | \> postfix{\_}expression \textbf{[} expression \textbf{]} \\
+	\> | \> postfix{\_}expression \textbf{(} \textbf{)} \\
+	\> | \> postfix{\_}expression \textbf{(} argument{\_}expression{\_}list \textbf{)} \\
+	\> | \> postfix{\_}expression \textbf{++} \\
+	\> | \> postfix{\_}expression \textbf{$--$}
+\end{tabbing}
+
+\item \begin{tabbing} primary{\_}expression \= $\to$ \= IDENTIFIER \\
+	\> | \> CONSTANT \\
+	\> | \> STRING{\_}LITERAL \\
+	\> | \> \textbf{(} expression \textbf{)}
+\end{tabbing}
+
+\item \begin{tabbing} type{\_}specifier \= $\to$ \= VOID \\
+	%\> | \> BOOL \\
+	\> | \> CHAR \\
+	\> | \> INT \\
+	\> | \> FLOAT
+\end{tabbing}
+
+
+\end{enumerate}
+\normalsize
+
+\section{Error handling}
+The program scans the input file and splits it into tokens. Each token is then analyzed
+by the error handlers and stored in either a list of valid tokens or a list of invalid tokens.
+Every input token is analyzed, regardless of whether or not errors were found during the process,
+which effectively allows for every (handled) lexical error to be reported to the user. The use
+of the lists as buffers for the tokens also avoids clampering the output when errors are found, such
+that the valid token list is only displayed when no errors are found, and only errors are displayed
+otherwise.
+
+Error handling is defined by additional functions on the \texttt{part2.lex} file, which will
+be explained in more detail on the next Section.
+
+
+\section{Implementation details}
+A separate \texttt{main} function as well as additional functions for auxiliary data structures,
+error and input/output handling were implemented.
+
+\begin{lstlisting}[language=C]
+int  main(int argc, char** argv);      // (main.c) Main function, handles files and the program arguments
+void print_tokens(struct tokenlist*);  // (main.c) Formats the list of tokens
+void print_errors(struct tokenlist*);  // (main.c)  Formats the list of errors
+void scan(void);                       // (main.c)  Acts as a wrapper for yylex()
+
+// (token.h) Enumerates all possible token classes:
+// keywords/types/operators/punctuation/constants/identifiers/errors
+enum tokenclass {...}
+
+// (token.h) Holds data about each token
+struct token {
+	int line;
+	int column;
+	enum tokenclass tc;
+	char * text;
+	struct token * next;
+};
+
+// (token.h) Linked list for storing tokens
+struct tokenlist {
+	struct token * first;
+	struct token * last;
+};
+
+// (token.h) list manipulation and element initialization
+const char* tok_to_str(enum tokenclass);
+struct token * new_token(int, int, enum tokenclass, const char*);
+void add_token(struct tokenlist*, struct token*);
+void clear_tokens (struct tokenlist*);
+
+
+// (lex.yy.c) Updates the line and column counters
+static void update_position(void) {
+	for(int i = 0; i < yyleng; ++i) {
+		if (yytext[i] == '\n') {
+			++nline;
+			ncolumn = 1;
+		} else {
+			++ncolumn;
+		}
+	}
+}
+
+// (lex.yy.c) Handles identifiers
+// and its associated error (length above 32)
+static int identifier(void) {
+	if (yyleng > 32) {
+		return ERROR_INVALID_IDENTIFIER;
+	} else {
+		return IDENTIFIER;
+	}
+}
+
+// (lex.yy.c) handles character constants
+// and its associated error (malformed char constant)
+static int character_const(void) {
+	if (yytext[1] != '\\' && yyleng >= 4) {
+		return ERROR_INVALID_CHAR_CONST;
+	} else {
+		return CONSTANT;
+	}
+}
+\end{lstlisting}
+
+Lexical errors are treated by the functions defined in \texttt{lex.yy.c} (and \texttt{part2.lex}).
+When the errors are detected, \texttt{yylex()} returns a negative value associated with each error.
+There are three of such errors: identifiers above 32 characters in length
+(in \texttt{static int identifier(void)}), character constants containing more than one character
+(in \texttt{static int character{\_}const(void)}) and unrecognized symbols (dot pattern
+in the lexical definitions file: \texttt{. \{ update{\_}position();}
+\texttt{return ERROR{\_}UNRECOGNIZED{\_}TOKEN; \}}, \texttt{part2.lex}, line 99, which encompasses
+the cases where the input did not match any other pattern).
+
+\section{Tests}
+Five sample test files are provided in the folder ./tests.
+
+\paragraph{test{\_}valid1.c} is valid, tests for most recognized keywords and punctuation;
+\paragraph{test{\_}valid2.c} is valid, tests for numerical values and loops;
+\paragraph{test{\_}valid3.c} is valid, tests for character and string literals;
+\paragraph{test{\_}error1.c} is invalid, tests for invalid tokens and malformed character literals
+and should detect the following errors:
+\begin{itemize}
+\item Unrecognized token at line 2, column 19 (?)
+\item Unrecognized token at line 2, column 23 (:)
+\item Invalid character constant at line 2, column 25 ('abcdef')
+\end{itemize}
+
+\paragraph{test{\_}error2.c:} is invalid, invalid tokens and long identifiers and  should
+detect the following errors:
+\begin{itemize}
+\item Unrecognized token at line 1, column 1  (\#)
+\item Unrecognized token at line 1, column 16 (.)
+\item Invalid identifier at line 4, column 9  (abcdefghijabcdefghijabcdefghijabcdefghij)
+\end{itemize}
+
+Both on valid and invalid inputs, the program outputs the position where it found each token or
+error. Lines and columns are 1-indexed and the columns should point to where the token begins.
+Note, however, that tabs (\textbackslash t) count as if they had a length of one character.
+
+\printbibliography
+
+\end{document}

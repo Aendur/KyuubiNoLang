@@ -1,0 +1,258 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{Tabbing}
+\usepackage{biblatex}
+\usepackage[affil-it]{authblk}
+
+\addbibresource{refs.bib}
+\renewcommand{\baselinestretch}{1.05}
+\renewcommand{\familydefault}{\sfdefault}
+
+\begin{document}
+
+\title{Compilers - Part 1: Outline }
+\author{Diogo César Ferreira\\11/0027931}
+\affil{University of Brasília}
+\maketitle
+
+\section{Introduction}
+Programming languages are languages that can be converted into sets of instructions to be executed by a computer. This conversion process is called translation (or compilation) and is done by software known as compilers. As programming languages evolved, we observe an increasing variety of abstractions to accommodate for new programing paradigms and techniques, which also bring them closer to the domain of the problems they are set out to solve and away from the specificities of architecture set implementations \cite{Aho2007}.
+
+One such abstraction is polymorphism. In typed languages, symbols (named identifiers for entities such as variables or functions) are constrained by their data type. If polymorphism is available, we are able to interact with different data types through a single interface, for instance, by allowing multiple types to be assigned  to a given symbol. Polymorphism improves code readability and helps keeping the namespace clean by allowing functions to be identified by their expected behavior rather than contrived by the types of their arguments. Polymorphism is also one of the key features in object-oriented programming \cite{Aho2007, Strachey2000}.
+
+Aside from the possibility to perform arithmetical operations over a few different data types (integers, floating point and pointers), the C programming language has does not support polymorphism. In this work we seek to provide polymorphism in the form of function overloading - where polymorphic functions may have multiple definitions according to their argument types - to a simplified subset of the C programing language. The grammar of the language is presented on the following section.
+
+
+\section{Language grammar}
+\subsection{Formal description}
+\small
+\begin{enumerate}
+
+\item \begin{tabbing} program \= $\to$ \= function{\_}definition \\
+	\> | \> declaration
+\end{tabbing}
+
+\item \begin{tabbing} function{\_}definition \= $\to$ \= type{\_}specifier IDENTIFIER \textbf{(} parameter{\_}list \textbf{)} compound{\_}statement \\
+	\> | \> type{\_}specifier IDENTIFIER \textbf{(} \textbf{)} compound{\_}statement
+\end{tabbing}
+
+\item \begin{tabbing} parameter{\_}list \= $\to$ \= parameter{\_}declaration \\
+	\> | \> parameter{\_}list \textbf{,} parameter{\_}declaration
+\end{tabbing}
+
+\item \begin{tabbing} parameter{\_}declaration \= $\to$ \= type{\_}specifier declarator
+\end{tabbing}
+
+\item \begin{tabbing} compound{\_}statement \= $\to$ \= \textbf{\{} \textbf{\}} \\
+	\> | \> \textbf{\{} statement{\_}list \textbf{\}} \\
+	\> | \> \textbf{\{} declaration{\_}list \textbf{\}} \\
+	\> | \> \textbf{\{} declaration{\_}list statement{\_}list \textbf{\}}
+\end{tabbing}
+
+\item \begin{tabbing} declaration{\_}list \= $\to$ \= declaration \\
+	\> | \> declaration{\_}list declaration
+\end{tabbing}
+
+\item \begin{tabbing} declaration \= $\to$ \= type{\_}specifier init{\_}declarator{\_}list \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} init{\_}declarator{\_}list \= $\to$ \= init{\_}declarator \\
+	\> | \> init{\_}declarator{\_}list \textbf{,} init{\_}declarator
+\end{tabbing}
+
+\item \begin{tabbing} init{\_}declarator \= $\to$ \= declarator \\
+	\> | \> declarator \textbf{=} initializer
+\end{tabbing}
+
+\item \begin{tabbing} declarator \= $\to$ \= IDENTIFIER \\
+	\> | \> \textbf{(} declarator \textbf{)} \\
+	\> | \> declarator \textbf{[} logical{\_}or{\_}expression \textbf{]} \\
+	\> | \> declarator \textbf{[} \textbf{]} \\
+	\> | \> declarator \textbf{(} identifier{\_}list \textbf{)} \\
+	\> | \> declarator \textbf{(} parameter{\_}list \textbf{)} \\
+	\> | \> declarator \textbf{(} \textbf{)}
+\end{tabbing}
+
+\item \begin{tabbing} statement{\_}list \= $\to$ \= statement \\
+	\> | \> statement{\_}list statement
+\end{tabbing}
+
+\item \begin{tabbing} statement \= $\to$ \= compound{\_}statement \\
+	\> | \> expression{\_}statement \\
+	\> | \> selection{\_}statement \\
+	\> | \> iteration{\_}statement \\
+	\> | \> jump{\_}statement
+\end{tabbing}
+
+\item \begin{tabbing} selection{\_}statement \= $\to$ \= IF \textbf{(} expression \textbf{)} statement \\
+	\> | \> IF \textbf{(} expression \textbf{)} statement ELSE statement
+\end{tabbing}
+
+\item \begin{tabbing} iteration{\_}statement \= $\to$ \= WHILE \textbf{(} expression \textbf{)} statement \\
+	\> | \> DO statement WHILE \textbf{(} expression \textbf{)} \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} jump{\_}statement \= $\to$ \= RETURN \textbf{;} \\
+	\> | \> RETURN expression \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} expression{\_}statement \= $\to$ \= \textbf{;} \\
+	\> | \> expression \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} identifier{\_}list \= $\to$ \= IDENTIFIER \\
+	\> | \> identifier{\_}list \textbf{,} IDENTIFIER
+\end{tabbing}
+
+\item \begin{tabbing} initializer \= $\to$ \= assignment{\_}expression \\
+	\> | \> \textbf{\{} initializer{\_}list \textbf{\}} \\
+	\> | \> \textbf{\{} initializer{\_}list \textbf{,} \textbf{\}}
+\end{tabbing}
+
+\item \begin{tabbing} initializer{\_}list \= $\to$ \= initializer \\
+	\> | \> initializer{\_}list \textbf{,} initializer
+\end{tabbing}
+
+\item \begin{tabbing} expression \= $\to$ \= assignment{\_}expression \\
+	\> | \> expression \textbf{,} assignment{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} argument{\_}expression{\_}list \= $\to$ \= assignment{\_}expression \\
+	\> | \> argument{\_}expression{\_}list \textbf{,} assignment{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} assignment{\_}expression \= $\to$ \= logical{\_}or{\_}expression \\
+	\> | \> postfix{\_}expression \textbf{=} assignment{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} logical{\_}or{\_}expression \= $\to$ \= logical{\_}and{\_}expression \\
+	\> | \> logical{\_}or{\_}expression OR{\_}OP logical{\_}and{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} logical{\_}and{\_}expression \= $\to$ \= equality{\_}expression \\
+	\> | \> logical{\_}and{\_}expression AND{\_}OP equality{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} equality{\_}expression \= $\to$ \= relational{\_}expression \\
+	\> | \> equality{\_}expression EQ{\_}OP relational{\_}expression \\
+	\> | \> equality{\_}expression NE{\_}OP relational{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} relational{\_}expression \= $\to$ \= additive{\_}expression \\
+	\> | \> relational{\_}expression \textbf{<} additive{\_}expression \\
+	\> | \> relational{\_}expression \textbf{>} additive{\_}expression \\
+	\> | \> relational{\_}expression LE{\_}OP additive{\_}expression \\
+	\> | \> relational{\_}expression GE{\_}OP additive{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} additive{\_}expression \= $\to$ \= multiplicative{\_}expression \\
+	\> | \> additive{\_}expression \textbf{+} multiplicative{\_}expression \\
+	\> | \> additive{\_}expression \textbf{-} multiplicative{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} multiplicative{\_}expression \= $\to$ \= postfix{\_}expression \\
+	\> | \> multiplicative{\_}expression \textbf{*} postfix{\_}expression \\
+	\> | \> multiplicative{\_}expression \textbf{/} postfix{\_}expression \\
+	\> | \> multiplicative{\_}expression \textbf{\%} postfix{\_}expression
+\end{tabbing}
+
+\item \begin{tabbing} postfix{\_}expression \= $\to$ \= primary{\_}expression \\
+	\> | \> postfix{\_}expression \textbf{[} expression \textbf{]} \\
+	\> | \> postfix{\_}expression \textbf{(} \textbf{)} \\
+	\> | \> postfix{\_}expression \textbf{(} argument{\_}expression{\_}list \textbf{)} \\
+	\> | \> postfix{\_}expression INC{\_}OP \\
+	\> | \> postfix{\_}expression DEC{\_}OP
+\end{tabbing}
+
+\item \begin{tabbing} primary{\_}expression \= $\to$ \= IDENTIFIER \\
+	\> | \> CONSTANT \\
+	\> | \> STRING{\_}LITERAL \\
+	\> | \> \textbf{(} expression \textbf{)}
+\end{tabbing}
+
+\item \begin{tabbing} type{\_}specifier \= $\to$ \= VOID \\
+	\> | \> CHAR \\
+	\> | \> INT \\
+	\> | \> FLOAT
+\end{tabbing}
+
+
+\end{enumerate}
+\normalsize
+
+\subsection{Remarks}
+The language specified in this work should contain:
+
+\paragraph{Keywords} \textit{if else do while return}
+
+\paragraph{Data types} \textit{void char int float}
+
+\paragraph{Character and string delimiters} \textit{' "}
+
+\paragraph{Other symbols} \textit{( ) [ ] \{ \} ; ,}
+
+\paragraph{Arithmetical operators} \textit{+ - * / \% ++ $--$}
+
+\paragraph{Logical operators} \textit{\&\& ||}
+
+\paragraph{Comparison operators} \textit{< > <= >= ==}
+
+\paragraph{Comments} \textit{/* */ //}
+
+\paragraph{} No special syntactic structure has been designed for polymorphic function declaration. This feature will be implemented either through changes in how the symbol table is built or through parse tree annotations at later stages in the compilation process.
+
+\section{Semântica}
+
+We present some use cases in which polymorphic functions would be useful. Functions with the same behavior, but different argument types:
+
+\begin{lstlisting}[language=C]
+int   i = -1;
+float f = -1.0;
+abs(i); // return the absolute value of i
+abs(f); // return the absolute value of f
+        // In C, abs does not accept a floating-point argument
+        // we must use fabs instead
+\end{lstlisting}
+
+In this simple example, the abs function could compute the absolute of any numeric value passed as argument. The type constrains in C, however, do not allow the abs function to be called with a floating-point argument.
+
+Functions with different behavior, but the same "intuitive meaning" for the programmer
+
+\begin{lstlisting}[language=C]
+int  i[3] = { 9, 2, 5 };
+char w[][9] = { "word", "vocable", "locution" };
+
+sort(i); // The user implements a sorting function for integer vectors
+sort(w); // The user implements a lexicographic or alphabetic
+         // sorting function for string vectors
+\end{lstlisting}
+
+The implementation of a sorting function for integers and strings would be considerably distinct. However, intuitively a programmer might expect some notion of ordering to be present in arrays of strings. This can also be applied to functions with different number of arguments:
+
+\begin{lstlisting}[language=C]
+// Should return the lowest of either x or y
+int min(int x, int y) {
+	if (x <= y) { return x; }
+	else { return y; }
+}
+
+// Should also return the lowest of either x, y or z
+int min(int x, int y, int z) {
+	if (x <= y) {
+		if (x <= z) { return x; }
+		else { return z; }
+	} else {
+		if (y <= z) { return y; }
+		else { return z; }
+	}
+}
+\end{lstlisting}
+
+\printbibliography
+
+\end{document}

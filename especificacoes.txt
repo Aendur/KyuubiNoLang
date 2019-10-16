@@ -1,0 +1,44 @@
+﻿3. Implementação do analisador sintático
+
+Esta fase tem por objetivo a implementação do analisador sintático para a linguagem escolhida na Fase 1 e a integração com a analisador léxico entregue na Fase 2.
+
+Sugere-se fortemente que seja utilizado o bison (implementação do yacc) para a realização desta fase. Se você considerar que o uso do gerador é inadequado para a construção do seu analisador sintático, você deve justificar a implementação manual de seu programa, incluindo justificativas para escolha da linguagem de programação e especificidades que não podem ser providas pelo gerador mas que sejam necessárias ao desenvolvimento do seu projeto. Neste caso, não serão aceitas implementações em linguagens proprietárias e/ou que exijam ambiente proprietário para serem compiladas e/ou executadas.
+
+O analisador léxico e sintático devem estar integrados, ou seja, tokens reconhecidos pelo analisador léxico serão enviados para o sintático e o analisador sintático deve prover como saída a árvore sintática e a tabela de símbolos. Informações relevantes devem ser armazenadas na tabela de símbolos, tanto pelo analisador léxico quanto pelo analisador sintático (a decisão de quais entradas serão manipuladas em cada fase deve ser apresentada na documentação). Tanto a árvore sintática quanto a tabela de símbolos devem ser apresentadas na saída.
+
+Caso a entrada não pertença à linguagem, o analisador deve reportar erro detalhado. Você deve prover o arquivo usado pelo gerador de analisador léxico, o arquivo em C produzido pelo gerador de analisador léxico, o arquivo usado como entrada para o gerador de analisador sintático, o arquivo em C produzido pelo gerador de analisador sintático e o(s) arquivo(s) que efetivamente implementam o seu programa (já que podem ser necessárias alterações no código). Devem ser providos também arquivos de teste.
+
+A documentação escrita deve conter:
+
+i) breve relato sobre a implementação e funcionamento do programa;
+ii) a especificação da gramática da linguagem, considerando que alterações que tenham sido feitas na gramática da primeira e segunda fases para esta devem ser apresentadas e justificadas;
+iii) descrição da política de tratamento de erros por você adotada, devidamente justificada;
+iv) descrição de funções que tenham sido alteradas/introduzidas por você no código produzido pelo gerador de analisador léxico e sintático, incluindo especificamente as partes que lidam com erro;
+v) descrição suscinta da construção da árvore sintática, bem como da estrutura e informações armazenadas na tabela de símbolos;
+vi) descrição dos arquivos de teste, informando quais contém código correto (relativo ao léxico/sintático) e quais contém código incorreto (relativo ao léxico e sintático, sendo necessário apontar especificamente onde tais erros se encontram);
+vii) relato breve sobre dificuldades encontradas durante o desenvolvimento desta fase.
+
+O analisador sintático para a linguagem escolhida, integrado ao analisador léxico, deverá ser entregue nesta fase. O documento escrito deve estar no formato PDF e não deve ultrapassar quinze páginas. Todos os arquivos devem estar compactados em um único arquivo, em formato zip, nomeado com seu número de matrícula e nome da fase (e.g. 00_000000_sintatico.zip). Este é um trabalho acadêmico e deve ater-se ao nível de discurso usado neste meio. Em particular, citações e bibliografia devem ser apresentados apropriadamente.
+
+********************************************************************************************************
+
+4. Implementação do analisador semântico
+
+Nesta fase será implementada a análise semântica. Você deve decidir se a tradução será feita em um ou dois passos.  Lembre-se que não serão aceitas implementações em linguagens proprietárias e/ou que exijam ambiente proprietário para serem compiladas e/ou executadas. Todos os arquivos, incluindo aqueles utilizados pelos geradores de analisadores, devem ser entregues. Arquivos de testes, com e sem erros (léxicos, sintáticos e semânticos), também devem ser entregues.
+
+A documentação escrita deve conter:
+
+i) breve relato sobre a implementação e funcionamento do programa;
+ii) a especificação da gramática da linguagem, considerando que alterações que tenham sido feitas na gramática da primeira, segunda e terceira fases para esta devem ser apresentadas de forma destacada e justificadas;
+iii) descrição detalhada da semântica da linguagem que está sendo traduzida, incluindo regras de escopo de variáveis e funções, além de decisões sobre conversões de tipos;
+iv) descrição da política de tratamento de erros para todas as fases, devidamente justificada;
+v) descrição de funções que tenham sido alteradas/introduzidas por você no código produzido pelo gerador de analisador léxico e sintático, incluindo especificamente as partes que lidam com erros sintáticos e semânticos;
+vii) descrição suscinta da construção da árvore sintática anotada, bem como da estrutura e informações sintáticas e semânticas armazenadas na tabela de símbolos;
+viii) descrição dos arquivos de teste, informando quais contém código correto (relativo ao léxico/sintático/semântico) e quais contém código incorreto (relativo ao léxico, sintático e semântico, sendo necessário apontar especificamente onde tais erros se encontram);
+ix) relato breve sobre dificuldades encontradas durante o desenvolvimento desta fase.
+
+O documento escrito deve estar no formato PDF e não deve ultrapassar vinte páginas. Todos os arquivos devem estar compactados em um único arquivo, em formato zip, nomeado com seu número de matrícula e nome da fase (e.g. 00_000000_semantico.zip). Este é um trabalho acadêmico e deve ater-se ao nível de discurso usado neste meio. Em particular, citações e bibliografia devem ser apresentados apropriadamente.
+
+********************************************************************************************************
+
+Nesta fase será entregue a versão final do tradutor, integrando as fases anteriores, juntamente com documentação e arquivos de teste. O código gerado na fase anterior deve estar em formato executável. Instruções específicas para a geração do código executável (no caso de linguagens compiladas) ou para a execução do código intermediário (no caso de linguagens interpretadas) devem estar contidas na documentação. O documento escrito deve estar no formato PDF e não deve ultrapassar vinte páginas. Todos os arquivos devem estar compactados em um único arquivo, em formato zip, nomeado com seu número de matrícula e nome da fase (e.g. 00_000000_tradutor.zip). Este é um trabalho acadêmico e deve ater-se ao nível de discurso usado neste meio. Em particular, citações e bibliografia devem ser apresentados apropriadamente.
