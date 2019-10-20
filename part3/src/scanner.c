@@ -1,6 +1,6 @@
-#line 2 "src/lex.yy.c"
+#line 2 "src/scanner.c"
 
-#line 4 "src/lex.yy.c"
+#line 4 "src/scanner.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -379,7 +379,7 @@ static const flex_int16_t yy_accept[99] =
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        2,    2,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    4,    5,    1,    1,    6,    7,    8,    9,
        10,   11,   12,   13,   14,   15,   16,   17,   18,   18,
@@ -512,20 +512,20 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "language.l"
-#define YY_NO_INPUT 1
+#line 2 "language.l"
+ //%option nounput
+ //%option noinput
+ //%option noyywrap
+ //%option bison-bridge bison-locations
 
 
-#line 15 "language.l"
-#include "token.h"
-
-extern int  nline;
-extern int  ncolumn;
-
+#include "parser.h"
+extern int yynerrs;
 static void update_position(void);
 static int  identifier(void);
 static int  character_const(void);
-#line 528 "src/lex.yy.c"
-#line 529 "src/lex.yy.c"
+#line 528 "src/scanner.c"
+#line 529 "src/scanner.c"
 
 #define INITIAL 0
 #define COMMENT_BLOCK 1
@@ -587,6 +587,8 @@ extern int yywrap ( void );
 #endif
 
 #ifndef YY_NO_UNPUT
+    
+    static void yyunput ( int c, char *buf_ptr  );
     
 #endif
 
@@ -742,11 +744,11 @@ YY_DECL
 		}
 
 	{
-#line 25 "language.l"
+#line 24 "language.l"
 
-#line 27 "language.l"
+#line 26 "language.l"
 					/* block comments */
-#line 750 "src/lex.yy.c"
+#line 752 "src/scanner.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -801,269 +803,267 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 28 "language.l"
+#line 27 "language.l"
 { update_position(); BEGIN(COMMENT_BLOCK); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 29 "language.l"
+#line 28 "language.l"
 { update_position(); BEGIN(INITIAL); }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 30 "language.l"
+#line 29 "language.l"
 { update_position(); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 31 "language.l"
+#line 30 "language.l"
 { update_position(); }
 	YY_BREAK
 /* single line comments */
 case 5:
 YY_RULE_SETUP
-#line 34 "language.l"
+#line 33 "language.l"
 { update_position(); BEGIN(COMMENT_LINE); }
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 35 "language.l"
+#line 34 "language.l"
 { update_position(); BEGIN(INITIAL); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 36 "language.l"
+#line 35 "language.l"
 { update_position(); }
 	YY_BREAK
 /* keywords */
 case 8:
 YY_RULE_SETUP
-#line 39 "language.l"
-{ update_position(); return KW_IF; }
+#line 38 "language.l"
+{ update_position(); return IF    ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "language.l"
-{ update_position(); return KW_ELSE; }
+#line 39 "language.l"
+{ update_position(); return ELSE  ; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "language.l"
-{ update_position(); return KW_DO; }
+#line 40 "language.l"
+{ update_position(); return DO    ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "language.l"
-{ update_position(); return KW_WHILE; }
+#line 41 "language.l"
+{ update_position(); return WHILE ; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "language.l"
-{ update_position(); return KW_RETURN; }
+#line 42 "language.l"
+{ update_position(); return RETURN; }
 	YY_BREAK
 /* data types */
 case 13:
 YY_RULE_SETUP
-#line 46 "language.l"
-{ update_position(); return TYPE_VOID; }
+#line 45 "language.l"
+{ update_position(); return VOID; }
 	YY_BREAK
-/*"bool"		{ update_position(); return TYPE_BOOL; }*/
 case 14:
 YY_RULE_SETUP
-#line 48 "language.l"
-{ update_position(); return TYPE_CHAR; }
+#line 46 "language.l"
+{ update_position(); return CHAR; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 49 "language.l"
-{ update_position(); return TYPE_INT; }
+#line 47 "language.l"
+{ update_position(); return INT; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 50 "language.l"
-{ update_position(); return TYPE_FLOAT; }
+#line 48 "language.l"
+{ update_position(); return FLOAT; }
 	YY_BREAK
 /* Arithmetical operators */
 case 17:
 YY_RULE_SETUP
-#line 53 "language.l"
-{ update_position(); return OP_ADD; }
+#line 51 "language.l"
+{ update_position(); return '+'; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 54 "language.l"
-{ update_position(); return OP_SUB; }
+#line 52 "language.l"
+{ update_position(); return '-'; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 55 "language.l"
-{ update_position(); return OP_MUL; }
+#line 53 "language.l"
+{ update_position(); return '*'; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 56 "language.l"
-{ update_position(); return OP_DIV; }
+#line 54 "language.l"
+{ update_position(); return '/'; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 57 "language.l"
-{ update_position(); return OP_REM; }
+#line 55 "language.l"
+{ update_position(); return '%'; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 58 "language.l"
+#line 56 "language.l"
 { update_position(); return OP_INC; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 59 "language.l"
+#line 57 "language.l"
 { update_position(); return OP_DEC; }
 	YY_BREAK
 /* Comparison operators */
 case 24:
 YY_RULE_SETUP
-#line 62 "language.l"
-{ update_position(); return OP_LT; }
+#line 60 "language.l"
+{ update_position(); return '<'; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 63 "language.l"
+#line 61 "language.l"
 { update_position(); return OP_LE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 64 "language.l"
+#line 62 "language.l"
 { update_position(); return OP_EQ; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 65 "language.l"
+#line 63 "language.l"
 { update_position(); return OP_GE; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 66 "language.l"
-{ update_position(); return OP_GT; }
+#line 64 "language.l"
+{ update_position(); return '>'; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 67 "language.l"
+#line 65 "language.l"
 { update_position(); return OP_NE; }
 	YY_BREAK
 /* Logical operators */
-/*"!"			{ update_position(); return OP_NOT; }*/
 case 30:
 YY_RULE_SETUP
-#line 71 "language.l"
+#line 68 "language.l"
 { update_position(); return OP_AND; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 72 "language.l"
+#line 69 "language.l"
 { update_position(); return OP_OR ; }
 	YY_BREAK
 /* Other symbols */
 case 32:
 YY_RULE_SETUP
-#line 75 "language.l"
-{ update_position(); return POI_LBRACE; }
+#line 72 "language.l"
+{ update_position(); return '{'; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 76 "language.l"
-{ update_position(); return POI_RBRACE; }
+#line 73 "language.l"
+{ update_position(); return '}'; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 77 "language.l"
-{ update_position(); return POI_LBRACKET; }
+#line 74 "language.l"
+{ update_position(); return '['; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 78 "language.l"
-{ update_position(); return POI_RBRACKET; }
+#line 75 "language.l"
+{ update_position(); return ']'; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 79 "language.l"
-{ update_position(); return POI_LPAR; }
+#line 76 "language.l"
+{ update_position(); return '('; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 80 "language.l"
-{ update_position(); return POI_RPAR; }
+#line 77 "language.l"
+{ update_position(); return ')'; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 81 "language.l"
-{ update_position(); return POI_SEMICOLON; }
+#line 78 "language.l"
+{ update_position(); return ';'; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 82 "language.l"
-{ update_position(); return POI_COMMA; }
+#line 79 "language.l"
+{ update_position(); return ','; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 83 "language.l"
-{ update_position(); return POI_EQ; }
+#line 80 "language.l"
+{ update_position(); return '='; }
 	YY_BREAK
 /* Numerical constants */
 case 41:
 YY_RULE_SETUP
-#line 86 "language.l"
+#line 83 "language.l"
 { update_position(); return CONSTANT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 87 "language.l"
+#line 84 "language.l"
 { update_position(); return CONSTANT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 88 "language.l"
+#line 85 "language.l"
 { update_position(); return CONSTANT; }
 	YY_BREAK
 /* Characters and string literals */
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 91 "language.l"
+#line 88 "language.l"
 { update_position(); return character_const(); }
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 92 "language.l"
+#line 89 "language.l"
 { update_position(); return STRING_LITERAL; }
 	YY_BREAK
 /* Identifiers */
 case 46:
 YY_RULE_SETUP
-#line 95 "language.l"
+#line 92 "language.l"
 { update_position(); return identifier(); }
 	YY_BREAK
 /* whitespace */
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 98 "language.l"
+#line 95 "language.l"
 { update_position(); }
 	YY_BREAK
 /* other symbols not part of the language */
 case 48:
 YY_RULE_SETUP
-#line 101 "language.l"
-{ update_position(); return ERROR_UNRECOGNIZED_TOKEN; }
+#line 98 "language.l"
+{ update_position(); return UNRECOGNIZED_TOKEN; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 103 "language.l"
+#line 100 "language.l"
 ECHO;
 	YY_BREAK
-#line 1067 "src/lex.yy.c"
+#line 1067 "src/scanner.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT_BLOCK):
 case YY_STATE_EOF(COMMENT_LINE):
@@ -1401,6 +1401,43 @@ static int yy_get_next_buffer (void)
 }
 
 #ifndef YY_NO_UNPUT
+
+    static void yyunput (int c, char * yy_bp )
+{
+	char *yy_cp;
+    
+    yy_cp = (yy_c_buf_p);
+
+	/* undo effects of setting up yytext */
+	*yy_cp = (yy_hold_char);
+
+	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
+		{ /* need to shift things up to make room */
+		/* +2 for EOB chars. */
+		int number_to_move = (yy_n_chars) + 2;
+		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
+					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
+		char *source =
+				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
+
+		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
+			*--dest = *--source;
+
+		yy_cp += (int) (dest - source);
+		yy_bp += (int) (dest - source);
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
+			(yy_n_chars) = (int) YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
+
+		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
+			YY_FATAL_ERROR( "flex scanner push-back overflow" );
+		}
+
+	*--yy_cp = (char) c;
+
+	(yytext_ptr) = yy_bp;
+	(yy_hold_char) = *yy_cp;
+	(yy_c_buf_p) = yy_cp;
+}
 
 #endif
 
@@ -2034,19 +2071,25 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 103 "language.l"
+#line 100 "language.l"
 
-// Returns 1 when yylex reaches EOF
-int yywrap() { return 1; }
+// // Returns 1 when yylex reaches EOF
+// int yywrap() { return 1; }
+
+#define TABSIZE 4
 
 // Updates the line and column counters
 static void update_position(void) {
+	yylloc.first_column = yylloc.last_column;
 	for(int i = 0; i < yyleng; ++i) {
 		if (yytext[i] == '\n') {
-			++nline;
-			ncolumn = 1;
+			++yylloc.last_line;
+			yylloc.first_column = 1;
+			yylloc.last_column = 1;
+		} else if (yytext[i] == '\t') {
+			yylloc.last_column += TABSIZE;
 		} else {
-			++ncolumn;
+			++yylloc.last_column;
 		}
 	}
 }
@@ -2054,7 +2097,8 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		return ERROR_INVALID_IDENTIFIER;
+		//yyerror("Identifier exceeds 32 characters.");
+		return INVALID_IDENTIFIER;
 	} else {
 		return IDENTIFIER;
 	}
@@ -2063,7 +2107,7 @@ static int identifier(void) {
 // handles character constants
 static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
-		return ERROR_INVALID_CHAR_CONST;
+		return INVALID_CHAR_CONST;
 	} else {
 		return CONSTANT;
 	}

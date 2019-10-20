@@ -1,8 +1,10 @@
-%option nounput
-%option noinput
+ //%option nounput
+ //%option noinput
+ //%option noyywrap
 %option never-interactive
-%option outfile="src/lex.yy.c"
-%option header-file="src/lex.yy.h"
+%option outfile="src/scanner.c"
+%option header-file="src/scanner.h"
+ //%option bison-bridge bison-locations
 
 D [0-9]
 L [a-zA-Z_]
@@ -12,11 +14,8 @@ H [a-fA-F0-9]
 %x COMMENT_LINE
 
 %{
-#include "token.h"
-
-extern int  nline;
-extern int  ncolumn;
-
+#include "parser.h"
+extern int yynerrs;
 static void update_position(void);
 static int  identifier(void);
 static int  character_const(void);
@@ -35,51 +34,49 @@ static int  character_const(void);
 <COMMENT_LINE>.		{ update_position(); }
 
 			/* keywords */
-"if"		{ update_position(); return KW_IF; }
-"else"		{ update_position(); return KW_ELSE; }
-"do"		{ update_position(); return KW_DO; }
-"while"		{ update_position(); return KW_WHILE; }
-"return"	{ update_position(); return KW_RETURN; }
+"if"		{ update_position(); return IF    ; }
+"else"		{ update_position(); return ELSE  ; }
+"do"		{ update_position(); return DO    ; }
+"while"		{ update_position(); return WHILE ; }
+"return"	{ update_position(); return RETURN; }
 
 			/* data types */
-"void"		{ update_position(); return TYPE_VOID; }
- /*"bool"		{ update_position(); return TYPE_BOOL; }*/
-"char"		{ update_position(); return TYPE_CHAR; }
-"int"		{ update_position(); return TYPE_INT; }
-"float"		{ update_position(); return TYPE_FLOAT; }
+"void"		{ update_position(); return VOID; }
+"char"		{ update_position(); return CHAR; }
+"int"		{ update_position(); return INT; }
+"float"		{ update_position(); return FLOAT; }
 
 			/* Arithmetical operators */
-"+"			{ update_position(); return OP_ADD; }
-"-"			{ update_position(); return OP_SUB; }
-"*"			{ update_position(); return OP_MUL; }
-"/"			{ update_position(); return OP_DIV; }
-"%"			{ update_position(); return OP_REM; }
+"+"			{ update_position(); return '+'; }
+"-"			{ update_position(); return '-'; }
+"*"			{ update_position(); return '*'; }
+"/"			{ update_position(); return '/'; }
+"%"			{ update_position(); return '%'; }
 "++"		{ update_position(); return OP_INC; }
 "--"		{ update_position(); return OP_DEC; }
 
 			/* Comparison operators */
-"<"			{ update_position(); return OP_LT; }
+"<"			{ update_position(); return '<'; }
 "<="		{ update_position(); return OP_LE; }
 "=="		{ update_position(); return OP_EQ; }
 ">="		{ update_position(); return OP_GE; }
-">"			{ update_position(); return OP_GT; }
+">"			{ update_position(); return '>'; }
 "!="		{ update_position(); return OP_NE; }
 
 			/* Logical operators */
- /*"!"			{ update_position(); return OP_NOT; }*/
 "&&"		{ update_position(); return OP_AND; }
 "||"		{ update_position(); return OP_OR ; }
 
 			/* Other symbols */
-"{"			{ update_position(); return POI_LBRACE; }
-"}"			{ update_position(); return POI_RBRACE; }
-"["			{ update_position(); return POI_LBRACKET; }
-"]"			{ update_position(); return POI_RBRACKET; }
-"("			{ update_position(); return POI_LPAR; }
-")"			{ update_position(); return POI_RPAR; }
-";"			{ update_position(); return POI_SEMICOLON; }
-","			{ update_position(); return POI_COMMA; }
-"="			{ update_position(); return POI_EQ; }
+"{"			{ update_position(); return '{'; }
+"}"			{ update_position(); return '}'; }
+"["			{ update_position(); return '['; }
+"]"			{ update_position(); return ']'; }
+"("			{ update_position(); return '('; }
+")"			{ update_position(); return ')'; }
+";"			{ update_position(); return ';'; }
+","			{ update_position(); return ','; }
+"="			{ update_position(); return '='; }
 
 					/* Numerical constants */
 [\-\+]?0[xX]{H}+	{ update_position(); return CONSTANT; }
@@ -94,23 +91,29 @@ static int  character_const(void);
 {L}({L}|{D})*	{ update_position(); return identifier(); }
 
 				/* whitespace */
-[ \t\v\n\f]		{ update_position(); }
+[ \n\r\t] 		{ update_position(); }
 
 				/* other symbols not part of the language */
-.				{ update_position(); return ERROR_UNRECOGNIZED_TOKEN; }
+.				{ update_position(); return UNRECOGNIZED_TOKEN; }
 
 %%
-// Returns 1 when yylex reaches EOF
-int yywrap() { return 1; }
+// // Returns 1 when yylex reaches EOF
+// int yywrap() { return 1; }
+
+#define TABSIZE 4
 
 // Updates the line and column counters
 static void update_position(void) {
+	yylloc.first_column = yylloc.last_column;
 	for(int i = 0; i < yyleng; ++i) {
 		if (yytext[i] == '\n') {
-			++nline;
-			ncolumn = 1;
+			++yylloc.last_line;
+			yylloc.first_column = 1;
+			yylloc.last_column = 1;
+		} else if (yytext[i] == '\t') {
+			yylloc.last_column += TABSIZE;
 		} else {
-			++ncolumn;
+			++yylloc.last_column;
 		}
 	}
 }
@@ -118,7 +121,8 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		return ERROR_INVALID_IDENTIFIER;
+		//yyerror("Identifier exceeds 32 characters.");
+		return INVALID_IDENTIFIER;
 	} else {
 		return IDENTIFIER;
 	}
@@ -127,7 +131,7 @@ static int identifier(void) {
 // handles character constants
 static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
-		return ERROR_INVALID_CHAR_CONST;
+		return INVALID_CHAR_CONST;
 	} else {
 		return CONSTANT;
 	}

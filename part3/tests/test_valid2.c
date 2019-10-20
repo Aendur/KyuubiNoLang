@@ -1,5 +1,7 @@
 int main(void) {
-	int a = -1, b = +1, c = 5;
+	int a = -1;
+	int b = +1;
+	int c = 5;
 	do {
 		b = b * c--;
 	} while (c > 0);
@@ -10,3 +12,4 @@ int main(void) {
 	float z = +3.14159;
 	return 0;
 }
+
