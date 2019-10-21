@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include "parser.h"
 #include "scanner.h"
+#include "node.h"
 
 extern int yynerrs;
+int nline = 1;
+int ncol0 = 1;
+int ncol1 = 1;
+Node * root;
 
 int main(int argc, char** argv) {
 	// handle cmd line arguments
@@ -22,6 +27,9 @@ int main(int argc, char** argv) {
 
 	yyparse();
 	printf("%d\n", yynerrs);
+	
+	print_tree(root, 0);
+	node_free_recursive(&root);
 
 	// close input file
 	fclose(yyin);

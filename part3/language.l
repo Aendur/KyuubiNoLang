@@ -4,7 +4,8 @@
 %option never-interactive
 %option outfile="src/scanner.c"
 %option header-file="src/scanner.h"
- //%option bison-bridge bison-locations
+ //%option bison-bridge
+ //%option bison-locations
 
 D [0-9]
 L [a-zA-Z_]
@@ -15,7 +16,12 @@ H [a-fA-F0-9]
 
 %{
 #include "parser.h"
+#include "node.h"
 extern int yynerrs;
+extern int nline;
+extern int ncol0;
+extern int ncol1;
+
 static void update_position(void);
 static int  identifier(void);
 static int  character_const(void);
@@ -34,58 +40,58 @@ static int  character_const(void);
 <COMMENT_LINE>.		{ update_position(); }
 
 			/* keywords */
-"if"		{ update_position(); return IF    ; }
-"else"		{ update_position(); return ELSE  ; }
-"do"		{ update_position(); return DO    ; }
-"while"		{ update_position(); return WHILE ; }
-"return"	{ update_position(); return RETURN; }
+"if"		{ update_position(); int t = IF    ; return t; }
+"else"		{ update_position(); int t = ELSE  ; return t; }
+"do"		{ update_position(); int t = DO    ; return t; }
+"while"		{ update_position(); int t = WHILE ; return t; }
+"return"	{ update_position(); int t = RETURN; return t; }
 
 			/* data types */
-"void"		{ update_position(); return VOID; }
-"char"		{ update_position(); return CHAR; }
-"int"		{ update_position(); return INT; }
-"float"		{ update_position(); return FLOAT; }
+"void"		{ update_position(); int t = VOID ; yylval.node = node_init(t, yytext, NULL); return t; }
+"char"		{ update_position(); int t = CHAR ; yylval.node = node_init(t, yytext, NULL); return t; }
+"int"		{ update_position(); int t = INT  ; yylval.node = node_init(t, yytext, NULL); return t; }
+"float"		{ update_position(); int t = FLOAT; yylval.node = node_init(t, yytext, NULL); return t; }
 
 			/* Arithmetical operators */
-"+"			{ update_position(); return '+'; }
-"-"			{ update_position(); return '-'; }
-"*"			{ update_position(); return '*'; }
-"/"			{ update_position(); return '/'; }
-"%"			{ update_position(); return '%'; }
-"++"		{ update_position(); return OP_INC; }
-"--"		{ update_position(); return OP_DEC; }
+"+"			{ update_position(); int t = '+'   ; return t; }
+"-"			{ update_position(); int t = '-'   ; return t; }
+"*"			{ update_position(); int t = '*'   ; return t; }
+"/"			{ update_position(); int t = '/'   ; return t; }
+"%"			{ update_position(); int t = '%'   ; return t; }
+"++"		{ update_position(); int t = OP_INC; return t; }
+"--"		{ update_position(); int t = OP_DEC; return t; }
 
 			/* Comparison operators */
-"<"			{ update_position(); return '<'; }
-"<="		{ update_position(); return OP_LE; }
-"=="		{ update_position(); return OP_EQ; }
-">="		{ update_position(); return OP_GE; }
-">"			{ update_position(); return '>'; }
-"!="		{ update_position(); return OP_NE; }
+"<"			{ update_position(); int t = '<'  ; return t; }
+"<="		{ update_position(); int t = OP_LE; return t; }
+"=="		{ update_position(); int t = OP_EQ; return t; }
+">="		{ update_position(); int t = OP_GE; return t; }
+">"			{ update_position(); int t = '>'  ; return t; }
+"!="		{ update_position(); int t = OP_NE; return t; }
 
 			/* Logical operators */
-"&&"		{ update_position(); return OP_AND; }
-"||"		{ update_position(); return OP_OR ; }
+"&&"		{ update_position(); int t = OP_AND; return t;}
+"||"		{ update_position(); int t = OP_OR ; return t;}
 
 			/* Other symbols */
-"{"			{ update_position(); return '{'; }
-"}"			{ update_position(); return '}'; }
-"["			{ update_position(); return '['; }
-"]"			{ update_position(); return ']'; }
-"("			{ update_position(); return '('; }
-")"			{ update_position(); return ')'; }
-";"			{ update_position(); return ';'; }
-","			{ update_position(); return ','; }
-"="			{ update_position(); return '='; }
+"{"			{ update_position(); return '{';}
+"}"			{ update_position(); return '}';}
+"["			{ update_position(); return '[';}
+"]"			{ update_position(); return ']';}
+"("			{ update_position(); return '(';}
+")"			{ update_position(); return ')';}
+";"			{ update_position(); return ';';}
+","			{ update_position(); return ',';}
+"="			{ update_position(); return '=';}
 
 					/* Numerical constants */
-[\-\+]?0[xX]{H}+	{ update_position(); return CONSTANT; }
-[\-\+]?{D}+			{ update_position(); return CONSTANT; }
-[\-\+]?{D}+"."{D}* 	{ update_position(); return CONSTANT; }
+[\-\+]?0[xX]{H}+	{ update_position(); int t = CONSTANT; yylval.node = node_init(t, yytext, NULL); return t; }
+[\-\+]?{D}+			{ update_position(); int t = CONSTANT; yylval.node = node_init(t, yytext, NULL); return t; }
+[\-\+]?{D}+"."{D}* 	{ update_position(); int t = CONSTANT; yylval.node = node_init(t, yytext, NULL); return t; }
 
 					/* Characters and string literals */
 '(\\.|[^\\'])+'		{ update_position(); return character_const(); }
-\"(\\.|[^\\"])*\"	{ update_position(); return STRING_LITERAL; }
+\"(\\.|[^\\"])*\"	{ update_position(); int t = STRING_LITERAL; yylval.node = node_init(t, yytext, NULL); return t; }
 
 				/* Identifiers */
 {L}({L}|{D})*	{ update_position(); return identifier(); }
@@ -104,16 +110,16 @@ static int  character_const(void);
 
 // Updates the line and column counters
 static void update_position(void) {
-	yylloc.first_column = yylloc.last_column;
+	ncol0 = ncol1;
 	for(int i = 0; i < yyleng; ++i) {
 		if (yytext[i] == '\n') {
-			++yylloc.last_line;
-			yylloc.first_column = 1;
-			yylloc.last_column = 1;
+			++nline;
+			ncol0 = 1;
+			ncol1 = 1;
 		} else if (yytext[i] == '\t') {
-			yylloc.last_column += TABSIZE;
+			ncol1 += TABSIZE;
 		} else {
-			++yylloc.last_column;
+			++ncol1;
 		}
 	}
 }
@@ -124,7 +130,9 @@ static int identifier(void) {
 		//yyerror("Identifier exceeds 32 characters.");
 		return INVALID_IDENTIFIER;
 	} else {
-		return IDENTIFIER;
+		int t = IDENTIFIER; 
+		yylval.node = node_init(t, yytext, NULL);
+		return t;
 	}
 }
 
@@ -133,6 +141,8 @@ static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
 		return INVALID_CHAR_CONST;
 	} else {
-		return CONSTANT;
+		int t = CONSTANT;
+		yylval.node = node_init(t, yytext, NULL);
+		return t;
 	}
 }

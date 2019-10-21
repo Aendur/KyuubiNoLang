@@ -43,12 +43,6 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
-/* "%code requires" blocks.  */
-#line 27 "language.y"
-
-	int yylex (void);
-
-#line 52 "src/parser.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -73,8 +67,8 @@ extern int yydebug;
     OP_AND = 273,
     OP_OR = 274,
     IDENTIFIER = 275,
-    CONSTANT = 276,
-    STRING_LITERAL = 277,
+    STRING_LITERAL = 276,
+    CONSTANT = 277,
     UNRECOGNIZED_TOKEN = 278,
     INVALID_IDENTIFIER = 279,
     INVALID_CHAR_CONST = 280
@@ -87,12 +81,9 @@ union YYSTYPE
 {
 #line 11 "language.y"
 
-	char   cval;
-	char * sval;
-	int    ival;
-	float  fval;
+	struct node * node;
 
-#line 96 "src/parser.h"
+#line 87 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -100,29 +91,15 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-/* Location type.  */
-#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE
-{
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-};
-# define YYLTYPE_IS_DECLARED 1
-# define YYLTYPE_IS_TRIVIAL 1
-#endif
-
 
 extern YYSTYPE yylval;
-extern YYLTYPE yylloc;
+
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 31 "language.y"
+#line 32 "language.y"
 
 	void yyerror (char const *);	
 
-#line 127 "src/parser.h"
+#line 104 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */
