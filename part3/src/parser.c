@@ -89,17 +89,23 @@
 #include "parser.h"
 
 /* Second part of user prologue.  */
-#line 36 "language.y"
+#line 39 "language.y"
 
 #include <stdio.h>
+#include <string.h>
 #include "node.h"
+#include "table.h"
 int yylex (void);
 extern int nline;
 extern int ncol0;
 extern int ncol1;
 extern Node * root;
+extern Nodelist * node_list;
+extern Table * symbol_table;
+void add_symbol_var(Node* node);
+void add_symbol_fun(Node* node);
 
-#line 103 "src/parser.c"
+#line 109 "src/parser.c"
 
 
 #ifdef short
@@ -393,14 +399,14 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    47,    47,    50,    51,    55,    56,    57,    58,    59,
-      63,    64,    68,    69,    70,    74,    75,    76,    80,    81,
-      85,    86,    87,    88,    92,    93,    97,    98,   102,   103,
-     107,   108,   109,   110,   111,   112,   116,   117,   121,   122,
-     126,   127,   131,   132,   136,   137,   141,   142,   146,   147,
-     148,   152,   153,   154,   155,   156,   160,   161,   162,   166,
-     167,   168,   169,   173,   174,   175,   176,   177,   178,   182,
-     183,   184,   185,   186,   190,   191,   195,   196,   197,   198
+       0,    56,    56,    59,    60,    64,    65,    66,    67,    68,
+      72,    73,    77,    78,    79,    83,    84,    85,    89,    90,
+      94,    95,    96,    97,   101,   102,   106,   107,   111,   112,
+     116,   117,   118,   119,   120,   121,   125,   126,   130,   131,
+     135,   136,   140,   141,   145,   146,   150,   151,   155,   156,
+     157,   161,   162,   163,   164,   165,   169,   170,   171,   175,
+     176,   177,   178,   182,   183,   184,   185,   186,   187,   191,
+     192,   193,   194,   195,   199,   200,   204,   205,   206,   207
 };
 #endif
 
@@ -2738,313 +2744,313 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 47 "language.y"
+#line 56 "language.y"
     { root = (yyvsp[0].node); }
-#line 2744 "src/parser.c"
-    break;
-
-  case 4:
-#line 51 "language.y"
-    { (yyval.node) = node_init('L', "decl-list", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
 #line 2750 "src/parser.c"
     break;
 
-  case 5:
-#line 55 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); }
+  case 4:
+#line 60 "language.y"
+    { (yyval.node) = node_init(node_list, 'L', "decl-list", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
 #line 2756 "src/parser.c"
     break;
 
-  case 6:
-#line 56 "language.y"
-    { (yyval.node) = node_init('F', "fdefn", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
+  case 5:
+#line 64 "language.y"
+    { (yyval.node) = (yyvsp[-1].node); }
 #line 2762 "src/parser.c"
     break;
 
-  case 7:
-#line 57 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); }
+  case 6:
+#line 65 "language.y"
+    { (yyval.node) = node_init(node_list, 'F', "fdefn", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
 #line 2768 "src/parser.c"
     break;
 
-  case 8:
-#line 58 "language.y"
-    { fprintf(stderr, "HANDLE DECL1 ERROR\n"); }
+  case 7:
+#line 66 "language.y"
+    { (yyval.node) = (yyvsp[-1].node); }
 #line 2774 "src/parser.c"
     break;
 
-  case 9:
-#line 59 "language.y"
-    { fprintf(stderr, "HANDLE DECL2 ERROR\n"); }
+  case 8:
+#line 67 "language.y"
+    { }
 #line 2780 "src/parser.c"
     break;
 
-  case 11:
-#line 64 "language.y"
-    { (yyval.node) = node_init('=', "=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 9:
+#line 68 "language.y"
+    { }
 #line 2786 "src/parser.c"
     break;
 
-  case 12:
-#line 68 "language.y"
-    { (yyval.node) = node_init('D', "decl-var", (yyvsp[-1].node), (yyvsp[0].node)    , NULL); }
+  case 11:
+#line 73 "language.y"
+    { (yyval.node) = node_init(node_list, '=', "=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2792 "src/parser.c"
     break;
 
-  case 13:
-#line 69 "language.y"
-    { (yyval.node) = node_init('D', "decl-arr", (yyvsp[-3].node), (yyvsp[-2].node)    , NULL); }
+  case 12:
+#line 77 "language.y"
+    { (yyval.node) = node_init(node_list, 'D', "decl-var", (yyvsp[-1].node), (yyvsp[0].node)    , NULL); add_symbol_var((yyval.node)); }
 #line 2798 "src/parser.c"
     break;
 
-  case 14:
-#line 70 "language.y"
-    { (yyval.node) = node_init('D', "decl-arr", (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
+  case 13:
+#line 78 "language.y"
+    { (yyval.node) = node_init(node_list, 'E', "decl-arr", (yyvsp[-3].node), (yyvsp[-2].node)    , NULL); add_symbol_var((yyval.node)); }
 #line 2804 "src/parser.c"
     break;
 
-  case 16:
-#line 75 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); }
+  case 14:
+#line 79 "language.y"
+    { (yyval.node) = node_init(node_list, 'E', "decl-arr", (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), NULL); add_symbol_var((yyval.node)); }
 #line 2810 "src/parser.c"
     break;
 
-  case 17:
-#line 76 "language.y"
-    { (yyval.node) = (yyvsp[-2].node); }
+  case 16:
+#line 84 "language.y"
+    { (yyval.node) = (yyvsp[-1].node); }
 #line 2816 "src/parser.c"
     break;
 
-  case 19:
-#line 81 "language.y"
-    { (yyval.node) = node_init('L', "init-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 17:
+#line 85 "language.y"
+    { (yyval.node) = (yyvsp[-2].node); }
 #line 2822 "src/parser.c"
     break;
 
-  case 20:
-#line 85 "language.y"
-    { (yyval.node) = node_init('F', "fdecl", (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
+  case 19:
+#line 90 "language.y"
+    { (yyval.node) = node_init(node_list, 'L', "init-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2828 "src/parser.c"
     break;
 
-  case 21:
-#line 86 "language.y"
-    { (yyval.node) = node_init('F', "fdecl", (yyvsp[-3].node), (yyvsp[-2].node),     NULL); }
+  case 20:
+#line 94 "language.y"
+    { (yyval.node) = node_init(node_list, 'F', "fdecl", (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), NULL); add_symbol_fun((yyval.node)); }
 #line 2834 "src/parser.c"
     break;
 
-  case 22:
-#line 87 "language.y"
-    { (yyval.node) = node_init('F', "fdecl", (yyvsp[-4].node), (yyvsp[-3].node),     NULL); }
+  case 21:
+#line 95 "language.y"
+    { (yyval.node) = node_init(node_list, 'F', "fdecl", (yyvsp[-3].node), (yyvsp[-2].node),     NULL); add_symbol_fun((yyval.node)); }
 #line 2840 "src/parser.c"
     break;
 
-  case 23:
-#line 88 "language.y"
-    { fprintf(stderr, "HANDLE ARG LIST ERROR\n"); }
+  case 22:
+#line 96 "language.y"
+    { (yyval.node) = node_init(node_list, 'F', "fdecl", (yyvsp[-4].node), (yyvsp[-3].node),     NULL); add_symbol_fun((yyval.node)); }
 #line 2846 "src/parser.c"
     break;
 
-  case 25:
-#line 93 "language.y"
-    { (yyval.node) = node_init('L', "par-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 23:
+#line 97 "language.y"
+    { }
 #line 2852 "src/parser.c"
     break;
 
-  case 26:
-#line 97 "language.y"
-    { }
+  case 25:
+#line 102 "language.y"
+    { (yyval.node) = node_init(node_list, 'L', "par-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2858 "src/parser.c"
     break;
 
-  case 27:
-#line 98 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); }
+  case 26:
+#line 106 "language.y"
+    { }
 #line 2864 "src/parser.c"
     break;
 
-  case 29:
-#line 103 "language.y"
-    { (yyval.node) = node_init('L', "stm-list", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
+  case 27:
+#line 107 "language.y"
+    { (yyval.node) = (yyvsp[-1].node); }
 #line 2870 "src/parser.c"
     break;
 
-  case 30:
-#line 107 "language.y"
-    { }
+  case 29:
+#line 112 "language.y"
+    { (yyval.node) = node_init(node_list, 'L', "stm-list", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
 #line 2876 "src/parser.c"
     break;
 
-  case 36:
+  case 30:
 #line 116 "language.y"
-    { (yyval.node) = node_init(IF  , "if"     , (yyvsp[-2].node), (yyvsp[0].node),     NULL); }
+    { }
 #line 2882 "src/parser.c"
     break;
 
-  case 37:
-#line 117 "language.y"
-    { (yyval.node) = node_init(ELSE, "if-else", (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 36:
+#line 125 "language.y"
+    { (yyval.node) = node_init(node_list, IF  , "if"     , (yyvsp[-2].node), (yyvsp[0].node),     NULL); }
 #line 2888 "src/parser.c"
     break;
 
-  case 38:
-#line 121 "language.y"
-    { (yyval.node) = node_init(WHILE, "while"   , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 37:
+#line 126 "language.y"
+    { (yyval.node) = node_init(node_list, ELSE, "if-else", (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2894 "src/parser.c"
     break;
 
-  case 39:
-#line 122 "language.y"
-    { (yyval.node) = node_init(DO   , "do-while", (yyvsp[-5].node), (yyvsp[-2].node), NULL); }
+  case 38:
+#line 130 "language.y"
+    { (yyval.node) = node_init(node_list, WHILE, "while"   , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2900 "src/parser.c"
     break;
 
-  case 40:
-#line 126 "language.y"
-    { (yyval.node) = node_init(RETURN, "return",     NULL); }
+  case 39:
+#line 131 "language.y"
+    { (yyval.node) = node_init(node_list, DO   , "do-while", (yyvsp[-5].node), (yyvsp[-2].node), NULL); }
 #line 2906 "src/parser.c"
     break;
 
-  case 41:
-#line 127 "language.y"
-    { (yyval.node) = node_init(RETURN, "return", (yyvsp[0].node), NULL); }
+  case 40:
+#line 135 "language.y"
+    { (yyval.node) = node_init(node_list, RETURN, "return",     NULL); }
 #line 2912 "src/parser.c"
     break;
 
-  case 43:
-#line 132 "language.y"
-    { (yyval.node) = node_init('=', "=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 41:
+#line 136 "language.y"
+    { (yyval.node) = node_init(node_list, RETURN, "return", (yyvsp[0].node), NULL); }
 #line 2918 "src/parser.c"
     break;
 
-  case 45:
-#line 137 "language.y"
-    { (yyval.node) = node_init(OP_OR, "||", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 43:
+#line 141 "language.y"
+    { (yyval.node) = node_init(node_list, '=', "=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2924 "src/parser.c"
     break;
 
-  case 47:
-#line 142 "language.y"
-    { (yyval.node) = node_init(OP_AND, "&&", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 45:
+#line 146 "language.y"
+    { (yyval.node) = node_init(node_list, OP_OR, "||", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2930 "src/parser.c"
     break;
 
-  case 49:
-#line 147 "language.y"
-    { (yyval.node) = node_init(OP_EQ, "==", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 47:
+#line 151 "language.y"
+    { (yyval.node) = node_init(node_list, OP_AND, "&&", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2936 "src/parser.c"
     break;
 
-  case 50:
-#line 148 "language.y"
-    { (yyval.node) = node_init(OP_NE, "!=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 49:
+#line 156 "language.y"
+    { (yyval.node) = node_init(node_list, OP_EQ, "==", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2942 "src/parser.c"
     break;
 
-  case 52:
-#line 153 "language.y"
-    { (yyval.node) = node_init('<'  , "<" , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 50:
+#line 157 "language.y"
+    { (yyval.node) = node_init(node_list, OP_NE, "!=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2948 "src/parser.c"
     break;
 
-  case 53:
-#line 154 "language.y"
-    { (yyval.node) = node_init('>'  , ">" , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 52:
+#line 162 "language.y"
+    { (yyval.node) = node_init(node_list, '<'  , "<" , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2954 "src/parser.c"
     break;
 
-  case 54:
-#line 155 "language.y"
-    { (yyval.node) = node_init(OP_LE, "<=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 53:
+#line 163 "language.y"
+    { (yyval.node) = node_init(node_list, '>'  , ">" , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2960 "src/parser.c"
     break;
 
-  case 55:
-#line 156 "language.y"
-    { (yyval.node) = node_init(OP_GE, ">=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 54:
+#line 164 "language.y"
+    { (yyval.node) = node_init(node_list, OP_LE, "<=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2966 "src/parser.c"
     break;
 
-  case 57:
-#line 161 "language.y"
-    { (yyval.node) = node_init('+', "+", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 55:
+#line 165 "language.y"
+    { (yyval.node) = node_init(node_list, OP_GE, ">=", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2972 "src/parser.c"
     break;
 
-  case 58:
-#line 162 "language.y"
-    { (yyval.node) = node_init('-', "-", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 57:
+#line 170 "language.y"
+    { (yyval.node) = node_init(node_list, '+', "+", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2978 "src/parser.c"
     break;
 
-  case 60:
-#line 167 "language.y"
-    { (yyval.node) = node_init('*', "*", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 58:
+#line 171 "language.y"
+    { (yyval.node) = node_init(node_list, '-', "-", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2984 "src/parser.c"
     break;
 
-  case 61:
-#line 168 "language.y"
-    { (yyval.node) = node_init('/', "/", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 60:
+#line 176 "language.y"
+    { (yyval.node) = node_init(node_list, '*', "*", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2990 "src/parser.c"
     break;
 
-  case 62:
-#line 169 "language.y"
-    { (yyval.node) = node_init('%', "%", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 61:
+#line 177 "language.y"
+    { (yyval.node) = node_init(node_list, '/', "/", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2996 "src/parser.c"
     break;
 
-  case 64:
-#line 174 "language.y"
-    { (yyval.node) = node_init('V'   , "vec"  , (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
+  case 62:
+#line 178 "language.y"
+    { (yyval.node) = node_init(node_list, '%', "%", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 3002 "src/parser.c"
     break;
 
-  case 65:
-#line 175 "language.y"
-    { (yyval.node) = node_init('C'   , "fcall", (yyvsp[-2].node)    , NULL); }
+  case 64:
+#line 183 "language.y"
+    { (yyval.node) = node_init(node_list, 'V'   , "vec"  , (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
 #line 3008 "src/parser.c"
     break;
 
-  case 66:
-#line 176 "language.y"
-    { (yyval.node) = node_init('C'   , "fcall", (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
+  case 65:
+#line 184 "language.y"
+    { (yyval.node) = node_init(node_list, 'C'   , "fcall", (yyvsp[-2].node)    , NULL); }
 #line 3014 "src/parser.c"
     break;
 
-  case 67:
-#line 177 "language.y"
-    { (yyval.node) = node_init(OP_INC, "++"   , (yyvsp[-1].node)    , NULL); }
+  case 66:
+#line 185 "language.y"
+    { (yyval.node) = node_init(node_list, 'C'   , "fcall", (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
 #line 3020 "src/parser.c"
     break;
 
-  case 68:
-#line 178 "language.y"
-    { (yyval.node) = node_init(OP_DEC, "--"   , (yyvsp[-1].node)    , NULL); }
+  case 67:
+#line 186 "language.y"
+    { (yyval.node) = node_init(node_list, OP_INC, "++"   , (yyvsp[-1].node)    , NULL); }
 #line 3026 "src/parser.c"
     break;
 
-  case 72:
-#line 185 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); }
+  case 68:
+#line 187 "language.y"
+    { (yyval.node) = node_init(node_list, OP_DEC, "--"   , (yyvsp[-1].node)    , NULL); }
 #line 3032 "src/parser.c"
     break;
 
-  case 73:
-#line 186 "language.y"
-    { fprintf(stderr, "HANDLE EXPR ERROR\n"); }
+  case 72:
+#line 194 "language.y"
+    { (yyval.node) = (yyvsp[-1].node); }
 #line 3038 "src/parser.c"
     break;
 
-  case 75:
-#line 191 "language.y"
-    { (yyval.node) = node_init('L', "arg-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+  case 73:
+#line 195 "language.y"
+    { }
 #line 3044 "src/parser.c"
     break;
 
+  case 75:
+#line 200 "language.y"
+    { (yyval.node) = node_init(node_list, 'L', "arg-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
+#line 3050 "src/parser.c"
+    break;
 
-#line 3048 "src/parser.c"
+
+#line 3054 "src/parser.c"
 
       default: break;
     }
@@ -3276,8 +3282,46 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 201 "language.y"
+#line 210 "language.y"
 
 void yyerror (char const * msg) {
 	fprintf(stderr, "%d %d: %s\n", nline, ncol0, msg);
+}
+
+void add_symbol_var(Node* node) {
+	char * name = node->leaf[1]->name;
+	if(symtab_find(symbol_table, name) == NULL) {
+		symtab_insert(&symbol_table, name, node);
+	}
+}
+
+void recurse_types(Node * n0, char ** str) {
+	if (n0 == NULL) { return; }
+	if (n0->type == 'D' && n0->nleaves > 0) {
+		**str = n0->leaf[0]->name[0];
+		*str = (*str) + 1;
+	} else if (n0->type == 'E' && n0->nleaves > 0) {
+		**str = n0->leaf[0]->name[0] - 0x20;
+		*str = (*str) + 1;
+	} else {
+		for(int i = 0; i < n0->nleaves; ++i) {
+			recurse_types(n0->leaf[i], str);
+		}
+	}
+}
+
+void add_symbol_fun(Node* node) {
+	char * name = malloc(strlen(node->leaf[1]->name) * 2);
+	strcpy(name, node->leaf[1]->name);
+	char * pos = &name[strlen(name)];
+	*pos = '_'; ++pos;
+	if (node->nleaves == 2) {
+		*pos = 'v'; ++pos;
+		*pos = 0;
+	} else {
+		recurse_types(node, &pos);
+		*pos = 0;
+	}
+	symtab_insert(&symbol_table, name, node);
+	free(name);
 }

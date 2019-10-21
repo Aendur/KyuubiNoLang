@@ -5,6 +5,7 @@ void write(float x);
 void write(char x);
 void write(char x[]);
 void write(char x[10]) { return; } // also test return without argument
+void write(char c1, int c2, float c3, char c4[]) { return; }
 
 // test function definition
 int min(int x, int y) {

@@ -1,10 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include "table.h"
-
-typedef struct symtab_table Table;
+#include "node.h"
 
 Table * symtab_init (int size) {
 	if (size < 1) { size = 1;}
@@ -119,14 +117,28 @@ void symtab_print(Table * tab) {
 	}
 }
 
+void symtab_printf(Table * tab) {
+	printf("%-20s %-10s\n", "SYMBOL", "TYPE");
+	for(int i = 0; i < tab->tab_size; ++i) {
+		if (tab->buckets[i][0].key != NULL) {
+			Node * n = (Node*) tab->buckets[i][0].val;
+			//printf("%-20s %-10s %20p\n", tab->buckets[i][0].key, n->leaf[0]->name, tab->buckets[i][0].val);
+			printf("%-20s %-10s\n", tab->buckets[i][0].key, n->leaf[0]->name);
+		}
+		if (tab->buckets[i][1].key != NULL) {
+			Node * n = (Node*) tab->buckets[i][1].val;
+			//printf("%-20s %-10s %20p\n", tab->buckets[i][1].key, n->leaf[1]->name, tab->buckets[i][1].val);
+			printf("%-20s %-10sp\n", tab->buckets[i][1].key, n->leaf[1]->name);
+		}
+	}
+}
+
 #ifdef UNIT_TEST_HASH
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-
-typedef struct symtab_table Table;
 
 int exec_insertions(void);
 int main(void) {

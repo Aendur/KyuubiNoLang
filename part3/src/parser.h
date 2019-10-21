@@ -96,7 +96,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 32 "language.y"
+#line 35 "language.y"
 
 	void yyerror (char const *);	
 

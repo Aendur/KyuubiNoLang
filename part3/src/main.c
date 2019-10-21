@@ -2,12 +2,16 @@
 #include "parser.h"
 #include "scanner.h"
 #include "node.h"
+#include "table.h"
 
 extern int yynerrs;
 int nline = 1;
 int ncol0 = 1;
 int ncol1 = 1;
 Node * root;
+Nodelist * node_list;
+Table * symbol_table;
+
 
 int main(int argc, char** argv) {
 	// handle cmd line arguments
@@ -25,73 +29,31 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	yyparse();
-	printf("%d\n", yynerrs);
-	
-	print_tree(root, 0);
-	node_free_recursive(&root);
+	symbol_table = symtab_init(16);
+	node_list = nodelist_init();
 
+	yyparse();
+	//printf("%d\n", yynerrs);
+	
+	if (yynerrs == 0) {
+		printf("------------------------------\n");
+		printf("SYMBOL TABLE\n");
+		printf("------------------------------\n");
+		symtab_printf(symbol_table);
+		printf("------------------------------\n");
+		printf("SYNTAX TREE\n");
+		printf("------------------------------\n");
+		print_tree(root, 0);
+	}
+
+	symtab_free(&symbol_table);
+	nodelist_free(&node_list);
+	
 	// close input file
 	fclose(yyin);
 
 	yylex_destroy();
+	//yy_destroy();
 	return 0;
 }
 
-
-// void scan(void) {
-// 	struct tokenlist list_valid = {NULL, NULL}; // list of valid tokens
-// 	struct tokenlist list_error = {NULL, NULL}; // list of errors
-
-// 	enum tokenclass tc;
-// 	while((tc = yylex()) != 0)  {
-// 		// printf("TOKEN: %-15s   line: %-3d column: %-3d   value: %s\n",
-// 		// 	tok_to_str(tc),
-// 		// 	nline,
-// 		// 	ncolumn - yyleng,
-// 		// 	yytext
-// 		// );
-// 		if (tc < 0) {
-// 			add_token(&list_error, new_token(nline, ncolumn - yyleng, tc, yytext));
-// 		} else {
-// 			add_token(&list_valid, new_token(nline, ncolumn - yyleng, tc, yytext));
-// 		}
-// 	}
-	
-// 	if (list_error.first == NULL) {
-// 		printf("Valid input.\n");
-// 		print_tokens(&list_valid);
-// 	} else {
-// 		printf("Invalid input.\n");
-// 		print_errors(&list_error);
-// 	}
-
-// 	clear_tokens(&list_valid);
-// 	clear_tokens(&list_error);
-// }
-
-// void print_tokens(struct tokenlist * l) {
-// 	struct token * tok = l->first;
-// 	while(tok != NULL) {
-// 		printf("Token: %-15s   line: %-3d column: %-3d   value: %s\n",
-// 			tok_to_str(tok->tc),
-// 			tok->line,
-// 			tok->column,
-// 			tok->text
-// 		);
-// 		tok = tok->next;
-// 	}
-// }
-
-// void print_errors(struct tokenlist * l) {
-// 	struct token * tok = l->first;
-// 	while(tok != NULL) {
-// 		printf("\033[31;1mError:\033[0m %-15s   line: %-3d column: %-3d   value: %s\n",
-// 			tok_to_str(tok->tc),
-// 			tok->line,
-// 			tok->column,
-// 			tok->text
-// 		);
-// 		tok = tok->next;
-// 	}
-// }

@@ -9,7 +9,50 @@
 extern int yyleng;
 extern char * yytext;
 
-Node * node_init(int type, const char * name, ...) {
+Nodelist * nodelist_init(void) {
+	Nodelist * nl = malloc(sizeof(Nodelist));
+	nl->size     = 0;
+	nl->capacity = 16;
+	nl->nodes    = calloc(nl->capacity, sizeof(Node*));
+	return nl;
+}
+
+void nodelist_push(Nodelist * nl, Node * n0) {
+	if (nl->size < nl->capacity) {
+		nl->nodes[nl->size] = n0;
+		nl->size++;
+	} else {
+		Node ** newn = realloc(nl->nodes, 2 * nl->capacity * (sizeof(Node*)));
+		if (newn == NULL) { fprintf (stderr, "failed to realloc\n"); }
+		else {
+			nl->nodes = newn;
+			nl->capacity = 2 * nl->capacity;
+			nl->nodes[nl->size] = n0;
+			nl->size++;
+			for (int i = nl->size; i < nl->capacity; ++i) { nl->nodes[i] = NULL; }
+		}
+	}
+}
+
+void nodelist_free(Nodelist** nl) {
+	if (nl == NULL || *nl == NULL) { return; }
+	Nodelist * nlist = *nl;
+	for(int i = 0; i < nlist->size; ++i) {
+		node_free(&(nlist->nodes[i]));
+	}
+	free(nlist->nodes);
+	free(nlist);
+	*nl = NULL;
+}
+
+void nodelist_print(Nodelist* nl) {
+	printf("Nodes: %d Cap: %d\n", nl->size, nl->capacity);
+	for(int i = 0; i < nl->size; ++i) {
+		printf("ADDR %p\n", (void*)nl->nodes[i]);
+	}
+}
+
+Node * node_init(Nodelist * node_list, int type, const char * name, ...) {
 	Node * n0 = malloc(sizeof(Node));
 	n0->root = NULL;
 	n0->type = type;
@@ -38,6 +81,7 @@ Node * node_init(int type, const char * name, ...) {
 	}
 	va_end(args);
 
+	nodelist_push(node_list, n0);
 	return n0;
 }
 
@@ -45,8 +89,8 @@ void node_free(Node ** n) {
 	if ( n == NULL) { fprintf(stderr, "trying to free null pointer arg\n"); return; }
 	if (*n == NULL) { fprintf(stderr, "trying to free null pointer obj\n"); return; }
 	Node * n0 = *n;
-	free(n0->leaf);
-	free(n0->name);
+	free(n0->leaf); n0->leaf = NULL;
+	free(n0->name); n0->name = NULL;
 	free(n0);
 	*n = NULL;
 }
@@ -56,8 +100,8 @@ void node_free_recursive(Node ** n) {
 	if (*n == NULL) { fprintf(stderr, "trying to free null pointer obj\n"); return; }
 	Node * n0 = *n;
 	for(int i = 0; i < n0->nleaves; ++i) { node_free_recursive(&(n0->leaf[i])); }
-	free(n0->leaf);
-	free(n0->name);
+	free(n0->leaf); n0->leaf = NULL;
+	free(n0->name); n0->name = NULL;
 	free(n0);
 	*n = NULL;
 }
@@ -81,20 +125,35 @@ void print_tree(Node * root, int level) {
 
 #ifdef UNIT_TEST_NODE
 int main() {
-	//Node * n9 = node_init_term(100, "3");
-	//Node * n8 = node_init_term(100, "5");
-	Node * n9 = node_init(100, "9", NULL);
-	Node * n8 = node_init(100, "8", NULL);
-	Node * n7 = node_init(100, "7", NULL);
-	Node * n6 = node_init(100, "6", NULL);
-	Node * n5 = node_init(100, "5", n6, n7, n8, n9, NULL);
+	Nodelist * nl = nodelist_init();
+	Node * n9 = node_init(nl, 100, "9", NULL);
+	Node * n8 = node_init(nl, 100, "8", NULL);
+	Node * n7 = node_init(nl, 100, "7", NULL);
+	Node * n6 = node_init(nl, 100, "6", NULL);
+	Node * n5 = node_init(nl, 100, "5", n6, n7, n8, n9, NULL);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl); 
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
+	node_init(nl, 100, "6", NULL); nodelist_print(nl);
 	print_node(n9);
 	print_node(n8);
 	print_node(n7);
 	print_node(n6);
 	print_node(n5);
 	print_tree(n5, 0);
-	node_free_recursive(&n5);
+	nodelist_free(&nl);
+	//node_free_recursive(&n5);
 }
 
 #endif

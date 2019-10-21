@@ -1,6 +1,6 @@
  //%option nounput
  //%option noinput
- //%option noyywrap
+ // %option noyywrap
 %option never-interactive
 %option outfile="src/scanner.c"
 %option header-file="src/scanner.h"
@@ -21,6 +21,7 @@ extern int yynerrs;
 extern int nline;
 extern int ncol0;
 extern int ncol1;
+extern Nodelist * node_list;
 
 static void update_position(void);
 static int  identifier(void);
@@ -47,10 +48,10 @@ static int  character_const(void);
 "return"	{ update_position(); int t = RETURN; return t; }
 
 			/* data types */
-"void"		{ update_position(); int t = VOID ; yylval.node = node_init(t, yytext, NULL); return t; }
-"char"		{ update_position(); int t = CHAR ; yylval.node = node_init(t, yytext, NULL); return t; }
-"int"		{ update_position(); int t = INT  ; yylval.node = node_init(t, yytext, NULL); return t; }
-"float"		{ update_position(); int t = FLOAT; yylval.node = node_init(t, yytext, NULL); return t; }
+"void"		{ update_position(); int t = VOID ; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
+"char"		{ update_position(); int t = CHAR ; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
+"int"		{ update_position(); int t = INT  ; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
+"float"		{ update_position(); int t = FLOAT; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
 
 			/* Arithmetical operators */
 "+"			{ update_position(); int t = '+'   ; return t; }
@@ -85,13 +86,13 @@ static int  character_const(void);
 "="			{ update_position(); return '=';}
 
 					/* Numerical constants */
-[\-\+]?0[xX]{H}+	{ update_position(); int t = CONSTANT; yylval.node = node_init(t, yytext, NULL); return t; }
-[\-\+]?{D}+			{ update_position(); int t = CONSTANT; yylval.node = node_init(t, yytext, NULL); return t; }
-[\-\+]?{D}+"."{D}* 	{ update_position(); int t = CONSTANT; yylval.node = node_init(t, yytext, NULL); return t; }
+[\-\+]?0[xX]{H}+	{ update_position(); int t = CONSTANT; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
+[\-\+]?{D}+			{ update_position(); int t = CONSTANT; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
+[\-\+]?{D}+"."{D}* 	{ update_position(); int t = CONSTANT; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
 
 					/* Characters and string literals */
 '(\\.|[^\\'])+'		{ update_position(); return character_const(); }
-\"(\\.|[^\\"])*\"	{ update_position(); int t = STRING_LITERAL; yylval.node = node_init(t, yytext, NULL); return t; }
+\"(\\.|[^\\"])*\"	{ update_position(); int t = STRING_LITERAL; yylval.node = node_init(node_list, t, yytext, NULL); return t; }
 
 				/* Identifiers */
 {L}({L}|{D})*	{ update_position(); return identifier(); }
@@ -131,7 +132,7 @@ static int identifier(void) {
 		return INVALID_IDENTIFIER;
 	} else {
 		int t = IDENTIFIER; 
-		yylval.node = node_init(t, yytext, NULL);
+		yylval.node = node_init(node_list, t, yytext, NULL);
 		return t;
 	}
 }
@@ -142,7 +143,7 @@ static int character_const(void) {
 		return INVALID_CHAR_CONST;
 	} else {
 		int t = CONSTANT;
-		yylval.node = node_init(t, yytext, NULL);
+		yylval.node = node_init(node_list, t, yytext, NULL);
 		return t;
 	}
 }
