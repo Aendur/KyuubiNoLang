@@ -1,6 +1,6 @@
- //%option nounput
- //%option noinput
- // %option noyywrap
+%option nounput
+%option noinput
+ //%option noyywrap
 %option never-interactive
 %option outfile="src/scanner.c"
 %option header-file="src/scanner.h"
@@ -101,7 +101,7 @@ static int  character_const(void);
 [ \n\r\t] 		{ update_position(); }
 
 				/* other symbols not part of the language */
-.				{ update_position(); return UNRECOGNIZED_TOKEN; }
+.				{ update_position(); yyerror("lexical error, unrecognized token"); yynerrs++; return UNRECOGNIZED_TOKEN; }
 
 %%
 // // Returns 1 when yylex reaches EOF
@@ -128,7 +128,8 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		//yyerror("Identifier exceeds 32 characters.");
+		yyerror("lexical error, identifier exceeds 32 characters.");
+		yynerrs++;
 		return INVALID_IDENTIFIER;
 	} else {
 		int t = IDENTIFIER; 
@@ -140,6 +141,8 @@ static int identifier(void) {
 // handles character constants
 static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
+		yyerror("lexical error, invalid character constant.");
+		yynerrs++;
 		return INVALID_CHAR_CONST;
 	} else {
 		int t = CONSTANT;

@@ -53,30 +53,32 @@ void add_symbol_fun(Node* node);
 %}
 
 %%
-start : declaration_list            { root = $1; }
+start
+	: declaration_list            { root = $1; }
+	;
 
 declaration_list
 	: declaration                   
-	| declaration_list declaration  { $$ = node_init(node_list, 'L', "decl-list", $1, $2, NULL); }
+	| declaration_list declaration  { $$ = node_init(node_list, 'L', "declaration-list", $1, $2, NULL); }
 	;
 
 declaration
-	: function_declarator ';'                { $$ = $1; }
-	| function_declarator compound_statement { $$ = node_init(node_list, 'F', "fdefn", $1, $2, NULL); }
-	| init_declarator ';'                    { $$ = $1; }
+	: function_declarator ';'                
+	| function_declarator compound_statement { $$ = node_init(node_list, 'F', "function-definition", $1, $2, NULL); }
+	| init_declarator ';'                    
 	| error ';'                              { }
 	| error compound_statement               { } 
 	;
 
 init_declarator
 	: declarator                 
-	| declarator '=' initializer { $$ = node_init(node_list, '=', "=", $1, $3, NULL); }
+	| declarator '=' initializer { $$ = node_init(node_list, '=', "'='", $1, $3, NULL); }
 	;
 
 declarator
-	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "decl-var", $1, $2    , NULL); add_symbol_var($$); }
-	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "decl-arr", $1, $2    , NULL); add_symbol_var($$); }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "decl-arr", $1, $2, $4, NULL); add_symbol_var($$); }
+	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); add_symbol_var($$); }
+	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); add_symbol_var($$); }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); add_symbol_var($$); }
 	;
 
 initializer
@@ -87,19 +89,19 @@ initializer
 
 initializer_list
 	: initializer                      
-	| initializer_list ',' initializer { $$ = node_init(node_list, 'L', "init-list", $1, $3, NULL); }
+	| initializer_list ',' initializer { $$ = node_init(node_list, 'L', "initializer-list", $1, $3, NULL); }
 	;
 
 function_declarator
-	: type IDENTIFIER '(' parameter_list ')' { $$ = node_init(node_list, 'F', "fdecl", $1, $2, $4, NULL); add_symbol_fun($$); }
-	| type IDENTIFIER '(' ')'                { $$ = node_init(node_list, 'F', "fdecl", $1, $2,     NULL); add_symbol_fun($$); }
-	| type IDENTIFIER '(' VOID ')'           { $$ = node_init(node_list, 'F', "fdecl", $1, $2,     NULL); add_symbol_fun($$); }
+	: type IDENTIFIER '(' parameter_list ')' { $$ = node_init(node_list, 'F', "function-declarator", $1, $2, $4, NULL); add_symbol_fun($$); }
+	| type IDENTIFIER '(' ')'                { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); add_symbol_fun($$); }
+	| type IDENTIFIER '(' VOID ')'           { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); add_symbol_fun($$); }
 	| type IDENTIFIER '(' error ')'          { }
 	;
 
 parameter_list
 	: declarator
-	| parameter_list ',' declarator  { $$ = node_init(node_list, 'L', "par-list", $1, $3, NULL); }
+	| parameter_list ',' declarator  { $$ = node_init(node_list, 'L', "parameter-list", $1, $3, NULL); }
 	;
 
 compound_statement
@@ -109,7 +111,7 @@ compound_statement
 
 statement_list
 	: statement                //
-	| statement_list statement { $$ = node_init(node_list, 'L', "stm-list", $1, $2, NULL); }
+	| statement_list statement { $$ = node_init(node_list, 'L', "statement-list", $1, $2, NULL); }
 	;
 
 statement
@@ -138,53 +140,53 @@ return_statement
 
 assignment_expression
 	: logical_or_expression
-	| postfix_expression '=' logical_or_expression  { $$ = node_init(node_list, '=', "=", $1, $3, NULL); }
+	| postfix_expression '=' logical_or_expression  { $$ = node_init(node_list, '=', "'='", $1, $3, NULL); }
 	;
 
 logical_or_expression
 	: logical_and_expression
-	| logical_or_expression OP_OR logical_and_expression  { $$ = node_init(node_list, OP_OR, "||", $1, $3, NULL); }
+	| logical_or_expression OP_OR logical_and_expression  { $$ = node_init(node_list, OP_OR, "'||'", $1, $3, NULL); }
 	; 
 
 logical_and_expression
 	: equality_expression
-	| logical_and_expression OP_AND equality_expression  { $$ = node_init(node_list, OP_AND, "&&", $1, $3, NULL); }
+	| logical_and_expression OP_AND equality_expression  { $$ = node_init(node_list, OP_AND, "'&&'", $1, $3, NULL); }
 	;
 
 equality_expression
 	: relational_expression
-	| equality_expression OP_EQ relational_expression  { $$ = node_init(node_list, OP_EQ, "==", $1, $3, NULL); }
-	| equality_expression OP_NE relational_expression  { $$ = node_init(node_list, OP_NE, "!=", $1, $3, NULL); }
+	| equality_expression OP_EQ relational_expression  { $$ = node_init(node_list, OP_EQ, "'=='", $1, $3, NULL); }
+	| equality_expression OP_NE relational_expression  { $$ = node_init(node_list, OP_NE, "'!='", $1, $3, NULL); }
 	;
 
 relational_expression
 	: additive_expression
-	| relational_expression '<'   additive_expression  { $$ = node_init(node_list, '<'  , "<" , $1, $3, NULL); }
-	| relational_expression '>'   additive_expression  { $$ = node_init(node_list, '>'  , ">" , $1, $3, NULL); }
-	| relational_expression OP_LE additive_expression  { $$ = node_init(node_list, OP_LE, "<=", $1, $3, NULL); }
-	| relational_expression OP_GE additive_expression  { $$ = node_init(node_list, OP_GE, ">=", $1, $3, NULL); }
+	| relational_expression '<'   additive_expression  { $$ = node_init(node_list, '<'  , "'<'" , $1, $3, NULL); }
+	| relational_expression '>'   additive_expression  { $$ = node_init(node_list, '>'  , "'>'" , $1, $3, NULL); }
+	| relational_expression OP_LE additive_expression  { $$ = node_init(node_list, OP_LE, "'<='", $1, $3, NULL); }
+	| relational_expression OP_GE additive_expression  { $$ = node_init(node_list, OP_GE, "'>='", $1, $3, NULL); }
 	;
 
 additive_expression
 	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression  { $$ = node_init(node_list, '+', "+", $1, $3, NULL); }
-	| additive_expression '-' multiplicative_expression  { $$ = node_init(node_list, '-', "-", $1, $3, NULL); }
+	| additive_expression '+' multiplicative_expression  { $$ = node_init(node_list, '+', "'+'", $1, $3, NULL); }
+	| additive_expression '-' multiplicative_expression  { $$ = node_init(node_list, '-', "'-'", $1, $3, NULL); }
 	;
 
 multiplicative_expression
 	: postfix_expression
-	| multiplicative_expression '*' postfix_expression  { $$ = node_init(node_list, '*', "*", $1, $3, NULL); }
-	| multiplicative_expression '/' postfix_expression  { $$ = node_init(node_list, '/', "/", $1, $3, NULL); }
-	| multiplicative_expression '%' postfix_expression  { $$ = node_init(node_list, '%', "%", $1, $3, NULL); }
+	| multiplicative_expression '*' postfix_expression  { $$ = node_init(node_list, '*', "'*'", $1, $3, NULL); }
+	| multiplicative_expression '/' postfix_expression  { $$ = node_init(node_list, '/', "'/'", $1, $3, NULL); }
+	| multiplicative_expression '%' postfix_expression  { $$ = node_init(node_list, '%', "'%'", $1, $3, NULL); }
 	;
 
 postfix_expression
 	: primary_expression
-	| postfix_expression '[' assignment_expression ']' { $$ = node_init(node_list, 'V'   , "vec"  , $1, $3, NULL); }
-	| postfix_expression '(' ')'                       { $$ = node_init(node_list, 'C'   , "fcall", $1    , NULL); }
-	| postfix_expression '(' argument_list ')'         { $$ = node_init(node_list, 'C'   , "fcall", $1, $3, NULL); }
-	| postfix_expression OP_INC                        { $$ = node_init(node_list, OP_INC, "++"   , $1    , NULL); }
-	| postfix_expression OP_DEC                        { $$ = node_init(node_list, OP_DEC, "--"   , $1    , NULL); }
+	| postfix_expression '[' assignment_expression ']' { $$ = node_init(node_list, 'V'   , "vector-index" , $1, $3, NULL); }
+	| postfix_expression '(' ')'                       { $$ = node_init(node_list, 'C'   , "function-call", $1    , NULL); }
+	| postfix_expression '(' argument_list ')'         { $$ = node_init(node_list, 'C'   , "function-call", $1, $3, NULL); }
+	| postfix_expression OP_INC                        { $$ = node_init(node_list, OP_INC, "'++'"         , $1    , NULL); }
+	| postfix_expression OP_DEC                        { $$ = node_init(node_list, OP_DEC, "'--'"         , $1    , NULL); }
 	;
 
 primary_expression
@@ -197,7 +199,7 @@ primary_expression
 
 argument_list
 	: assignment_expression
-	| argument_list ',' assignment_expression  { $$ = node_init(node_list, 'L', "arg-list", $1, $3, NULL); }
+	| argument_list ',' assignment_expression  { $$ = node_init(node_list, 'L', "argument-list", $1, $3, NULL); }
 	;
 
 type
@@ -209,7 +211,7 @@ type
 
 %%
 void yyerror (char const * msg) {
-	fprintf(stderr, "Line: %d  Column: %d: %s\n", nline, ncol0, msg);
+	fprintf(stderr, "Line %d, column %d: %s\n", nline, ncol0, msg);
 }
 
 void add_symbol_var(Node* node) {

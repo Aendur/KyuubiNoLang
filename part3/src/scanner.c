@@ -512,10 +512,9 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "language.l"
-#line 2 "language.l"
- //%option nounput
- //%option noinput
- // %option noyywrap
+#define YY_NO_INPUT 1
+#line 4 "language.l"
+ //%option noyywrap
  //%option bison-bridge
  //%option bison-locations
 
@@ -531,8 +530,8 @@ extern Nodelist * node_list;
 static void update_position(void);
 static int  identifier(void);
 static int  character_const(void);
+#line 534 "src/scanner.c"
 #line 535 "src/scanner.c"
-#line 536 "src/scanner.c"
 
 #define INITIAL 0
 #define COMMENT_BLOCK 1
@@ -594,8 +593,6 @@ extern int yywrap ( void );
 #endif
 
 #ifndef YY_NO_UNPUT
-    
-    static void yyunput ( int c, char *buf_ptr  );
     
 #endif
 
@@ -755,7 +752,7 @@ YY_DECL
 
 #line 33 "language.l"
 					/* block comments */
-#line 759 "src/scanner.c"
+#line 756 "src/scanner.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1063,14 +1060,14 @@ YY_RULE_SETUP
 case 48:
 YY_RULE_SETUP
 #line 105 "language.l"
-{ update_position(); return UNRECOGNIZED_TOKEN; }
+{ update_position(); yyerror("lexical error, unrecognized token"); yynerrs++; return UNRECOGNIZED_TOKEN; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 107 "language.l"
 ECHO;
 	YY_BREAK
-#line 1074 "src/scanner.c"
+#line 1071 "src/scanner.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT_BLOCK):
 case YY_STATE_EOF(COMMENT_LINE):
@@ -1408,43 +1405,6 @@ static int yy_get_next_buffer (void)
 }
 
 #ifndef YY_NO_UNPUT
-
-    static void yyunput (int c, char * yy_bp )
-{
-	char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		int number_to_move = (yy_n_chars) + 2;
-		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = (int) YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
-}
 
 #endif
 
@@ -2104,7 +2064,8 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		//yyerror("Identifier exceeds 32 characters.");
+		yyerror("lexical error, identifier exceeds 32 characters.");
+		yynerrs++;
 		return INVALID_IDENTIFIER;
 	} else {
 		int t = IDENTIFIER; 
@@ -2116,6 +2077,8 @@ static int identifier(void) {
 // handles character constants
 static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
+		yyerror("lexical error, invalid character constant.");
+		yynerrs++;
 		return INVALID_CHAR_CONST;
 	} else {
 		int t = CONSTANT;

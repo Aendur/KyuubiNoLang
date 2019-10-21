@@ -1,0 +1,426 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{Tabbing}
+\usepackage{biblatex}
+\usepackage[affil-it]{authblk}
+\usepackage{lmodern}
+\usepackage{titlesec}
+
+
+%\titlespacing{\paragraph}{1.5em}{0.5em}{0.5em}
+\titlespacing{\paragraph}{\parindent}{0.5em}{0.5em}
+
+\addbibresource{refs.bib}
+\renewcommand{\baselinestretch}{1.05}
+%\renewcommand{\familydefault}{\sfdefault}
+
+\lstset{basicstyle=\ttfamily\fontseries{lc}\selectfont,breaklines=true,tabsize=4}
+
+\begin{document}
+
+\title{Building a compiler\\\Large for an yet unnamed language\\\small Polymorphism in a C-like programming language}
+
+\author{Diogo César Ferreira\\11/0027931}
+\affil{University of Brasília}
+\maketitle
+
+\section{Introduction}
+Programming languages are languages that can be converted into sets of instructions to be executed by a computer. This conversion process is called translation (or compilation) and is done by software known as compilers. As programming languages evolved, we observe an increasing variety of abstractions to accommodate for new programming paradigms and techniques, which also bring them closer to the domain of the problems they are set out to solve and away from the specificities of architecture set implementations \cite{Aho2007}.
+
+One such abstraction is polymorphism. In typed languages, symbols (named identifiers for entities such as variables or functions) are constrained by their data type. If polymorphism is available, we are able to interact with different data types through a single interface, for instance, by allowing multiple types to be assigned  to a given symbol. Polymorphism improves code readability and helps keeping the namespace clean by allowing functions to be identified by their expected behavior rather than contrived by the types of their arguments. Polymorphism is also one of the key features in object-oriented programming \cite{Aho2007, Strachey2000}.
+
+Aside from the possibility to perform arithmetical operations over a few different data types (integers, floating point and pointers), the C programming language has does not support polymorphism. In this work we seek to provide polymorphism in the form of function overloading - where polymorphic functions may have multiple definitions according to their argument types - to a simplified subset of the C programming language. The grammar of the language is presented in the following subsection.
+
+
+\subsection{Language features}
+The following table summarizes what word patterns are part of the language we are designing.
+These patterns should be recognized by the scanner, and therefore are provided as an input file
+for the FLEX \cite{FLEX} scanner generator (see attached file ``language.l''):
+
+%\paragraph{}
+\begin{tabular}{lccccccccc}
+\textbf{Data types}                      & void & char & int & float &         &      &      &   &   \\
+\textbf{Keywords}                        & if   & else & do  & while & return  &      &      &   &   \\
+\textbf{Arithmetical operators}          & $+$  & $-$  & $*$ & $/$   & $\%$    & $++$ & $--$ &   &   \\
+\textbf{Comparison operators}            & <    & >    & <=  & >=    & ==      & !=   &      &   &   \\
+\textbf{Logical operators}               & \&\& & ||   &     &       &         &      &      &   &   \\
+\textbf{Assignment operator}             & =    &      &     &       &         &      &      &   &   \\
+\textbf{Character/string delimiters}     & '    & "    &     &       &         &      &      &   &   \\
+\textbf{Array indexers}                  & [    & ]    &     &       &         &      &      &   &   \\
+\textbf{Scope delims./init lists}        & \{   & \}   &     &       &         &      &      &   &   \\
+\textbf{End of statement mark}           & ;    &      &     &       &         &      &      &   &   \\
+\textbf{Function args/calls}             & (    & )    &     &       &         &      &      &   &   \\
+\textbf{List element separator}          & ,    &      &     &       &         &      &      &   &   \\
+\textbf{Comment delimiters}              & /*   & */   & //  &       &         &      &      &   &   \\
+\end{tabular}
+
+\vspace*{1cm}
+
+\begin{tabular}{ll}
+\textbf{Character constants}            & text delimited by single quotation marks (') \\
+\textbf{String literals}                & text delimited by double quotation marks (") \\
+\textbf{Integer decimal constants}      & e.g. 1, 2, 100, -5, +7                       \\
+\textbf{Integer hexadecimal constants}  & e.g. 0x01, -0xA, +0x123                      \\
+\textbf{Floating-point constants}       & g.g. 0.0, -1.234, +3.14                      \\
+\textbf{Comments and white space}        & are ignored.                                 \\
+\end{tabular}
+
+\subsection{Formal description}
+
+Our language's original grammar was based on that presented by \textcite{Harbison2002},
+which is a compilation from the many versions of the C grammar specified by the ISO C Standard
+along the years. However, some of the changes we had made actually rendered our grammar
+unsuitable for a decent programming language, resulting in problems like the inability
+to declare more than one function. Therefore, the following grammar has been heavily
+refactored and mostly written from scratch, even though some elements such as the arithmetic
+expressions were kept the same.
+
+Despite the changes in the grammar's structure, most, if not all the features as we originally intended
+remain in the language. Particularly, only a single feature was intentionally removed: now it is no
+longer possible to declare and initialize more than one variable at once in a single statement (item 4).
+This was done in order to solve some shift/reduce conflicts that would otherwise require further
+restructuring on the grammar. On the other hand, we now included the possibility to declare functions
+without defining (item 3), as we believe will be useful in the future for better demonstrating
+the use of polymorphic functions.
+
+The grammar is also provided as an input file for the GNU Bison \cite{BISON} parser generator
+(see attached file ``language.y'').
+
+
+\small
+\begin{enumerate}
+\item \begin{tabbing} start \= $\rightarrow$ \= declaration-list \\
+\end{tabbing}
+
+\item \begin{tabbing} declaration-list \= $\rightarrow$ \= declaration \\
+	\> \hspace*{0.05cm} | \> declaration-list declaration
+\end{tabbing}
+
+\item \begin{tabbing} declaration \= $\rightarrow$ \= function-declarator \textbf{;} \\
+	\> \hspace*{0.05cm} | \> function-declarator compound-statement \\
+	\> \hspace*{0.05cm} | \> init-declarator \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} init-declarator \= $\rightarrow$ \= declarator \\
+	\> \hspace*{0.05cm} | \> declarator \textbf{=} initializer
+\end{tabbing}
+
+\item \begin{tabbing} declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER} \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}
+\end{tabbing}
+
+\item \begin{tabbing} initializer \= $\rightarrow$ \= assignment-expression \\
+	\> \hspace*{0.05cm} | \> \textbf{\{} initializer-list \textbf{\}} \\
+	\> \hspace*{0.05cm} | \> \textbf{\{} initializer-list \textbf{,} \textbf{\}}
+\end{tabbing}
+
+\item \begin{tabbing} initializer-list \= $\rightarrow$ \= initializer \\
+	\> \hspace*{0.05cm} | \> initializer-list \textbf{,} initializer
+\end{tabbing}
+
+\item \begin{tabbing} function-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} parameter-list \textbf{)} \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{(} \textbf{)} \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}
+\end{tabbing}
+
+\item \begin{tabbing} parameter-list \= $\rightarrow$ \= declarator \\
+	\> \hspace*{0.05cm} | \> parameter-list \textbf{,} declarator
+\end{tabbing}
+
+\item \begin{tabbing} compound-statement \= $\rightarrow$ \= \textbf{\{} \textbf{\}} \\
+	\> \hspace*{0.05cm} | \> \textbf{\{} statement-list \textbf{\}}
+\end{tabbing}
+
+\item \begin{tabbing} statement-list \= $\rightarrow$ \= statement \\
+	\> \hspace*{0.05cm} | \> statement-list statement
+\end{tabbing}
+
+\item \begin{tabbing} statement \= $\rightarrow$ \= \textbf{;} \\
+	\> \hspace*{0.05cm} | \> init-declarator \textbf{;} \\
+	\> \hspace*{0.05cm} | \> assignment-expression \textbf{;} \\
+	\> \hspace*{0.05cm} | \> conditional-statement \\
+	\> \hspace*{0.05cm} | \> iteration-statement \\
+	\> \hspace*{0.05cm} | \> return-statement \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} conditional-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \\
+	\> \hspace*{0.05cm} | \> \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \textbf{ELSE} compound-statement
+\end{tabbing}
+
+\item \begin{tabbing} iteration-statement \= $\rightarrow$ \= \textbf{WHILE} \textbf{(} assignment-expression \textbf{)} compound-statement \\
+	\> \hspace*{0.05cm} | \> \textbf{DO} compound-statement \textbf{WHILE} \textbf{(} assignment-expression \textbf{)} \textbf{;}
+\end{tabbing}
+
+\item \begin{tabbing} return-statement \= $\rightarrow$ \= \textbf{RETURN} \\
+	\> \hspace*{0.05cm} | \> \textbf{RETURN} assignment-expression
+\end{tabbing}
+
+\item \begin{tabbing} assignment-expression \= $\rightarrow$ \= logical-or-expression \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{=} logical-or-expression
+\end{tabbing}
+
+\item \begin{tabbing} logical-or-expression \= $\rightarrow$ \= logical-and-expression \\
+	\> \hspace*{0.05cm} | \> logical-or-expression \textbf{||} logical-and-expression
+\end{tabbing}
+
+\item \begin{tabbing} logical-and-expression \= $\rightarrow$ \= equality-expression \\
+	\> \hspace*{0.05cm} | \> logical-and-expression \textbf{\&\&} equality-expression
+\end{tabbing}
+
+\item \begin{tabbing} equality-expression \= $\rightarrow$ \= relational-expression \\
+	\> \hspace*{0.05cm} | \> equality-expression \textbf{==} relational-expression \\
+	\> \hspace*{0.05cm} | \> equality-expression \textbf{!=} relational-expression
+\end{tabbing}
+
+\item \begin{tabbing} relational-expression \= $\rightarrow$ \= additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{<}   additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{>}   additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{<=} additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{>=} additive-expression
+\end{tabbing}
+
+\item \begin{tabbing} additive-expression \= $\rightarrow$ \= multiplicative-expression \\
+	\> \hspace*{0.05cm} | \> additive-expression \textbf{+} multiplicative-expression \\
+	\> \hspace*{0.05cm} | \> additive-expression \textbf{--} multiplicative-expression
+\end{tabbing}
+
+\item \begin{tabbing} multiplicative-expression \= $\rightarrow$ \= postfix-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{*} postfix-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{/} postfix-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{\%} postfix-expression
+\end{tabbing}
+
+\item \begin{tabbing} postfix-expression \= $\rightarrow$ \= primary-expression \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{[} assignment-expression \textbf{]} \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{(} \textbf{)} \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{(} argument-list \textbf{)} \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{++} \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{-- --}
+\end{tabbing}
+
+\item \begin{tabbing} primary-expression \= $\rightarrow$ \= \textbf{IDENTIFIER} \\
+	\> \hspace*{0.05cm} | \> \textbf{CONSTANT} \\
+	\> \hspace*{0.05cm} | \> \textbf{STRING-LITERAL} \\
+	\> \hspace*{0.05cm} | \> \textbf{(} assignment-expression \textbf{)}
+\end{tabbing}
+
+\item \begin{tabbing} argument-list \= $\rightarrow$ \= assignment-expression \\
+	\> \hspace*{0.05cm} | \> argument-list \textbf{,} assignment-expression
+\end{tabbing}
+
+\item \begin{tabbing} type \= $\rightarrow$ \= \textbf{VOID} \\
+	\> \hspace*{0.05cm} | \> \textbf{INT} \\
+	\> \hspace*{0.05cm} | \> \textbf{FLOAT} \\
+	\> \hspace*{0.05cm} | \> \textbf{CHAR}
+\end{tabbing}
+
+\end{enumerate}
+\normalsize
+
+\subsection{Input / output}
+Input and output operations are not specified in our language's grammar. However, these will be provided
+in the form of special polymorphic functions available to the user, akin to a small built-in
+\texttt{stdio.h} library. The available functions will have the following signatures:
+
+\begin{lstlisting}[language=C]
+void write(int i);    //
+void write(char c);   // output values to the standard output
+void write(char[] s); //
+void write(float f);  //
+
+void read(int i);    //
+void read(char c);   // receives values from the standard input
+void read(char[] s); //
+void read(float f);  //
+\end{lstlisting}
+
+\subsection{Semantics}
+We present some use cases in which polymorphic functions would be useful. Functions with the same behavior, but different argument types:
+
+\begin{lstlisting}[language=C]
+int   i = -1;
+float f = -1.0;
+abs(i); // return the absolute value of i
+abs(f); // return the absolute value of f
+        // In C, abs does not accept a floating-point argument
+        // we must use fabs instead
+\end{lstlisting}
+
+In this simple example, the abs function could compute the absolute of any numeric value passed as argument. The type constrains in C, however, do not allow the abs function to be called with a floating-point argument.
+
+Functions with different behavior, but the same "intuitive meaning" for the programmer
+
+\begin{lstlisting}[language=C]
+int  i[3] = { 9, 2, 5 };
+char w[][9] = { "word", "vocable", "locution" };
+
+sort(i); // The user implements a sorting function for integer vectors
+sort(w); // The user implements a lexicographic or alphabetic
+         // sorting function for string vectors
+\end{lstlisting}
+
+The implementation of a sorting function for integers and strings would be considerably distinct. However, intuitively a programmer might expect some notion of ordering to be present in arrays of strings. This can also be applied to functions with different number of arguments:
+
+\begin{lstlisting}[language=C]
+// Should return the lowest of either x or y
+int min(int x, int y) {
+	if (x <= y) { return x; }
+	else { return y; }
+}
+
+// Should also return the lowest of either x, y or z
+int min(int x, int y, int z) {
+	if (x <= y) {
+		if (x <= z) { return x; }
+		else { return z; }
+	} else {
+		if (y <= z) { return y; }
+		else { return z; }
+	}
+}
+\end{lstlisting}
+
+
+
+
+\clearpage
+
+\section{The compiler}
+In this section we will describe the compiler's implementation for our yet unnamed programming
+language, which has the responsibility to read the input text and ultimately convert it into an
+executable file. The first step is to define the patterns which are to be recognized by the scanner.
+Then, the Fast Lexical Analyzer (FLEX) \cite{FLEX} software is used to generate the lexical
+analyzer's main functionality. Moreover we provide the language's grammar to the GNU Bison parser
+generator \cite{BISON} which generates the syntax analyzer. Additional routines for input, output,
+error handling and data structures to build the syntax tree and symbol table were also implemented
+and will be explained in detail later.
+
+
+\subsection{Program usage}
+The program takes one argument which should be a path to the input file.
+
+\begin{lstlisting}
+$ ./a.out <input_file>
+\end{lstlisting}
+
+The program will then output a preliminary version of the symbol table along with the syntax tree
+generated from the input file, if it is part of the language.
+Should there be lexical or syntax errors, the program will instead list them along with their
+positions in the text (line and column numbers, where tabs count as 4 columns).
+
+\subsection{Compilation instructions}
+
+\begin{enumerate}
+\item (Optional) Generate the lexical analyzer .c source code through FLEX
+\begin{lstlisting}
+$ flex language.l
+\end{lstlisting}
+
+\item (Optional) Generate the syntax analyzer .c source code through GNU Bison
+\begin{lstlisting}
+$ bison -Wall language.y
+\end{lstlisting}
+
+\item Compile the program
+\begin{lstlisting}
+$ gcc -lfl -std=c11 -m64 -O3 src/main.c src/node.c src/table.c src/parser.c src/scanner.c
+\end{lstlisting}
+
+\item Alternatively, a makefile has also been provided which will run all commands
+\begin{lstlisting}
+$ make
+\end{lstlisting}
+\end{enumerate}
+
+\paragraph{Operating system:} Debian GNU/Linux 10 (buster)
+\paragraph{Compiler version:} gcc (Debian 8.3.0-7) 8.3.0
+\paragraph{FLEX version:} flex 2.6.4
+\paragraph{GNU Bison version:} bison (GNU Bison) 3.4.1
+
+\subsection{Attached files}
+\begin{lstlisting}
+./a.out       - Precompiled x64 binary
+./language.l  - FLEX definitions file
+./language.y  - BISON definitions file
+./makefile    - 
+./report.pdf  - 
+
+Source files:
+./src/main.c     - Program entry point
+./src/node.c     - Tree nodes data structures (source)
+./src/node.h     - Tree nodes data structures (header)
+./src/parser.c   - GNU Bison generated code (source)
+./src/parser.h   - GNU Bison generated code (header)
+./src/scanner.c  - FLEX generated code (source)
+./src/scanner.h  - FLEX generated code (header)
+./src/table.c    - Hash table data structures (source)
+./src/table.h    - Hash table data structures (header)
+
+Sample test files:
+./tests/test_error1.c
+./tests/test_error2.c
+./tests/test_error3.c
+./tests/test_valid1.c
+./tests/test_valid2.c
+./tests/test_valid3.c
+./tests/test_valid4.c
+./tests/test_valid5.c
+\end{lstlisting}
+
+
+\subsection{Error handling}
+The program scans the input file and splits it into tokens. Each token is then analyzed
+by the error handlers and stored in either a list of valid tokens or a list of invalid tokens.
+Every input token is analyzed, regardless of whether or not errors were found during the process,
+which effectively allows for every (handled) lexical error to be reported to the user. The use
+of the lists as buffers for the tokens also avoids encumbering the output when errors are found, such
+that the valid token list is only displayed when no errors are found, and only errors are displayed
+otherwise.
+
+Error handling is defined by additional functions in the \texttt{part2.lex} file, which will
+be explained in more detail in the next Section.
+
+Lexical errors are treated by the functions defined in \texttt{lex.yy.c} (and \texttt{part2.lex}).
+When the errors are detected, \texttt{yylex()} returns a negative value associated with each error.
+There are three of such errors: identifiers above 32 characters in length
+(in \texttt{static int identifier(void)}), character constants containing more than one character
+(in \texttt{static int character{\_}const(void)}) and unrecognized symbols (dot pattern
+in the lexical definitions file: \texttt{. \{ update{\_}position();}
+\texttt{return ERROR{\_}UNRECOGNIZED{\_}TOKEN; \}}, \texttt{part2.lex}, line 99, which encompasses
+the cases where the input did not match any other pattern).
+
+\section{Tests}
+Five sample test files are provided in the folder ./tests.
+
+\paragraph{test{\_}valid1.c} is valid, tests for most recognized keywords and punctuation;
+\paragraph{test{\_}valid2.c} is valid, tests for numerical values and loops;
+\paragraph{test{\_}valid3.c} is valid, tests for character and string literals;
+\paragraph{test{\_}error1.c} is invalid, tests for invalid tokens and malformed character literals
+and should detect the following errors:
+\begin{itemize}
+\item Unrecognized token at line 2, column 19 (?)
+\item Unrecognized token at line 2, column 23 (:)
+\item Invalid character constant at line 2, column 25 ('abcdef')
+\end{itemize}
+
+\paragraph{test{\_}error2.c:} is invalid, invalid tokens and long identifiers and  should
+detect the following errors:
+\begin{itemize}
+\item Unrecognized token at line 1, column 1  (\#)
+\item Unrecognized token at line 1, column 16 (.)
+\item Invalid identifier at line 4, column 9  (abcdefghijabcdefghijabcdefghijabcdefghij)
+\end{itemize}
+
+Both on valid and invalid inputs, the program outputs the position where it found each token or
+error. Lines and columns are 1-indexed and the columns should point to where the token begins.
+Note, however, that tabs (\textbackslash t) count as if they had a length of one character.
+
+
+\printbibliography
+
+\end{document}
