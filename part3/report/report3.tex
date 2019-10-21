@@ -9,6 +9,7 @@
 \usepackage[affil-it]{authblk}
 \usepackage{lmodern}
 \usepackage{titlesec}
+\usepackage[skip=2pt,font=footnotesize]{caption}
 
 
 %\titlespacing{\paragraph}{1.5em}{0.5em}{0.5em}
@@ -374,52 +375,198 @@ Sample test files:
 
 
 \subsection{Error handling}
-The program scans the input file and splits it into tokens. Each token is then analyzed
-by the error handlers and stored in either a list of valid tokens or a list of invalid tokens.
-Every input token is analyzed, regardless of whether or not errors were found during the process,
-which effectively allows for every (handled) lexical error to be reported to the user. The use
-of the lists as buffers for the tokens also avoids encumbering the output when errors are found, such
-that the valid token list is only displayed when no errors are found, and only errors are displayed
-otherwise.
+As the program reads the input file, the parser requests tokens from the scanner, who splits the
+input text into tokens and relays them back to the parser. If an error is found, a message is
+sent to \texttt{stderr} indicating the position (line and column) in the text where it was found,
+and whether it was detected by the scanner or the parser.
 
-Error handling is defined by additional functions in the \texttt{part2.lex} file, which will
-be explained in more detail in the next Section.
+If the scanner finds an error, it outputs a message and returns a special error token to the parser.
+The scanner recognizes the following errors (Table \ref{tab:scanner-errors}).
 
-Lexical errors are treated by the functions defined in \texttt{lex.yy.c} (and \texttt{part2.lex}).
-When the errors are detected, \texttt{yylex()} returns a negative value associated with each error.
-There are three of such errors: identifiers above 32 characters in length
-(in \texttt{static int identifier(void)}), character constants containing more than one character
-(in \texttt{static int character{\_}const(void)}) and unrecognized symbols (dot pattern
-in the lexical definitions file: \texttt{. \{ update{\_}position();}
-\texttt{return ERROR{\_}UNRECOGNIZED{\_}TOKEN; \}}, \texttt{part2.lex}, line 99, which encompasses
-the cases where the input did not match any other pattern).
+\begin{table}[h]
+\centering
+\captionsetup{width=0.7\textwidth}
+\caption{Lexical errors and their associated tokens. The tokens are returned
+to the parser and the program continues analyzing the rest of the text.}
+\label{tab:scanner-errors}
+\begin{tabular} {c c}
+\hline
+Error type & Token type \\
+\hline
+Identifier with more than 32 characters & \texttt{INVALID\_IDENTIFIER} \\
+Unrecognized token & \texttt{UNRECOGNIZED\_TOKEN} \\
+Malformed character constant & \texttt{INVALID\_CHAR\_CONST} \\
+\hline
+\end{tabular}
 
-\section{Tests}
-Five sample test files are provided in the folder ./tests.
+\end{table}
+
+
+Syntax errors are thrown from the parser when it is unable to complete a shift or reduce
+operation. To allow the parser to continue reading the input, the built in \texttt{error}
+token is included in some of the grammar's rules. Particularly, we have included
+such rules in order to capture: 
+
+\begin{itemize}
+\item  Malformed statements (the parser continues after the next semicolon or enclosing
+curly brace)
+\begin{lstlisting}
+declaration
+	: ...
+	| error ';'
+	| error compound_statement
+\end{lstlisting}
+
+\item  Malformed expressions (the parser continues after the next semicolon or enclosing
+parenthesis)
+\begin{lstlisting}
+primary_expression
+	: ...
+	| error
+\end{lstlisting}
+
+\item  Malformed argument lists (the parser continues after the next enclosing parenthesis)
+\begin{lstlisting}
+function_declarator
+	: ...
+	| type IDENTIFIER '(' error ')'
+\end{lstlisting}
+\end{itemize}
+
+These strategies allows us to display a reasonable amount of errors before the program is unable
+to proceed and terminates, in fact the parser should be able to finish (albeit not correctly)
+the syntax tree even when errors are found in several situations.
+The error messages are displayed as they are found, and since the
+scanner returns a token that is never used by the parser, lexical errors also generate syntax
+errors. To avoid encumbering the output when errors are found, only error messages are
+displayed on invalid input.
+
+\subsection{Syntax tree}
+To build the syntax tree, we use the data structures defined in \texttt{node.h} and \texttt{node.c}.
+By setting Bison's default data type a pointer to our tree node type, we are now able to start
+building our syntax tree as the parser proceeds.
+\begin{lstlisting}
+%union {
+	struct node * node;
+}
+\end{lstlisting}
+
+The scanner transforms some terminal tokens into leaf nodes for the tree. The structures
+are allocated then passed to the parser via the \texttt{yylval} variable:
+
+\begin{lstlisting}[caption={Example lexer rule where a leaf node is created. This procedure is done for
+all data types, identifiers and constants.},captionpos=b]
+"int"	{
+			update_position();
+			int t = INT;
+			yylval.node = node_init(node_list, t, yytext, NULL);
+			return t;
+		}
+\end{lstlisting}
+
+Then, the parser is instructed to connect these nodes forming the syntax tree.
+Nodes are connected for most (except when the \texttt{error} token is present)
+grammar productions. In some cases, such as when an identifier is found, a symbol is also added
+to the symbol table.
+
+\begin{lstlisting}[caption={Example parser rule where nodes are connected.
+This procedure is done for all productions, except error handlers. Here, a symbol
+is also added to the symbol table through the function \texttt{add\_symbol\_var}},captionpos=b]
+declarator : type IDENTIFIER 
+	{
+		$$ = node_init(node_list, 'D', "declarator-variable", $1, $2, NULL);
+		add_symbol_var($$);
+	}
+\end{lstlisting}
+
+\subsection{Symbol table and polymorphic functions}
+We use a hash table, defined in \texttt{table.h} and \texttt{table.c}, to implement the symbol
+table. At this point, the symbol table only stores variable and function names (and their types).
+We, however, are already able to distinguish each function by their signature, rather than
+only their name, by analyzing the syntax tree.
+
+Whereas variables are included to the table based solely on their names, a function uses a
+combination of both its name the list if its argument's types to form the key for the hash
+table. To do that, we append additional characters to the symbol key as we traverse the
+function's argument list from the syntax tree. For example, by parsing the following code
+(see attached file ``tests/test\_valid5.c''):
+
+\begin{lstlisting}
+int min(int x, int y);
+int min(int x, int y, int z);
+float min(float x, float y);
+float min(float x, float y, float z);
+\end{lstlisting}
+
+The following entries would be generated in the symbol table:
+
+\begin{table}[h]
+ \centering
+\begin{tabular}{c c}
+\hline
+Symbol    &   Return type \\
+\hline
+min\_ii    &          int \\
+min\_iii   &          int \\
+min\_ff    &          float \\
+min\_fff   &          float  \\
+\hline
+\end{tabular}
+\end{table}
+
+Each entry still knows their original name, but to be accessed in the table, the
+new key must be calculated, thus resolving collisions between functions with the
+same name but different signatures.
+
+\subsection{Tests}
+Eight sample test files are provided in the folder ./tests.
 
 \paragraph{test{\_}valid1.c} is valid, tests for most recognized keywords and punctuation;
 \paragraph{test{\_}valid2.c} is valid, tests for numerical values and loops;
 \paragraph{test{\_}valid3.c} is valid, tests for character and string literals;
-\paragraph{test{\_}error1.c} is invalid, tests for invalid tokens and malformed character literals
-and should detect the following errors:
+\paragraph{test{\_}valid4.c} is valid, tests for a slightly more complex program containing several language features;
+\paragraph{test{\_}valid5.c} is valid, tests mostly for multiple function declarations;
+
+\paragraph{test{\_}error1.c} is invalid, and contain the following errors:
 \begin{itemize}
-\item Unrecognized token at line 2, column 19 (?)
-\item Unrecognized token at line 2, column 23 (:)
-\item Invalid character constant at line 2, column 25 ('abcdef')
+\item Line 1, column 25: syntax error, unexpected '*', expecting IDENTIFIER
+\item Line 2, column 22: lexical error, unrecognized token ('?')
+\item Line 2, column 22: syntax error, unexpected UNRECOGNIZED\_TOKEN
+\item Line 2, column 26: lexical error, unrecognized token (':')
+\item Line 2, column 28: lexical error, invalid character constant. (char constant too long)
 \end{itemize}
 
-\paragraph{test{\_}error2.c:} is invalid, invalid tokens and long identifiers and  should
-detect the following errors:
+\paragraph{test{\_}error2.c} is invalid, and contain the following errors:
 \begin{itemize}
-\item Unrecognized token at line 1, column 1  (\#)
-\item Unrecognized token at line 1, column 16 (.)
-\item Invalid identifier at line 4, column 9  (abcdefghijabcdefghijabcdefghijabcdefghij)
+\item Line 1, column 1: lexical error, unrecognized token ('\#')
+\item Line 1, column 1: syntax error, unexpected UNRECOGNIZED\_TOKEN, expecting VOID or INT or FLOAT or CHAR
+\item Line 1, column 16: lexical error, unrecognized token ('.')
+\item Line 4, column 9: lexical error, identifier exceeds 32 characters.
+\item Line 4, column 52: lexical error, identifier exceeds 32 characters.
+\item Line 6, column 14: lexical error, invalid character constant.
+\item Line 6, column 14: syntax error, unexpected INVALID\_CHAR\_CONST
 \end{itemize}
 
-Both on valid and invalid inputs, the program outputs the position where it found each token or
-error. Lines and columns are 1-indexed and the columns should point to where the token begins.
-Note, however, that tabs (\textbackslash t) count as if they had a length of one character.
+\paragraph{test{\_}error3.c} is invalid, and contain the following errors:
+\begin{itemize}
+\item Line 2, column 12: syntax error, unexpected IDENTIFIER
+\item Line 3, column 15: syntax error, unexpected ')', expecting IDENTIFIER
+\item Line 4, column 19: syntax error, unexpected ';', expecting '[' or ',' or ')'
+\item Line 7, column 1: syntax error, unexpected VOID, expecting ';' or '\{'
+\item Line 12, column 12: syntax error, unexpected ')', expecting IDENTIFIER or STRING\_LITERAL or CONSTANT or '('
+\item Line 41, column 27: syntax error, unexpected ';'
+\end{itemize}
 
+Lines and columns are 1-indexed and the columns should point to where the error begins.
+Note, however, that tabs (\textbackslash t) count as if they had a length of four characters.
+
+\subsection{Additional remarks}
+Overall, this phase of the project presented itself more challenging than the previous ones,
+given the more complex nature of the parser, as opposed to the scanner. In particular, a
+remarkably nasty memory leak accompanied by several segfaults showed up as the
+syntax tree was being built while parsing input with errors. The solution for that was to
+reserve ownership of the allocated tree nodes to a vector that stores every node as they
+are allocated (\texttt{Nodelist * node\_list} in \texttt{main.c}).
 
 \printbibliography
 
