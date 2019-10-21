@@ -21,6 +21,8 @@ void   symtab_insert     (struct symtab_table**, const char*, void*);
 bool   symtab_try_insert (struct symtab_table* , const char*, void*);
 bool   symtab_copy_keys  (struct symtab_table* , struct symtab_table*);
 
+void   symtab_print      (struct symtab_table*);
+
 
 
 unsigned long symtab_hash(const char *, unsigned long);
