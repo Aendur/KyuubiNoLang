@@ -1,0 +1,71 @@
+Program usage:
+The program takes one argument which should be a path to the input file.
+
+$ ./a.out <input_file>
+
+The program will then output a preliminary version of the symbol table along with the syntax tree
+generated from the input file, if it is part of the language.
+Should there be lexical or syntax errors, the program will instead list them along with their
+positions in the text (line and column numbers, where tabs count as 4 columns).
+
+
+
+Compilation instructions
+
+1. (Optional) Generate the lexical analyzer .c source code through FLEX
+$ flex language.l
+
+2. (Optional) Generate the syntax analyzer .c source code through GNU Bison
+$ bison language.y
+
+3. Compile the program
+$ gcc -lfl -std=c11 -m64 -O3 src/main.c src/node.c src/table.c src/parser.c src/scanner.c
+
+- Alternatively, a makefile has also been provided which will run all commands
+$ make
+OR
+$ make flex   # for step 1
+$ make bison  # for step 2
+$ make rel    # for step 3
+
+
+
+Specs
+
+Operating system: Debian GNU/Linux 10 (buster)
+Compiler version: gcc (Debian 8.3.0-7) 8.3.0
+FLEX version: flex 2.6.4
+GNU Bison version: bison (GNU Bison) 3.4.1
+
+
+
+Attached files:
+
+./a.out       - Precompiled x64 binary
+./language.l  - FLEX definitions file
+./language.y  - BISON definitions file
+./makefile    - 
+./report3.pdf - 
+
+Source files:
+
+./src/main.c     - Program entry point
+./src/node.c     - Tree nodes data structures (source)
+./src/node.h     - Tree nodes data structures (header)
+./src/parser.c   - GNU Bison generated code (source)
+./src/parser.h   - GNU Bison generated code (header)
+./src/scanner.c  - FLEX generated code (source)
+./src/scanner.h  - FLEX generated code (header)
+./src/table.c    - Hash table data structures (source)
+./src/table.h    - Hash table data structures (header)
+
+Sample test files:
+
+./tests/test_error1.c
+./tests/test_error2.c
+./tests/test_error3.c
+./tests/test_valid1.c
+./tests/test_valid2.c
+./tests/test_valid3.c
+./tests/test_valid4.c
+./tests/test_valid5.c
