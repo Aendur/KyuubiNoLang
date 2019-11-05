@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.4.1.  */
+/* A Bison parser, made by GNU Bison 3.4.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -48,7 +48,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.4.1"
+#define YYBISON_VERSION "3.4.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -2145,7 +2145,9 @@ yy_symbol_value_print (FILE *yyo, int yytype, YYSTYPE const * const yyvaluep)
   if (yytype < YYNTOKENS)
     YYPRINT (yyo, yytoknum[yytype], *yyvaluep);
 # endif
+  YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
   YYUSE (yytype);
+  YY_IGNORE_MAYBE_UNINITIALIZED_END
 }
 
 
@@ -2746,299 +2748,299 @@ yyreduce:
   case 2:
 #line 57 "language.y"
     { root = (yyvsp[0].node); }
-#line 2750 "src/parser.c"
+#line 2752 "src/parser.c"
     break;
 
   case 4:
 #line 62 "language.y"
     { (yyval.node) = node_init(node_list, 'L', "declaration-list", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
-#line 2756 "src/parser.c"
+#line 2758 "src/parser.c"
     break;
 
   case 6:
 #line 67 "language.y"
     { (yyval.node) = node_init(node_list, 'F', "function-definition", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
-#line 2762 "src/parser.c"
+#line 2764 "src/parser.c"
     break;
 
   case 8:
 #line 69 "language.y"
     { }
-#line 2768 "src/parser.c"
+#line 2770 "src/parser.c"
     break;
 
   case 9:
 #line 70 "language.y"
     { }
-#line 2774 "src/parser.c"
+#line 2776 "src/parser.c"
     break;
 
   case 11:
 #line 75 "language.y"
     { (yyval.node) = node_init(node_list, '=', "'='", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2780 "src/parser.c"
+#line 2782 "src/parser.c"
     break;
 
   case 12:
 #line 79 "language.y"
     { (yyval.node) = node_init(node_list, 'D', "declarator-variable", (yyvsp[-1].node), (yyvsp[0].node)    , NULL); add_symbol_var((yyval.node)); }
-#line 2786 "src/parser.c"
+#line 2788 "src/parser.c"
     break;
 
   case 13:
 #line 80 "language.y"
     { (yyval.node) = node_init(node_list, 'E', "declarator-array"   , (yyvsp[-3].node), (yyvsp[-2].node)    , NULL); add_symbol_var((yyval.node)); }
-#line 2792 "src/parser.c"
+#line 2794 "src/parser.c"
     break;
 
   case 14:
 #line 81 "language.y"
     { (yyval.node) = node_init(node_list, 'E', "declarator-array"   , (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), NULL); add_symbol_var((yyval.node)); }
-#line 2798 "src/parser.c"
+#line 2800 "src/parser.c"
     break;
 
   case 16:
 #line 86 "language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2804 "src/parser.c"
+#line 2806 "src/parser.c"
     break;
 
   case 17:
 #line 87 "language.y"
     { (yyval.node) = (yyvsp[-2].node); }
-#line 2810 "src/parser.c"
+#line 2812 "src/parser.c"
     break;
 
   case 19:
 #line 92 "language.y"
     { (yyval.node) = node_init(node_list, 'L', "initializer-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2816 "src/parser.c"
+#line 2818 "src/parser.c"
     break;
 
   case 20:
 #line 96 "language.y"
     { (yyval.node) = node_init(node_list, 'F', "function-declarator", (yyvsp[-4].node), (yyvsp[-3].node), (yyvsp[-1].node), NULL); add_symbol_fun((yyval.node)); }
-#line 2822 "src/parser.c"
+#line 2824 "src/parser.c"
     break;
 
   case 21:
 #line 97 "language.y"
     { (yyval.node) = node_init(node_list, 'F', "function-declarator", (yyvsp[-3].node), (yyvsp[-2].node),     NULL); add_symbol_fun((yyval.node)); }
-#line 2828 "src/parser.c"
+#line 2830 "src/parser.c"
     break;
 
   case 22:
 #line 98 "language.y"
     { (yyval.node) = node_init(node_list, 'F', "function-declarator", (yyvsp[-4].node), (yyvsp[-3].node),     NULL); add_symbol_fun((yyval.node)); }
-#line 2834 "src/parser.c"
+#line 2836 "src/parser.c"
     break;
 
   case 23:
 #line 99 "language.y"
     { }
-#line 2840 "src/parser.c"
+#line 2842 "src/parser.c"
     break;
 
   case 25:
 #line 104 "language.y"
     { (yyval.node) = node_init(node_list, 'L', "parameter-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2846 "src/parser.c"
+#line 2848 "src/parser.c"
     break;
 
   case 26:
 #line 108 "language.y"
     { }
-#line 2852 "src/parser.c"
+#line 2854 "src/parser.c"
     break;
 
   case 27:
 #line 109 "language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2858 "src/parser.c"
+#line 2860 "src/parser.c"
     break;
 
   case 29:
 #line 114 "language.y"
     { (yyval.node) = node_init(node_list, 'L', "statement-list", (yyvsp[-1].node), (yyvsp[0].node), NULL); }
-#line 2864 "src/parser.c"
+#line 2866 "src/parser.c"
     break;
 
   case 30:
 #line 118 "language.y"
     { }
-#line 2870 "src/parser.c"
+#line 2872 "src/parser.c"
     break;
 
   case 36:
 #line 127 "language.y"
     { (yyval.node) = node_init(node_list, IF  , "if"     , (yyvsp[-2].node), (yyvsp[0].node),     NULL); }
-#line 2876 "src/parser.c"
+#line 2878 "src/parser.c"
     break;
 
   case 37:
 #line 128 "language.y"
     { (yyval.node) = node_init(node_list, ELSE, "if-else", (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2882 "src/parser.c"
+#line 2884 "src/parser.c"
     break;
 
   case 38:
 #line 132 "language.y"
     { (yyval.node) = node_init(node_list, WHILE, "while"   , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2888 "src/parser.c"
+#line 2890 "src/parser.c"
     break;
 
   case 39:
 #line 133 "language.y"
     { (yyval.node) = node_init(node_list, DO   , "do-while", (yyvsp[-5].node), (yyvsp[-2].node), NULL); }
-#line 2894 "src/parser.c"
+#line 2896 "src/parser.c"
     break;
 
   case 40:
 #line 137 "language.y"
     { (yyval.node) = node_init(node_list, RETURN, "return",     NULL); }
-#line 2900 "src/parser.c"
+#line 2902 "src/parser.c"
     break;
 
   case 41:
 #line 138 "language.y"
     { (yyval.node) = node_init(node_list, RETURN, "return", (yyvsp[0].node), NULL); }
-#line 2906 "src/parser.c"
+#line 2908 "src/parser.c"
     break;
 
   case 43:
 #line 143 "language.y"
     { (yyval.node) = node_init(node_list, '=', "'='", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2912 "src/parser.c"
+#line 2914 "src/parser.c"
     break;
 
   case 45:
 #line 148 "language.y"
     { (yyval.node) = node_init(node_list, OP_OR, "'||'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2918 "src/parser.c"
+#line 2920 "src/parser.c"
     break;
 
   case 47:
 #line 153 "language.y"
     { (yyval.node) = node_init(node_list, OP_AND, "'&&'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2924 "src/parser.c"
+#line 2926 "src/parser.c"
     break;
 
   case 49:
 #line 158 "language.y"
     { (yyval.node) = node_init(node_list, OP_EQ, "'=='", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2930 "src/parser.c"
+#line 2932 "src/parser.c"
     break;
 
   case 50:
 #line 159 "language.y"
     { (yyval.node) = node_init(node_list, OP_NE, "'!='", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2936 "src/parser.c"
+#line 2938 "src/parser.c"
     break;
 
   case 52:
 #line 164 "language.y"
     { (yyval.node) = node_init(node_list, '<'  , "'<'" , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2942 "src/parser.c"
+#line 2944 "src/parser.c"
     break;
 
   case 53:
 #line 165 "language.y"
     { (yyval.node) = node_init(node_list, '>'  , "'>'" , (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2948 "src/parser.c"
+#line 2950 "src/parser.c"
     break;
 
   case 54:
 #line 166 "language.y"
     { (yyval.node) = node_init(node_list, OP_LE, "'<='", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2954 "src/parser.c"
+#line 2956 "src/parser.c"
     break;
 
   case 55:
 #line 167 "language.y"
     { (yyval.node) = node_init(node_list, OP_GE, "'>='", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2960 "src/parser.c"
+#line 2962 "src/parser.c"
     break;
 
   case 57:
 #line 172 "language.y"
     { (yyval.node) = node_init(node_list, '+', "'+'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2966 "src/parser.c"
+#line 2968 "src/parser.c"
     break;
 
   case 58:
 #line 173 "language.y"
     { (yyval.node) = node_init(node_list, '-', "'-'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2972 "src/parser.c"
+#line 2974 "src/parser.c"
     break;
 
   case 60:
 #line 178 "language.y"
     { (yyval.node) = node_init(node_list, '*', "'*'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2978 "src/parser.c"
+#line 2980 "src/parser.c"
     break;
 
   case 61:
 #line 179 "language.y"
     { (yyval.node) = node_init(node_list, '/', "'/'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2984 "src/parser.c"
+#line 2986 "src/parser.c"
     break;
 
   case 62:
 #line 180 "language.y"
     { (yyval.node) = node_init(node_list, '%', "'%'", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 2990 "src/parser.c"
+#line 2992 "src/parser.c"
     break;
 
   case 64:
 #line 185 "language.y"
     { (yyval.node) = node_init(node_list, 'V'   , "vector-index" , (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
-#line 2996 "src/parser.c"
+#line 2998 "src/parser.c"
     break;
 
   case 65:
 #line 186 "language.y"
     { (yyval.node) = node_init(node_list, 'C'   , "function-call", (yyvsp[-2].node)    , NULL); }
-#line 3002 "src/parser.c"
+#line 3004 "src/parser.c"
     break;
 
   case 66:
 #line 187 "language.y"
     { (yyval.node) = node_init(node_list, 'C'   , "function-call", (yyvsp[-3].node), (yyvsp[-1].node), NULL); }
-#line 3008 "src/parser.c"
+#line 3010 "src/parser.c"
     break;
 
   case 67:
 #line 188 "language.y"
     { (yyval.node) = node_init(node_list, OP_INC, "'++'"         , (yyvsp[-1].node)    , NULL); }
-#line 3014 "src/parser.c"
+#line 3016 "src/parser.c"
     break;
 
   case 68:
 #line 189 "language.y"
     { (yyval.node) = node_init(node_list, OP_DEC, "'--'"         , (yyvsp[-1].node)    , NULL); }
-#line 3020 "src/parser.c"
+#line 3022 "src/parser.c"
     break;
 
   case 72:
 #line 196 "language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 3026 "src/parser.c"
+#line 3028 "src/parser.c"
     break;
 
   case 73:
 #line 197 "language.y"
     { }
-#line 3032 "src/parser.c"
+#line 3034 "src/parser.c"
     break;
 
   case 75:
 #line 202 "language.y"
     { (yyval.node) = node_init(node_list, 'L', "argument-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
-#line 3038 "src/parser.c"
+#line 3040 "src/parser.c"
     break;
 
 
-#line 3042 "src/parser.c"
+#line 3044 "src/parser.c"
 
       default: break;
     }
