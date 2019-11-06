@@ -4,7 +4,7 @@ flex:
 	flex language.l
 
 bison:
-	bison -Wall --graph --xml -rall language.y
+	bison -Wall language.y
 
 dbg:
 	gcc -lfl -std=c11 -m64 -g -Wall -Wextra -Wpedantic \
@@ -13,6 +13,7 @@ dbg:
 	src/table.c    \
 	src/parser.c   \
 	src/scanner.c  \
+	src/actions.c  \
 
 rel:
 	gcc -lfl -std=c11 -m64 -O3 \
@@ -21,6 +22,7 @@ rel:
 	src/table.c    \
 	src/parser.c   \
 	src/scanner.c  \
+	src/actions.c  \
 
 test-node:
 	gcc -std=c11 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_NODE \
