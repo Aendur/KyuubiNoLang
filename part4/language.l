@@ -1,11 +1,9 @@
 %option nounput
 %option noinput
- //%option noyywrap
+%option noyywrap
 %option never-interactive
 %option outfile="src/scanner.c"
 %option header-file="src/scanner.h"
- //%option bison-bridge
- //%option bison-locations
 
 D [0-9]
 L [a-zA-Z_]
@@ -101,7 +99,15 @@ static int  character_const(void);
 [ \n\r\t] 		{ update_position(); }
 
 				/* other symbols not part of the language */
-.				{ update_position(); yyerror("lexical error, unrecognized token"); yynerrs++; return UNRECOGNIZED_TOKEN; }
+.				{
+					update_position();
+					char * msg = malloc(64);
+					snprintf(msg, 64, "lexical error, unrecognized token: '%s'", yytext);
+					yyerror(msg);
+					yynerrs++;
+					free(msg);
+					return UNRECOGNIZED_TOKEN;
+				}
 
 %%
 // // Returns 1 when yylex reaches EOF
