@@ -27,6 +27,7 @@
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
 %type <node> multiplicative_expression postfix_expression primary_expression argument_list type
 
+
  //%type <node> error
  //%destructor { node_free_recursive(&$$); } <node>
 
@@ -76,9 +77,9 @@ init_declarator
 	;
 
 declarator
-	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); add_symbol_var($$); }
-	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); add_symbol_var($$); }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); add_symbol_var($$); }
+	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); /*add_symbol_var($$);*/ }
+	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); /*add_symbol_var($$);*/ }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); /*add_symbol_var($$);*/ }
 	;
 
 initializer
@@ -93,9 +94,9 @@ initializer_list
 	;
 
 function_declarator
-	: type IDENTIFIER '(' parameter_list ')' { $$ = node_init(node_list, 'F', "function-declarator", $1, $2, $4, NULL); add_symbol_fun($$); }
-	| type IDENTIFIER '(' ')'                { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); add_symbol_fun($$); }
-	| type IDENTIFIER '(' VOID ')'           { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); add_symbol_fun($$); }
+	: type IDENTIFIER '(' parameter_list ')' { $$ = node_init(node_list, 'F', "function-declarator", $1, $2, $4, NULL); /*add_symbol_fun($$);*/ }
+	| type IDENTIFIER '(' ')'                { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); /*add_symbol_fun($$);*/ }
+	| type IDENTIFIER '(' VOID ')'           { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); /*add_symbol_fun($$);*/ }
 	| type IDENTIFIER '(' error ')'          { }
 	;
 
@@ -121,6 +122,7 @@ statement
 	| conditional_statement     //
 	| iteration_statement       //
 	| return_statement ';'      //
+	| error ';'                 { } //
 	;
 
 conditional_statement
@@ -140,7 +142,7 @@ return_statement
 
 assignment_expression
 	: logical_or_expression
-	| postfix_expression '=' logical_or_expression  { $$ = node_init(node_list, '=', "'='", $1, $3, NULL); }
+	| primary_expression '=' logical_or_expression  { $$ = node_init(node_list, '=', "'='", $1, $3, NULL); }
 	;
 
 logical_or_expression
@@ -194,7 +196,7 @@ primary_expression
 	| CONSTANT                        
 	| STRING_LITERAL                  
 	| '(' assignment_expression ')'   { $$ = $2; }
-	| error                           { }
+	//| error                           { }
 	;
 
 argument_list

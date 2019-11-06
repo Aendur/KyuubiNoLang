@@ -4,9 +4,11 @@
 #include "table.h"
 #include "node.h"
 
+// Initialize a new table with at size buckets
 Table * symtab_init (int size) {
 	if (size < 1) { size = 1;}
 	Table * tab = malloc(sizeof(Table));
+	tab->root = NULL;
 	tab->tab_size = size;
 	tab->num_keys = 0;
 	tab->buckets = malloc(tab->tab_size * sizeof(struct symtab_pair*));
@@ -16,6 +18,7 @@ Table * symtab_init (int size) {
 	return tab;
 }
 
+// Release table from memory
 void symtab_free (Table** tab) {
 	Table * t = *tab;
 	if (t == NULL) { return; }
@@ -41,7 +44,7 @@ unsigned long symtab_hash(const char *str, unsigned long key) {
 	return hash;
 }
 
-
+// Find key in a table; returns NULL if not found
 void * symtab_find (Table * tab, const char* key) {
 	unsigned long index = symtab_hash(key, 5381) % tab->tab_size;
 	if (tab->buckets[index][0].key != NULL && strcmp(tab->buckets[index][0].key, key) == 0) {
@@ -54,6 +57,8 @@ void * symtab_find (Table * tab, const char* key) {
 	}
 }
 
+
+// Insert key in table. If not possible, reallocs until possible, then insert
 void symtab_insert (Table ** t, const char* key, void* val) {
 	Table * tab = *t;
 	if (symtab_try_insert(tab, key, val) == true) { return; }
@@ -71,6 +76,7 @@ void symtab_insert (Table ** t, const char* key, void* val) {
 	*t = new;
 }
 
+// Attempt to inserts key in table. If not possible, returns false, otherwise returns true.
 bool symtab_try_insert (Table * tab, const char* key, void* val) {
 	unsigned long index = symtab_hash(key, 5381) % tab->tab_size;
 	if (tab->buckets[index][0].key == NULL) {
@@ -101,6 +107,7 @@ bool symtab_try_insert (Table * tab, const char* key, void* val) {
 	}
 }
 
+// Copy keys from src to dst
 bool symtab_copy_keys(Table * dst, Table * src) {
 	bool inserted = true;
 	for(int i = 0; inserted && i < src->tab_size; ++i) {

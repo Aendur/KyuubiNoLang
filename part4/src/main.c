@@ -4,6 +4,8 @@
 #include "node.h"
 #include "table.h"
 
+//#include <getopt.h>
+
 extern int yynerrs;
 int nline = 1;
 int ncol0 = 1;
@@ -29,9 +31,17 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
+	// initialize symbol table
 	symbol_table = symtab_init(16);
+
+	// initialize symbol list
+
+
+	// initialize node list
 	node_list = nodelist_init();
 
+
+	// call GNU Bison
 	yyparse();
 	//printf("%d\n", yynerrs);
 	
@@ -46,14 +56,15 @@ int main(int argc, char** argv) {
 		print_tree(root, 0);
 	}
 
-	symtab_free(&symbol_table);
-	nodelist_free(&node_list);
-	
+
 	// close input file
 	fclose(yyin);
 
+	// release resources
 	yylex_destroy();
-	//yy_destroy();
+	symtab_free(&symbol_table);
+	nodelist_free(&node_list);
+
 	return 0;
 }
 

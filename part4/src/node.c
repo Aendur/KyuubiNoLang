@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-//#include <wchar.h>
 #include "parser.h"
 #include "node.h"
 #include "string.h"
@@ -114,14 +113,13 @@ void print_node(Node * n) {
 
 void print_tree(Node * root, int level) {
 	int lvl = 0;
-	while(lvl < level-1) { ++lvl; printf("   "); }
-	while(lvl < level)   { ++lvl; printf("-> "); }
+	while(lvl < level) { ++lvl; printf("   "); }
+	// while(lvl < level-1) { ++lvl; printf("   "); }
+	// while(lvl < level)   { ++lvl; printf("-> "); }
 	printf("%-s\n", root->name);
-
-	for(int l = 0; l < root->nleaves; ++l) {
-		print_tree(root->leaf[l], level+1);
-	}
+	for(int l = 0; l < root->nleaves; ++l) { print_tree(root->leaf[l], level+1); }
 }
+
 
 #ifdef UNIT_TEST_NODE
 int main() {

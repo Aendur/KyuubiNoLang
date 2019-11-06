@@ -1,10 +1,10 @@
-default: flex bison rel
+default: flex bison dbg
 
 flex:
 	flex language.l
 
 bison:
-	bison -Wall language.y
+	bison -Wall --graph --xml -rall language.y
 
 dbg:
 	gcc -lfl -std=c11 -m64 -g -Wall -Wextra -Wpedantic \
@@ -15,7 +15,7 @@ dbg:
 	src/scanner.c  \
 
 rel:
-	gcc -lfl -std=c11 -m64 -O3 -Wall -Wextra -Wpedantic \
+	gcc -lfl -std=c11 -m64 -O3 \
 	src/main.c     \
 	src/node.c     \
 	src/table.c    \
