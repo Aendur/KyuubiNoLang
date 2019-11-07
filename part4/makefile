@@ -7,7 +7,7 @@ bison:
 	bison -Wall language.y
 
 dbg:
-	gcc -lfl -std=c11 -m64 -g -Wall -Wextra -Wpedantic \
+	gcc -std=c11 -m64 -g -Wall -Wextra -Wpedantic \
 	src/main.c     \
 	src/node.c     \
 	src/table.c    \

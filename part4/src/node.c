@@ -77,6 +77,8 @@ Node * node_init(Nodelist * node_list, int type, const char * name, ...) {
 			n0->leaf[l] = n1;
 			n1->root = n0;
 		}
+	} else {
+		n0->leaf = NULL;
 	}
 	va_end(args);
 

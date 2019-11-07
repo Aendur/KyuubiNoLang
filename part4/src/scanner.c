@@ -2048,9 +2048,6 @@ void yyfree (void * ptr )
 
 #line 113 "language.l"
 
-// // Returns 1 when yylex reaches EOF
-// int yywrap() { return 1; }
-
 #define TABSIZE 4
 
 // Updates the line and column counters

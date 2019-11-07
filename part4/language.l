@@ -110,9 +110,6 @@ static int  character_const(void);
 				}
 
 %%
-// // Returns 1 when yylex reaches EOF
-// int yywrap() { return 1; }
-
 #define TABSIZE 4
 
 // Updates the line and column counters

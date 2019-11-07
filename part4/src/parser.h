@@ -79,7 +79,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "language.y"
+#line 12 "language.y"
 
 	struct node * node;
 
@@ -96,7 +96,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 36 "language.y"
+#line 37 "language.y"
 
 	void yyerror (char const *);	
 

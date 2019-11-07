@@ -1,0 +1,100 @@
+- Usando makefile, eu obtenho o seguinte erro:
+
+[claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ make
+flex language.l
+bison -Wall language.y
+language.y:3.9-26: error: %define variable 'api.header.include' is not used
+%define api.header.include "\"parser.h\""
+        ^^^^^^^^^^^^^^^^^^
+make: *** [makefile:7: bison] Error 1
+
+=> A opção api.header.include é uma opção das versão 3.4 do Bison que evita duplicação de código referente
+ao arquivo de cabeçalho criado, portanto a causa deste erro é possívelmente alguma diferença nas versões
+do Bison que utilizamos.
+
+
+Eu removi o define, mas não compilou:
+
+[claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ gcc -lfl -std=c11 -m64 -O3 src/main.c src/node.c src/table.c src/parser.c src/scanner.c
+/tmp/cc99uFEZ.o: In function `main':
+main.c:(.text.startup+0x0): multiple definition of `main'
+/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/libfl.a(libmain.o):(.text.startup+0x0): first defined here
+/tmp/ccPsw4WE.o: In function `yylex':
+scanner.c:(.text+0x2395): undefined reference to `yywrap'
+collect2: error: ld returned 1 exit status
+
+Eu removi o comentário no léxico referente ao yywrap e aí compilou.
+
+
+=> O yywrap estava comentado pois segundo o manual do flex há uma versão "default" do yywrap que pode
+ser ligada com a flag -lfl. De todo modo, adicionei a diretiva %noyywrap para evitar este erro no futuro.
+
+
+
+
+- Suas mensagens de erro não parecem condizer com a gramática: == não é reconhecido?
+
+[claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ ./a.out tests/test_error1.c
+Line 1, column 25: syntax error, unexpected '*', expecting IDENTIFIER
+Line 2, column 22: lexical error, unrecognized token
+Line 2, column 22: syntax error, unexpected UNRECOGNIZED_TOKEN
+Line 2, column 26: lexical error, unrecognized token
+Line 2, column 28: lexical error, invalid character constant.
+
+
+=> As mensagens de erros referente aos tokens não reconhecidos se referem respectivamente a '?' e a ':'.
+Pode ter havido confusão pois a contagem das colunas quando há tabulação não está boa. Modifiquei
+as mensagens de erro para informar a que eles se referem quando isso acontecer.
+
+
+
+[claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ cat tests/test_error1.c
+char main(int argc, char** argv) {
+return argc == 0 ? 0 : 'abcdef';
+}
+
+- Em test_error2.c:
+
+Line 4, column 9: lexical error, identifier exceeds 32 characters.
+
+Isto não é um erro; é um warning.
+
+- Em test_error3.c: parece que o seguinte erro não é capturado:
+
+int Y[] = {3,};
+
+Você forçou o reinício do reconhecimento no próximo ';'?
+
+=> Esta construção está correta, esta linha era para testar se o parser iria
+reconhecê-la. É possível fazer isso em C também.
+
+- Em text_valid1.c: sua tabela de símbolos não está completa. Você vai precisar inserir todos os identificadores, incluindo funções.
+
+- A quê se referem as anotações que você está adicionando ao nome das funções na tabela de símbolos? Parece-me que você que você vai ter que alterar isso. Não acho que seja a melhor forma de identificar o tipo da função e/ou de seus argumentos. Eu sugiro que em sua tabela de símbolos nas entradas de funções haja um atributo para outras tabelas com os tipos associados e listas de parâmetros permitidas pelas definições dadas pelo usuário.
+
+- Leaks: Cuidado com isso.
+
+==8214== 23 errors in context 1 of 1:
+==8214== Conditional jump or move depends on uninitialised value(s)
+==8214==    at 0x4C2FFEF: free (vg_replace_malloc.c:540)
+==8214==    by 0x4012AB: node_free (node.c:92)
+==8214==    by 0x400EE4: nodelist_free (node.c:41)
+==8214==    by 0x400CFA: main (main.c:50)
+==8214==  Uninitialised value was created by a heap allocation
+==8214==    at 0x4C2EE3B: malloc (vg_replace_malloc.c:309)
+==8214==    by 0x400FF1: node_init (node.c:56)
+==8214==    by 0x403C30: yylex (language.l:53)
+==8214==    by 0x40252F: yyparse (parser.c:2732)
+==8214==    by 0x400C7D: main (main.c:35)
+
+O problema é que você está inicializando com NULL (n0->root = NULL;), mas não está testando se é NULL antes de dar o free. Acrescentar safety checks em node_free:
+
+if (n0->leaf != NULL) {free(n0->leaf); n0->leaf = NULL;}
+if (n0->name != NULL) {free(n0->name); n0->name = NULL;}
+
+e em outras partes do seu programa.
+
+=> O padrão do C diz que free(NULL) pode ser feito e, quando for, nada deve acontecer.
+Aqui o problema era que alguns ponteiros não estavam sendo inicializados como NULL (em alguns casos específicos).
+Como eu estava checando uma outra variável antes de liberar esses objetos da memóira, isso não havia (ainda) causado problemas.
+Fiz a inicialização correta desses ponteiros e essas mensagens desapareceram.

@@ -1,6 +1,7 @@
 %defines "src/parser.h"
 %output  "src/parser.c"
 %define api.header.include "\"parser.h\""
+%require "3.4.2"
 
  //%define api.pure
  //%locations
