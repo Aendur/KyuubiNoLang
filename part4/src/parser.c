@@ -407,8 +407,8 @@ static const yytype_uint8 yyrline[] =
      138,   142,   143,   147,   148,   152,   153,   157,   158,   162,
      163,   164,   168,   169,   170,   171,   172,   176,   177,   178,
      182,   183,   184,   185,   189,   190,   191,   192,   193,   197,
-     198,   199,   200,   206,   207,   208,   209,   214,   215,   219,
-     220,   221,   222
+     198,   199,   200,   204,   205,   206,   207,   212,   213,   217,
+     218,   219,   220
 };
 #endif
 
@@ -2881,13 +2881,13 @@ yyreduce:
     break;
 
   case 76:
-#line 209 "language.y"
+#line 207 "language.y"
     { (yyval.node) = (yyvsp[-1].node); }
 #line 2887 "src/parser.c"
     break;
 
   case 78:
-#line 215 "language.y"
+#line 213 "language.y"
     { (yyval.node) = node_init(node_list, 'L', "argument-list", (yyvsp[-2].node), (yyvsp[0].node), NULL); }
 #line 2893 "src/parser.c"
     break;
@@ -3125,7 +3125,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 225 "language.y"
+#line 223 "language.y"
 
 void yyerror (char const * msg) {
 	fprintf(stderr, "Line %d, column %d: %s\n", nline, ncol0, msg);

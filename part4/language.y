@@ -10,10 +10,6 @@
 %define lr.type canonical-lr
 
 %union {
-	int   ival;
-	float fval;
-	char  cval;
-	char* sval;
 	struct node * node;
 }
 
@@ -202,8 +198,6 @@ postfix_expression
 	| postfix_expression '[' assignment_expression ']' { $$ = node_init(node_list, 'V'   , "vector-index" , $1, $3, NULL); }
 	| postfix_expression '(' ')'                       { $$ = node_init(node_list, 'C'   , "function-call", $1    , NULL); }
 	| postfix_expression '(' argument_list ')'         { $$ = node_init(node_list, 'C'   , "function-call", $1, $3, NULL); }
-	//	| postfix_expression OP_INC                        { $$ = node_init(node_list, OP_INC, "'++'"         , $1    , NULL); }
-	//	| postfix_expression OP_DEC                        { $$ = node_init(node_list, OP_DEC, "'--'"         , $1    , NULL); }
 	;
 
 primary_expression

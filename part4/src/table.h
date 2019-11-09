@@ -11,6 +11,12 @@ struct arg_type {
 
 struct symbol {
 	int type;
+	union {
+		float fval;
+		int   ival;
+		char  cval;
+		char* sval;
+	} value;
 	int n_args;
 	struct arg_type * first_arg;
 	struct arg_type * last_arg;
