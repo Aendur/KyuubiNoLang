@@ -10,6 +10,10 @@
 %define lr.type canonical-lr
 
 %union {
+	int   ival;
+	float fval;
+	char  cval;
+	char* sval;
 	struct node * node;
 }
 
@@ -27,6 +31,7 @@
 %type <node> statement conditional_statement iteration_statement return_statement assignment_expression
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
 %type <node> multiplicative_expression postfix_expression primary_expression argument_list type
+%type <node> unary_expression
 
 
  //%type <node> error
@@ -178,10 +183,18 @@ additive_expression
 	;
 
 multiplicative_expression
+	: unary_expression
+	| multiplicative_expression '*' unary_expression  { $$ = node_init(node_list, '*', "'*'", $1, $3, NULL); }
+	| multiplicative_expression '/' unary_expression  { $$ = node_init(node_list, '/', "'/'", $1, $3, NULL); }
+	| multiplicative_expression '%' unary_expression  { $$ = node_init(node_list, '%', "'%'", $1, $3, NULL); }
+	;
+
+unary_expression
 	: postfix_expression
-	| multiplicative_expression '*' postfix_expression  { $$ = node_init(node_list, '*', "'*'", $1, $3, NULL); }
-	| multiplicative_expression '/' postfix_expression  { $$ = node_init(node_list, '/', "'/'", $1, $3, NULL); }
-	| multiplicative_expression '%' postfix_expression  { $$ = node_init(node_list, '%', "'%'", $1, $3, NULL); }
+	| '!' unary_expression      { $$ = node_init(node_list, '!'   , "'!'" , $2, NULL); }     
+	| '-' unary_expression      { $$ = node_init(node_list, '-'   , "'-'" , $2, NULL); }     
+	| OP_INC unary_expression   { $$ = node_init(node_list, OP_INC, "'++'", $2, NULL); }        
+	| OP_DEC unary_expression   { $$ = node_init(node_list, OP_DEC, "'--'", $2, NULL); }        
 	;
 
 postfix_expression
@@ -189,8 +202,8 @@ postfix_expression
 	| postfix_expression '[' assignment_expression ']' { $$ = node_init(node_list, 'V'   , "vector-index" , $1, $3, NULL); }
 	| postfix_expression '(' ')'                       { $$ = node_init(node_list, 'C'   , "function-call", $1    , NULL); }
 	| postfix_expression '(' argument_list ')'         { $$ = node_init(node_list, 'C'   , "function-call", $1, $3, NULL); }
-	| postfix_expression OP_INC                        { $$ = node_init(node_list, OP_INC, "'++'"         , $1    , NULL); }
-	| postfix_expression OP_DEC                        { $$ = node_init(node_list, OP_DEC, "'--'"         , $1    , NULL); }
+	//	| postfix_expression OP_INC                        { $$ = node_init(node_list, OP_INC, "'++'"         , $1    , NULL); }
+	//	| postfix_expression OP_DEC                        { $$ = node_init(node_list, OP_DEC, "'--'"         , $1    , NULL); }
 	;
 
 primary_expression

@@ -3,10 +3,20 @@
 
 #include <stdbool.h>
 
-// struct symbol {
-// 	int type;
-// 	symtab_table * 
-// };
+
+struct arg_type {
+	int type;
+	struct arg_type * next;
+};
+
+struct symbol {
+	int type;
+	int n_args;
+	struct arg_type * first_arg;
+	struct arg_type * last_arg;
+	struct symtab_table * leaf;
+};
+
 
 struct symtab_pair {
 	const char * key;
