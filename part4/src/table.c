@@ -132,6 +132,10 @@ Table * table_rehash (Table ** tab) {
 	return newtab;
 }
 
+// Print table
+void table_printf (Table* tab) {
+	table_printm(tab);
+}
 
 // Print table metadata
 void table_printm (Table* tab) {

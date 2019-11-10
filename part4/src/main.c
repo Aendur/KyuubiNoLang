@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 	}
 
 	// initialize symbol table
-	symbol_table = symtab_init(16);
+	symbol_table = table_init(16);
 
 	// initialize symbol list
 
@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
 		printf("------------------------------\n");
 		printf("SYMBOL TABLE\n");
 		printf("------------------------------\n");
-		symtab_printf(symbol_table);
+		table_printf(symbol_table);
 		printf("------------------------------\n");
 		printf("SYNTAX TREE\n");
 		printf("------------------------------\n");
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
 
 	// release resources
 	yylex_destroy();
-	symtab_free(&symbol_table);
+	table_free(&symbol_table);
 	nodelist_free(&node_list);
 
 	return 0;

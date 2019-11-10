@@ -3,9 +3,6 @@
 %define api.header.include "\"parser.h\""
 %require "3.4.2"
 
- //%define api.pure
- //%locations
-
 %define parse.error verbose
 %define lr.type canonical-lr
 
@@ -28,10 +25,7 @@
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
 %type <node> multiplicative_expression postfix_expression primary_expression argument_list type
 %type <node> unary_expression
-
-
- //%type <node> error
- //%destructor { node_free_recursive(&$$); } <node>
+%type <node> parameter
 
 %start start
 
@@ -79,9 +73,9 @@ init_declarator
 	;
 
 declarator
-	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); /*add_symbol_var($$);*/ }
-	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); /*add_symbol_arr($$);*/ }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); /*add_symbol_arr($$);*/ }
+	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); add_symbol_var($$); }
+	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); add_symbol_arr($$); }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); add_symbol_arr($$); }
 	;
 
 initializer
@@ -96,35 +90,42 @@ initializer_list
 	;
 
 function_declarator
-	: type IDENTIFIER '(' parameter_list ')' { $$ = node_init(node_list, 'F', "function-declarator", $1, $2, $4, NULL); /*add_symbol_fun($$);*/ }
-	| type IDENTIFIER '(' ')'                { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); /*add_symbol_fun($$);*/ }
-	| type IDENTIFIER '(' VOID ')'           { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); /*add_symbol_fun($$);*/ }
+	: type IDENTIFIER '(' parameter_list ')' { $$ = node_init(node_list, 'F', "function-declarator", $1, $2, $4, NULL); add_symbol_fun($$); }
+	| type IDENTIFIER '(' ')'                { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); add_symbol_fun($$); }
+	| type IDENTIFIER '(' VOID ')'           { $$ = node_init(node_list, 'F', "function-declarator", $1, $2,     NULL); add_symbol_fun($$); }
 	| type IDENTIFIER '(' error ')'          { }
 	;
 
 parameter_list
-	: declarator
-	| parameter_list ',' declarator  { $$ = node_init(node_list, 'L', "parameter-list", $1, $3, NULL); }
+	: parameter
+	| parameter_list ',' parameter  { $$ = node_init(node_list, 'L', "parameter-list", $1, $3, NULL); }
+	;
+
+parameter
+	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); }
+	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); }
 	;
 
 compound_statement
-	: '{' '}'                { }
-	| '{' statement_list '}' { $$ = $2; }
+	: '{' '}'                                           { }
+	| '{' {printf("enter scope\n");} statement_list '}' { $$ = $3; {printf("exit scope\n");} }
 	;
 
 statement_list
-	: statement                //
+	: statement                
 	| statement_list statement { $$ = node_init(node_list, 'L', "statement-list", $1, $2, NULL); }
 	;
 
 statement
 	: ';'                       { }
-	| init_declarator ';'       //
-	| assignment_expression ';' //
-	| conditional_statement     //
-	| iteration_statement       //
-	| return_statement ';'      //
-	| error ';'                 { } //
+	| init_declarator ';'       
+	| assignment_expression ';' 
+	| conditional_statement     
+	| iteration_statement       
+	| compound_statement       
+	| return_statement ';'      
+	| error ';'                 { }
 	;
 
 conditional_statement

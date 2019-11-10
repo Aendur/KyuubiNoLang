@@ -1,19 +1,22 @@
-int main(int argc /*, char** argv*/) {
-	// handle cmd line arguments
-	if (argc < 2) {
-		fprintf(stderr, "Missing input file.\n");
-		return 0;
-	} else {
-		if ((yyin = fopen(argv[1], "r")) == NULL) {
-			fprintf(stderr, "Failed to open file %s.\n", argv[1]);
-			return 0;
-		}
-	}
+int gvar1;
+int gvar2 = 10;
 
-	/*
-	// run the scanner
-	scan();
-	// close input file
-	fclose(yyin);*/
-	return 0;
+int func2(int x);
+int func3(int x) {
+	int y = x;
+	if(!x) {
+		int z = 1;
+		return z;
+	} else {
+		return x + y;
+	}
+}
+
+int main(void) {
+	int a = 0;
+	func3(a);
+	{
+		int a = 1;
+		func3(a);
+	}
 }
