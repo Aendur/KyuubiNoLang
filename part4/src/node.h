@@ -1,7 +1,23 @@
 #ifndef NODE_H
 #define NODE_H
 
-typedef union YYSTYPE YYSTYPE;
+//typedef union YYSTYPE YYSTYPE;
+
+enum nodetypes {
+	NODE_TERMINAL,
+	NODE_LIST,
+	NODE_BINARY_OP,
+	NODE_VECTOR_INDEX,
+	NODE_DECL_ARRAY,
+	NODE_DECL_FUNCTION,
+	NODE_DECL_VARIABLE,
+	NODE_FUNCTION_CALL,
+	NODE_IF,
+	NODE_IF_ELSE,
+	NODE_RETURN,
+	NODE_WHILE,
+	NODE_DO_WHILE,
+};
 
 typedef struct node Node;
 struct node {
@@ -10,6 +26,7 @@ struct node {
 	int  nleaves;
 	int     type;
 	char *  name;
+	//struct symtab_pair * symtab_entry;
 };
 
 typedef struct nodelist Nodelist;

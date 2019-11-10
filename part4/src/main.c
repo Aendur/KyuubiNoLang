@@ -13,6 +13,7 @@ int ncol1 = 1;
 Node * root;
 Nodelist * node_list;
 Table * symbol_table;
+int no_scope = 0;
 
 
 int main(int argc, char** argv) {

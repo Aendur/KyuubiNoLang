@@ -7,7 +7,7 @@ bison:
 	bison -Wall language.y
 
 dbg:
-	gcc -std=c11 -m64 -g -Wall -Wextra -Wpedantic \
+	gcc -std=c18 -m64 -g -Wall -Wextra -Wpedantic \
 	src/main.c     \
 	src/node.c     \
 	src/table.c    \
@@ -16,7 +16,7 @@ dbg:
 	src/actions.c  \
 
 rel:
-	gcc -lfl -std=c11 -m64 -O3 \
+	gcc -lfl -std=c18 -m64 -O3 \
 	src/main.c     \
 	src/node.c     \
 	src/table.c    \
@@ -25,10 +25,10 @@ rel:
 	src/actions.c  \
 
 test-node:
-	gcc -std=c11 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_NODE \
+	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_NODE \
 	src/node.c
 
 test-hash:
-	gcc -std=c11 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_HASH \
+	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_HASH \
 	src/table.c
 

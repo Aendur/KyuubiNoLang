@@ -52,8 +52,7 @@ extern int ncol1;
 extern Node * root;
 extern Nodelist * node_list;
 extern Table * symbol_table;
-void add_symbol_var(Node* node);
-void add_symbol_fun(Node* node);
+//extern int no_scope;
 %}
 
 %%
@@ -68,10 +67,10 @@ declaration_list
 
 declaration
 	: function_declarator ';'                
-	| function_declarator compound_statement { $$ = node_init(node_list, 'F', "function-definition", $1, $2, NULL); }
+	| function_declarator compound_statement { $$ = node_init(node_list, 'F', "function-definition", $1, $2, NULL); /*add_symbol_fun($$);*/ }
 	| init_declarator ';'                    
 	| error ';'                              { }
-	| error compound_statement               { } 
+	| error compound_statement               { }
 	;
 
 init_declarator
@@ -81,8 +80,8 @@ init_declarator
 
 declarator
 	: type IDENTIFIER                                { $$ = node_init(node_list, 'D', "declarator-variable", $1, $2    , NULL); /*add_symbol_var($$);*/ }
-	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); /*add_symbol_var($$);*/ }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); /*add_symbol_var($$);*/ }
+	| type IDENTIFIER '[' ']'                        { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2    , NULL); /*add_symbol_arr($$);*/ }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = node_init(node_list, 'E', "declarator-array"   , $1, $2, $4, NULL); /*add_symbol_arr($$);*/ }
 	;
 
 initializer

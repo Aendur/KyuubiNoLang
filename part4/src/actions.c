@@ -1,9 +1,27 @@
 #include "actions.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 extern Table * symbol_table;
 
+
+void add_symbol_var(Node * node) {
+	(void) node;
+	printf("Include variable in table.\n");
+}
+
+void add_symbol_fun(Node * node) {
+	(void) node;
+	printf("Include function in table.\n");
+}
+
+void add_symbol_arr(Node * node) {
+	(void) node;
+	printf("Include array in table.\n");
+}
+
+/*
 void add_symbol_var(Node* node) {
 	char * name = node->leaf[1]->name;
 	if(symtab_find(symbol_table, name) == NULL) {
@@ -41,3 +59,4 @@ void add_symbol_fun(Node* node) {
 	symtab_insert(&symbol_table, name, node);
 	free(name);
 }
+*/

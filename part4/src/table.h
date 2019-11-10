@@ -3,6 +3,13 @@
 
 #include <stdbool.h>
 
+/*
+enum symtab_type {
+	SYMTAB_FUNCTION,
+	SYMTAB_VARIABLE,
+	SYMTAB_ARRAY,
+	SYMTAB_SCOPE,
+};
 
 struct arg_type {
 	int type;
@@ -10,42 +17,56 @@ struct arg_type {
 };
 
 struct symbol {
-	int type;
+	int n_args;
+	struct arg_type * first_arg;
+	struct arg_type * last_arg;
 	union {
 		float fval;
 		int   ival;
 		char  cval;
 		char* sval;
 	} value;
-	int n_args;
-	struct arg_type * first_arg;
-	struct arg_type * last_arg;
-	struct symtab_table * leaf;
-};
-
-
-struct symtab_pair {
-	const char * key;
-	void * val;
-};
-
-typedef struct symtab_table Table;
-struct symtab_table {
 	struct symtab_table * root;
-	struct symtab_pair ** buckets;
-	int tab_size;
-	int num_keys;
+	struct symtab_table * leaf;
+	struct node * node;
+};
+*/
+
+struct bucket {
+	struct pair * first;
+	struct pair * last;
+	unsigned long size;
 };
 
-Table * symtab_init      (int);
-void    symtab_free      (Table**);
-void *  symtab_find      (Table*, const char*);
-void    symtab_insert    (Table**, const char*, void*);
-bool    symtab_try_insert(Table* , const char*, void*);
-bool    symtab_copy_keys (Table* , Table*);
-void    symtab_print     (Table*);
-void    symtab_printf    (Table*);
-unsigned long symtab_hash(const char *, unsigned long);
+struct pair {
+	const char * key;
+	struct symbol * val;
+	struct pair * next;
+};
+
+typedef struct table Table;
+struct table {
+	unsigned long n_buckets;
+	unsigned long n_keys;
+	struct table  * root;
+	struct bucket * buckets;
+};
+
+Table * table_init (unsigned long size);
+void table_free (Table** tab);
+double table_loadf (Table* tab);
+unsigned long table_hash (const char * key);
+struct pair * table_find (Table* tab, const char* key);
+struct pair * table_insert (Table* tab, const char* key, struct symbol* val);
+Table * table_rehash (Table** tab);
+
+struct pair * pair_init(const char * key, struct symbol * val);
+void pair_print(struct pair * pair);
+
+void table_printm (Table* tab);
+void table_printf (Table* tab);
+
+unsigned long round_to_2(unsigned long x);
 
 
 #endif

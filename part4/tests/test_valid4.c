@@ -29,7 +29,8 @@ int min(int v[], int n) {
 		// test if statement
 		if (r >= v[i]) {
 			// test variable assignment
-			r = v[i++];
+			r = v[i];
+			++i;
 		}
 	}
 	return r;

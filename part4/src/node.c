@@ -56,6 +56,7 @@ Node * node_init(Nodelist * node_list, int type, const char * name, ...) {
 	n0->root = NULL;
 	n0->type = type;
 	n0->name = malloc(strlen(name) + 1);
+	//n0->symtab_entry = NULL;
 	strcpy(n0->name, name);
 
 	// init va
