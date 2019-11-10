@@ -1,57 +1,15 @@
+#include "node.h"
+#include "parser.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include "parser.h"
-#include "node.h"
-#include "string.h"
+#include <string.h>
 
 extern int yyleng;
 extern char * yytext;
 
-Nodelist * nodelist_init(void) {
-	Nodelist * nl = malloc(sizeof(Nodelist));
-	nl->size     = 0;
-	nl->capacity = 16;
-	nl->nodes    = calloc(nl->capacity, sizeof(Node*));
-	return nl;
-}
-
-void nodelist_push(Nodelist * nl, Node * n0) {
-	if (nl->size < nl->capacity) {
-		nl->nodes[nl->size] = n0;
-		nl->size++;
-	} else {
-		Node ** newn = realloc(nl->nodes, 2 * nl->capacity * (sizeof(Node*)));
-		if (newn == NULL) { fprintf (stderr, "failed to realloc\n"); }
-		else {
-			nl->nodes = newn;
-			nl->capacity = 2 * nl->capacity;
-			nl->nodes[nl->size] = n0;
-			nl->size++;
-			for (int i = nl->size; i < nl->capacity; ++i) { nl->nodes[i] = NULL; }
-		}
-	}
-}
-
-void nodelist_free(Nodelist** nl) {
-	if (nl == NULL || *nl == NULL) { return; }
-	Nodelist * nlist = *nl;
-	for(int i = 0; i < nlist->size; ++i) {
-		node_free(&(nlist->nodes[i]));
-	}
-	free(nlist->nodes);
-	free(nlist);
-	*nl = NULL;
-}
-
-void nodelist_print(Nodelist* nl) {
-	printf("Nodes: %d Cap: %d\n", nl->size, nl->capacity);
-	for(int i = 0; i < nl->size; ++i) {
-		printf("ADDR %p\n", (void*)nl->nodes[i]);
-	}
-}
-
-Node * node_init(Nodelist * node_list, int type, const char * name, ...) {
+Node * node_init(int type, const char * name, ...) {
 	Node * n0 = malloc(sizeof(Node));
 	n0->root = NULL;
 	n0->type = type;
@@ -83,7 +41,6 @@ Node * node_init(Nodelist * node_list, int type, const char * name, ...) {
 	}
 	va_end(args);
 
-	nodelist_push(node_list, n0);
 	return n0;
 }
 
@@ -116,9 +73,7 @@ void print_node(Node * n) {
 
 void print_tree(Node * root, int level) {
 	int lvl = 0;
-	while(lvl < level) { ++lvl; printf("   "); }
-	// while(lvl < level-1) { ++lvl; printf("   "); }
-	// while(lvl < level)   { ++lvl; printf("-> "); }
+	while(lvl++ < level) { printf("   "); }
 	printf("%-s\n", root->name);
 	for(int l = 0; l < root->nleaves; ++l) { print_tree(root->leaf[l], level+1); }
 }
@@ -126,35 +81,33 @@ void print_tree(Node * root, int level) {
 
 #ifdef UNIT_TEST_NODE
 int main() {
-	Nodelist * nl = nodelist_init();
-	Node * n9 = node_init(nl, 100, "9", NULL);
-	Node * n8 = node_init(nl, 100, "8", NULL);
-	Node * n7 = node_init(nl, 100, "7", NULL);
-	Node * n6 = node_init(nl, 100, "6", NULL);
-	Node * n5 = node_init(nl, 100, "5", n6, n7, n8, n9, NULL);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl); 
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	node_init(nl, 100, "6", NULL); nodelist_print(nl);
-	print_node(n9);
-	print_node(n8);
-	print_node(n7);
-	print_node(n6);
+	// Nodelist * nl = nodelist_init();
+	Node * n9 = node_init(9, "node9", NULL);
+	Node * n8 = node_init(8, "node8", NULL);
+	Node * n7 = node_init(7, "node7", n9, NULL);
+	Node * n6 = node_init(6, "node6", NULL);
+	Node * n5 = node_init(5, "node5", NULL);
+	Node * n4 = node_init(4, "node4", n6, n7, n8, NULL);
+	Node * n3 = node_init(3, "node3", n4, n5, NULL);
+	Node * n2 = node_init(2, "node2", n3, NULL);
+	Node * n1 = node_init(1, "node1", NULL);
+	Node * n0 = node_init(0, "node0", n1, n2, NULL);
+	
+	print_node(n0);
+	print_node(n1);
+	print_node(n2);
+	print_node(n3);
+	print_node(n4);
 	print_node(n5);
-	print_tree(n5, 0);
-	nodelist_free(&nl);
-	//node_free_recursive(&n5);
+	print_node(n6);
+	print_node(n7);
+	print_node(n8);
+	print_node(n9);
+
+	print_tree(n0, 0);
+	node_free_recursive(&n0);
+	// node_free_recursive(&nl->nodes[0]);
+	// nodelist_free(&nl);
 }
 
 #endif

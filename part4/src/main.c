@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "scanner.h"
 #include "node.h"
+#include "node-list.h"
 #include "table.h"
 
 //#include <getopt.h>
@@ -39,7 +40,7 @@ int main(int argc, char** argv) {
 
 
 	// initialize node list
-	node_list = nodelist_init();
+	node_list = nl_init();
 
 
 	// call GNU Bison
@@ -64,7 +65,7 @@ int main(int argc, char** argv) {
 	// release resources
 	yylex_destroy();
 	table_free(&symbol_table);
-	nodelist_free(&node_list);
+	nl_free(&node_list);
 
 	return 0;
 }
