@@ -96,6 +96,7 @@
 #include "node.h"
 #include "node-list.h"
 #include "table.h"
+#include "table-stack.h"
 #include "actions.h"
 int yylex (void);
 extern int nline;
@@ -103,8 +104,7 @@ extern int ncol0;
 extern int ncol1;
 extern Node * root;
 extern Nodelist * node_list;
-extern Table * symbol_table;
-//extern int no_scope;
+extern Tablestack * context_stack;
 
 #line 110 "src/parser.c"
 
@@ -403,12 +403,12 @@ static const yytype_uint8 yyrline[] =
        0,    55,    55,    59,    60,    64,    65,    66,    67,    68,
       72,    73,    77,    78,    79,    83,    84,    85,    89,    90,
       94,    95,    96,    97,   101,   102,   106,   107,   108,   112,
-     113,   113,   117,   118,   122,   123,   124,   125,   126,   127,
-     128,   129,   133,   134,   138,   139,   143,   144,   148,   149,
-     153,   154,   158,   159,   163,   164,   165,   169,   170,   171,
-     172,   173,   177,   178,   179,   183,   184,   185,   186,   190,
-     191,   192,   193,   194,   198,   199,   200,   201,   205,   206,
-     207,   208,   213,   214,   218,   219,   220,   221
+     113,   113,   123,   124,   128,   129,   130,   131,   132,   133,
+     134,   135,   139,   140,   144,   145,   149,   150,   154,   155,
+     159,   160,   164,   165,   169,   170,   171,   175,   176,   177,
+     178,   179,   183,   184,   185,   189,   190,   191,   192,   196,
+     197,   198,   199,   200,   204,   205,   206,   207,   211,   212,
+     213,   214,   219,   220,   224,   225,   226,   227
 };
 #endif
 
@@ -2734,210 +2734,216 @@ yyreduce:
 
   case 30:
 #line 113 "language.y"
-    {printf("enter scope\n");}
-#line 2739 "src/parser.c"
+    {
+				Table * t =  ts_push(context_stack, table_init(16));
+				printf("enter scope (new context %p)\n", (void*) t);
+	}
+#line 2742 "src/parser.c"
     break;
 
   case 31:
-#line 113 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); {printf("exit scope\n");} }
-#line 2745 "src/parser.c"
-    break;
-
-  case 33:
-#line 118 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('L', "statement-list", (yyvsp[-1].node), (yyvsp[0].node), NULL)); }
+#line 116 "language.y"
+    {
+				(yyval.node) = (yyvsp[-1].node);
+				printf("exit scope\n");
+	}
 #line 2751 "src/parser.c"
     break;
 
-  case 34:
-#line 122 "language.y"
-    { }
+  case 33:
+#line 124 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('L', "statement-list", (yyvsp[-1].node), (yyvsp[0].node), NULL)); }
 #line 2757 "src/parser.c"
     break;
 
-  case 41:
-#line 129 "language.y"
+  case 34:
+#line 128 "language.y"
     { }
 #line 2763 "src/parser.c"
     break;
 
-  case 42:
-#line 133 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(IF  , "if"     , (yyvsp[-2].node), (yyvsp[0].node),     NULL)); }
+  case 41:
+#line 135 "language.y"
+    { }
 #line 2769 "src/parser.c"
     break;
 
-  case 43:
-#line 134 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(ELSE, "if-else", (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 42:
+#line 139 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(IF  , "if"     , (yyvsp[-2].node), (yyvsp[0].node),     NULL)); }
 #line 2775 "src/parser.c"
     break;
 
-  case 44:
-#line 138 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(WHILE, "while"   , (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 43:
+#line 140 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(ELSE, "if-else", (yyvsp[-4].node), (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2781 "src/parser.c"
     break;
 
-  case 45:
-#line 139 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(DO   , "do-while", (yyvsp[-5].node), (yyvsp[-2].node), NULL)); }
+  case 44:
+#line 144 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(WHILE, "while"   , (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2787 "src/parser.c"
     break;
 
-  case 46:
-#line 143 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(RETURN, "return",     NULL)); }
+  case 45:
+#line 145 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(DO   , "do-while", (yyvsp[-5].node), (yyvsp[-2].node), NULL)); }
 #line 2793 "src/parser.c"
     break;
 
-  case 47:
-#line 144 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(RETURN, "return", (yyvsp[0].node), NULL)); }
+  case 46:
+#line 149 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(RETURN, "return",     NULL)); }
 #line 2799 "src/parser.c"
     break;
 
-  case 49:
-#line 149 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('=', "'='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 47:
+#line 150 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(RETURN, "return", (yyvsp[0].node), NULL)); }
 #line 2805 "src/parser.c"
     break;
 
-  case 51:
-#line 154 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_OR, "'||'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 49:
+#line 155 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('=', "'='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2811 "src/parser.c"
     break;
 
-  case 53:
-#line 159 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_AND, "'&&'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 51:
+#line 160 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_OR, "'||'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2817 "src/parser.c"
     break;
 
-  case 55:
-#line 164 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_EQ, "'=='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 53:
+#line 165 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_AND, "'&&'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2823 "src/parser.c"
     break;
 
-  case 56:
-#line 165 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_NE, "'!='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 55:
+#line 170 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_EQ, "'=='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2829 "src/parser.c"
     break;
 
-  case 58:
-#line 170 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('<'  , "'<'" , (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 56:
+#line 171 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_NE, "'!='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2835 "src/parser.c"
     break;
 
-  case 59:
-#line 171 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('>'  , "'>'" , (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 58:
+#line 176 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('<'  , "'<'" , (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2841 "src/parser.c"
     break;
 
-  case 60:
-#line 172 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_LE, "'<='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 59:
+#line 177 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('>'  , "'>'" , (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2847 "src/parser.c"
     break;
 
-  case 61:
-#line 173 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_GE, "'>='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 60:
+#line 178 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_LE, "'<='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2853 "src/parser.c"
     break;
 
-  case 63:
-#line 178 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('+', "'+'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 61:
+#line 179 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_GE, "'>='", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2859 "src/parser.c"
     break;
 
-  case 64:
-#line 179 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('-', "'-'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 63:
+#line 184 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('+', "'+'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2865 "src/parser.c"
     break;
 
-  case 66:
-#line 184 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('*', "'*'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 64:
+#line 185 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('-', "'-'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2871 "src/parser.c"
     break;
 
-  case 67:
-#line 185 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('/', "'/'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 66:
+#line 190 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('*', "'*'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2877 "src/parser.c"
     break;
 
-  case 68:
-#line 186 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('%', "'%'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+  case 67:
+#line 191 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('/', "'/'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2883 "src/parser.c"
     break;
 
-  case 70:
-#line 191 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('!'   , "'!'" , (yyvsp[0].node), NULL)); }
+  case 68:
+#line 192 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('%', "'%'", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
 #line 2889 "src/parser.c"
     break;
 
-  case 71:
-#line 192 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('-'   , "'-'" , (yyvsp[0].node), NULL)); }
+  case 70:
+#line 197 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('!'   , "'!'" , (yyvsp[0].node), NULL)); }
 #line 2895 "src/parser.c"
     break;
 
-  case 72:
-#line 193 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_INC, "'++'", (yyvsp[0].node), NULL)); }
+  case 71:
+#line 198 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('-'   , "'-'" , (yyvsp[0].node), NULL)); }
 #line 2901 "src/parser.c"
     break;
 
-  case 73:
-#line 194 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init(OP_DEC, "'--'", (yyvsp[0].node), NULL)); }
+  case 72:
+#line 199 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_INC, "'++'", (yyvsp[0].node), NULL)); }
 #line 2907 "src/parser.c"
     break;
 
-  case 75:
-#line 199 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('V'   , "vector-index" , (yyvsp[-3].node), (yyvsp[-1].node), NULL)); }
+  case 73:
+#line 200 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init(OP_DEC, "'--'", (yyvsp[0].node), NULL)); }
 #line 2913 "src/parser.c"
     break;
 
-  case 76:
-#line 200 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('C'   , "function-call", (yyvsp[-2].node)    , NULL)); }
+  case 75:
+#line 205 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('V'   , "vector-index" , (yyvsp[-3].node), (yyvsp[-1].node), NULL)); }
 #line 2919 "src/parser.c"
     break;
 
-  case 77:
-#line 201 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('C'   , "function-call", (yyvsp[-3].node), (yyvsp[-1].node), NULL)); }
+  case 76:
+#line 206 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('C'   , "function-call", (yyvsp[-2].node)    , NULL)); }
 #line 2925 "src/parser.c"
     break;
 
-  case 81:
-#line 208 "language.y"
-    { (yyval.node) = (yyvsp[-1].node); }
+  case 77:
+#line 207 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('C'   , "function-call", (yyvsp[-3].node), (yyvsp[-1].node), NULL)); }
 #line 2931 "src/parser.c"
     break;
 
-  case 83:
+  case 81:
 #line 214 "language.y"
-    { (yyval.node) = nl_push(node_list, node_init('L', "argument-list", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+    { (yyval.node) = (yyvsp[-1].node); }
 #line 2937 "src/parser.c"
     break;
 
+  case 83:
+#line 220 "language.y"
+    { (yyval.node) = nl_push(node_list, node_init('L', "argument-list", (yyvsp[-2].node), (yyvsp[0].node), NULL)); }
+#line 2943 "src/parser.c"
+    break;
 
-#line 2941 "src/parser.c"
+
+#line 2947 "src/parser.c"
 
       default: break;
     }
@@ -3169,7 +3175,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 224 "language.y"
+#line 230 "language.y"
 
 void yyerror (char const * msg) {
 	fprintf(stderr, "Line %d, column %d: %s\n", nline, ncol0, msg);

@@ -66,11 +66,20 @@ Table * ts_pull(Tablestack * ts) {
 
 void ts_print(Tablestack * ts) {
 	Table * tab = ts->top;
-	printf("top:\n%p (%lu)\n-----\n", (void*) tab, ts->size);
+	printf("top:\n");
 	while (tab != NULL) {
-		tab = tab->next;
 		printf("%p (%lu)\n", (void*) tab, ts->size);
+		tab = tab->next;
 	}
+	printf("=====\n");
+	tab = ts->top;
+	while (tab != NULL) {
+		printf("%p (%lu)\n", (void*) tab, ts->size);
+		table_printm(tab);
+		tab = tab->next;
+		printf("-----\n");
+	}
+
 }
 
 void ts_printt(Tablestack * ts) {

@@ -39,6 +39,7 @@
 #include "node.h"
 #include "node-list.h"
 #include "table.h"
+#include "table-stack.h"
 #include "actions.h"
 int yylex (void);
 extern int nline;
@@ -46,8 +47,7 @@ extern int ncol0;
 extern int ncol1;
 extern Node * root;
 extern Nodelist * node_list;
-extern Table * symbol_table;
-//extern int no_scope;
+extern Tablestack * context_stack;
 %}
 
 %%
@@ -109,8 +109,14 @@ parameter
 	;
 
 compound_statement
-	: '{' '}'                                           { }
-	| '{' {printf("enter scope\n");} statement_list '}' { $$ = $3; {printf("exit scope\n");} }
+	: '{' '}'	{ }
+	| '{'	{
+				Table * t =  ts_push(context_stack, table_init(16));
+				printf("enter scope (new context %p)\n", (void*) t);
+	} statement_list '}' {
+				$$ = $3;
+				printf("exit scope\n");
+	}
 	;
 
 statement_list
@@ -124,7 +130,7 @@ statement
 	| assignment_expression ';' 
 	| conditional_statement     
 	| iteration_statement       
-	| compound_statement        
+	| compound_statement        { $$ = $1; }
 	| return_statement ';'      
 	| error ';'                 { }
 	;

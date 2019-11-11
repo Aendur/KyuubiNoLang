@@ -4,6 +4,7 @@
 #include "node.h"
 #include "node-list.h"
 #include "table.h"
+#include "table-stack.h"
 
 //#include <getopt.h>
 
@@ -13,7 +14,8 @@ int ncol0 = 1;
 int ncol1 = 1;
 Node * root;
 Nodelist * node_list;
-Table * symbol_table;
+//Table * symbol_table;
+Tablestack * context_stack;
 int no_scope = 0;
 
 
@@ -33,11 +35,9 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	// initialize symbol table
-	symbol_table = table_init(16);
-
-	// initialize symbol list
-
+	// initialize context stack with global symbol table
+	context_stack = ts_init();
+	ts_push(context_stack, table_init(16));
 
 	// initialize node list
 	node_list = nl_init();
@@ -49,13 +49,14 @@ int main(int argc, char** argv) {
 	
 	if (yynerrs == 0) {
 		printf("------------------------------\n");
-		printf("SYMBOL TABLE\n");
-		printf("------------------------------\n");
-		table_printf(symbol_table);
-		printf("------------------------------\n");
 		printf("SYNTAX TREE\n");
 		printf("------------------------------\n");
 		print_tree(root, 0);
+		printf("------------------------------\n");
+		printf("SYMBOL TABLE\n");
+		printf("------------------------------\n");
+		// table_printf(context_stack->bot);
+		ts_print(context_stack);
 	}
 
 
@@ -64,7 +65,8 @@ int main(int argc, char** argv) {
 
 	// release resources
 	yylex_destroy();
-	table_free(&symbol_table);
+	//table_free(&symbol_table);
+	ts_free(&context_stack);
 	nl_free(&node_list);
 
 	return 0;
