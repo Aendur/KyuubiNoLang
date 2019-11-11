@@ -2,9 +2,6 @@
 #define NODE_H
 
 typedef struct node Node;
-typedef struct nodelist Nodelist;
-
-
 
 enum nodetypes {
 	NODE_TERMINAL,
@@ -21,8 +18,6 @@ enum nodetypes {
 	NODE_WHILE,
 	NODE_DO_WHILE,
 };
-
-
 
 struct node {
 	Node *  root;

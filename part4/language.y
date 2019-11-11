@@ -124,7 +124,7 @@ statement
 	| assignment_expression ';' 
 	| conditional_statement     
 	| iteration_statement       
-	| compound_statement       
+	| compound_statement        
 	| return_statement ';'      
 	| error ';'                 { }
 	;

@@ -26,6 +26,7 @@ Table * table_init (size_t size) {
 	tab->n_buckets = size;
 	tab->n_keys = 0;
 	tab->root = NULL;
+	tab->next = NULL;
 	tab->buckets = calloc(size, sizeof(struct bucket));
 	return tab;
 }

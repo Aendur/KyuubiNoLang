@@ -70,7 +70,7 @@ static int  character_const(void);
 "!="		{ update_position(); int t = OP_NE; return t; }
 
 			/* Logical operators */
-"!"		    { update_position(); int t = '!'   ; return t;}
+"!"			{ update_position(); int t = '!'   ; return t;}
 "&&"		{ update_position(); int t = OP_AND; return t;}
 "||"		{ update_position(); int t = OP_OR ; return t;}
 
