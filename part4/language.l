@@ -47,10 +47,10 @@ static int  character_const(void);
 "return"	{ update_position(); int t = RETURN; return t; }
 
 			/* data types */
-"void"		{ update_position(); int t = VOID ; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
-"char"		{ update_position(); int t = CHAR ; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
-"int"		{ update_position(); int t = INT  ; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
-"float"		{ update_position(); int t = FLOAT; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+"void"		{ update_position(); int t = VOID ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
+"char"		{ update_position(); int t = CHAR ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
+"int"		{ update_position(); int t = INT  ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
+"float"		{ update_position(); int t = FLOAT; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
 
 			/* Arithmetical operators */
 "+"			{ update_position(); int t = '+'   ; return t; }
@@ -133,9 +133,9 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		yyerror("lexical error, identifier exceeds 32 characters.");
-		yynerrs++;
-		return INVALID_IDENTIFIER;
+		yyerror("warning (lexical), identifier exceeds 32 characters.");
+		//yynerrs++;
+		return IDENTIFIER;
 	} else {
 		int t = IDENTIFIER; 
 		yylval.node = nl_push(node_list, node_init(t, yytext, NULL));

@@ -1,7 +1,7 @@
 %defines "src/parser.h"
 %output  "src/parser.c"
 %define api.header.include "\"parser.h\""
-%require "3.4.2"
+%require "3.4.0"
 
 %define parse.error verbose
 %define lr.type canonical-lr
@@ -18,6 +18,14 @@
 %token UNRECOGNIZED_TOKEN
 %token INVALID_IDENTIFIER
 %token INVALID_CHAR_CONST
+
+%token TYPE
+%token LIST
+%token FUN_DEF
+%token FUN_CALL
+%token DECL_VAR
+%token DECL_VEC
+%token VEC_INDEX
 
 %type <node> declaration_list declaration init_declarator declarator initializer
 %type <node> initializer_list function_declarator parameter_list compound_statement statement_list
@@ -57,12 +65,12 @@ start
 
 declaration_list
 	: declaration                   
-	| declaration_list declaration  { $$ = nl_push(node_list, node_init('L', "declaration-list", $1, $2, NULL)); assign($$); }
+	| declaration_list declaration  { $$ = nl_push(node_list, node_init(LIST, "declaration-list", $1, $2, NULL)); assign($$); }
 	;
 
 declaration
 	: function_declarator ';'                
-	| function_declarator compound_statement { $$ = nl_push(node_list, node_init('F', "function-definition", $1, $2, NULL)); assign($$); enclose($2, add_symbol_fun($$)); }
+	| function_declarator compound_statement { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2, NULL)); assign($$); enclose($2, add_symbol_fun($$)); }
 	| init_declarator ';'                    
 	| error ';'                              { }
 	| error compound_statement               { }
@@ -74,9 +82,9 @@ init_declarator
 	;
 
 declarator
-	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init('D', "declarator-variable", $1, $2    , NULL)); assign($$); add_symbol_var($$); }
-	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2    , NULL)); assign($$); add_symbol_arr($$); }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2, $4, NULL)); assign($$); add_symbol_arr($$); }
+	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init(DECL_VAR, "declarator-variable", $1, $2    , NULL)); assign($$); add_symbol_var($$); }
+	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2    , NULL)); assign($$); add_symbol_arr($$); }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2, $4, NULL)); assign($$); add_symbol_arr($$); }
 	;
 
 initializer
@@ -87,25 +95,25 @@ initializer
 
 initializer_list
 	: initializer                      
-	| initializer_list ',' initializer { $$ = nl_push(node_list, node_init('L', "initializer-list", $1, $3, NULL)); assign($$); }
+	| initializer_list ',' initializer { $$ = nl_push(node_list, node_init(LIST, "initializer-list", $1, $3, NULL)); assign($$); }
 	;
 
 function_declarator
-	: type IDENTIFIER '(' parameter_list ')' { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2, $4, NULL)); assign($$); }
-	| type IDENTIFIER '(' ')'                { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2,     NULL)); assign($$); }
-	| type IDENTIFIER '(' VOID ')'           { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2,     NULL)); assign($$); }
+	: type IDENTIFIER '(' parameter_list ')' { $$ = nl_push(node_list, node_init(FUN_DEF, "function-declarator", $1, $2, $4, NULL)); assign($$); }
+	| type IDENTIFIER '(' ')'                { $$ = nl_push(node_list, node_init(FUN_DEF, "function-declarator", $1, $2,     NULL)); assign($$); }
+	| type IDENTIFIER '(' VOID ')'           { $$ = nl_push(node_list, node_init(FUN_DEF, "function-declarator", $1, $2,     NULL)); assign($$); }
 	| type IDENTIFIER '(' error ')'          { }
 	;
 
 parameter_list
 	: parameter
-	| parameter_list ',' parameter  { $$ = nl_push(node_list, node_init('L', "parameter-list", $1, $3, NULL)); assign($$); }
+	| parameter_list ',' parameter  { $$ = nl_push(node_list, node_init(LIST, "parameter-list", $1, $3, NULL)); assign($$); }
 	;
 
 parameter
-	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init('D', "declarator-variable", $1, $2    , NULL)); /*assign($$);*/ }
-	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2    , NULL)); /*assign($$);*/ }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2, $4, NULL)); /*assign($$);*/ }
+	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init(DECL_VAR, "declarator-variable", $1, $2    , NULL)); /*assign($$);*/ }
+	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2    , NULL)); /*assign($$);*/ }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2, $4, NULL)); /*assign($$);*/ }
 	;
 
 compound_statement
@@ -113,15 +121,16 @@ compound_statement
 	| '{'	{
 				Table * t =  ts_push(context_stack, table_init(16));
 				printf("enter scope (new context %p)\n", (void*) t);
-	} statement_list '}' {
+			}
+	statement_list '}' {
 				$$ = $3;
 				printf("exit scope\n");
-	}
+			}
 	;
 
 statement_list
 	: statement                
-	| statement_list statement { $$ = nl_push(node_list, node_init('L', "statement-list", $1, $2, NULL)); assign($$); }
+	| statement_list statement { $$ = nl_push(node_list, node_init(LIST, "statement-list", $1, $2, NULL)); assign($$); }
 	;
 
 statement
@@ -202,9 +211,9 @@ unary_expression
 
 postfix_expression
 	: primary_expression
-	| postfix_expression '[' assignment_expression ']' { $$ = nl_push(node_list, node_init('V'   , "vector-index" , $1, $3, NULL)); assign($$); }
-	| postfix_expression '(' ')'                       { $$ = nl_push(node_list, node_init('C'   , "function-call", $1    , NULL)); assign($$); }
-	| postfix_expression '(' argument_list ')'         { $$ = nl_push(node_list, node_init('C'   , "function-call", $1, $3, NULL)); assign($$); }
+	| postfix_expression '[' assignment_expression ']' { $$ = nl_push(node_list, node_init(VEC_INDEX, "vector-index" , $1, $3, NULL)); assign($$); }
+	| postfix_expression '(' ')'                       { $$ = nl_push(node_list, node_init(FUN_CALL , "function-call", $1    , NULL)); assign($$); }
+	| postfix_expression '(' argument_list ')'         { $$ = nl_push(node_list, node_init(FUN_CALL , "function-call", $1, $3, NULL)); assign($$); }
 	;
 
 primary_expression
@@ -217,7 +226,7 @@ primary_expression
 
 argument_list
 	: assignment_expression
-	| argument_list ',' assignment_expression  { $$ = nl_push(node_list, node_init('L', "argument-list", $1, $3, NULL)); assign($$); }
+	| argument_list ',' assignment_expression  { $$ = nl_push(node_list, node_init(LIST, "argument-list", $1, $3, NULL)); assign($$); }
 	;
 
 type

@@ -874,22 +874,22 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 51 "language.l"
-{ update_position(); int t = VOID ; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+{ update_position(); int t = VOID ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 52 "language.l"
-{ update_position(); int t = CHAR ; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+{ update_position(); int t = CHAR ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 53 "language.l"
-{ update_position(); int t = INT  ; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+{ update_position(); int t = INT  ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 54 "language.l"
-{ update_position(); int t = FLOAT; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+{ update_position(); int t = FLOAT; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
 	YY_BREAK
 /* Arithmetical operators */
 case 17:
@@ -2075,9 +2075,9 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		yyerror("lexical error, identifier exceeds 32 characters.");
-		yynerrs++;
-		return INVALID_IDENTIFIER;
+		yyerror("warning (lexical), identifier exceeds 32 characters.");
+		//yynerrs++;
+		return IDENTIFIER;
 	} else {
 		int t = IDENTIFIER; 
 		yylval.node = nl_push(node_list, node_init(t, yytext, NULL));

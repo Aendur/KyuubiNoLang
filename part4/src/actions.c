@@ -1,10 +1,14 @@
 #include "actions.h"
+#include "parser.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 //extern Table * symbol_table;
 extern Tablestack * context_stack;
+extern int nline;
+extern int ncol0;
+extern int yynerrs;
 
 
 void assign(Node * node) {
@@ -24,7 +28,17 @@ Table * enclose(Node * node, const char * name) {
 		pair = table_insert(context_stack->top, key);
 		free(key);
 	} else {
-		pair = table_insert(context_stack->top, name);
+		struct pair * pair = table_find(context_stack->top, name);
+		if (pair != NULL) {
+			yynerrs++;
+			char * msg = malloc(64);
+			snprintf(msg, 64, "semantic error: redefinition of %s\n", name);
+			yyerror(msg);
+			free(msg);
+			//return pair;
+		} else {
+			pair = table_insert(context_stack->top, name);
+		}
 	}
 
 	pair->attr->node    = node;
@@ -71,7 +85,7 @@ const char* add_symbol_fun(Node * node) {
 	if (fnode->nleaves > 2) {
 		Node * plist = fnode->leaf[2];
 		Node * param;
-		while(plist->nleaves > 1 && plist->type == 'L') {
+		while(plist->nleaves > 1 && plist->type == LIST) {
 			param = plist->leaf[1];
 
 			// DISCOVER PARAM TYPE
@@ -80,8 +94,8 @@ const char* add_symbol_fun(Node * node) {
 			
 			// DISCOVER PARAM ID
 			// ID   = param->leaf[1]
-			if (param->type == 'D') { add_symbol_var(param); }
-			else if (param->type == 'E') { add_symbol_arr(param); }
+			if (param->type == DECL_VAR) { add_symbol_var(param); }
+			else if (param->type == DECL_VEC) { add_symbol_arr(param); }
 			
 			// get next
 			plist = plist->leaf[0];
@@ -94,8 +108,8 @@ const char* add_symbol_fun(Node * node) {
 			
 		// DISCOVER PARAM ID
 		// ID   = param->leaf[1]
-		if (plist->type == 'D') { add_symbol_var(plist); }
-		else if (plist->type == 'E') { add_symbol_arr(plist); }
+		if (plist->type == DECL_VAR) { add_symbol_var(plist); }
+		else if (plist->type == DECL_VEC) { add_symbol_arr(plist); }
 	}
 
 	return key;

@@ -71,7 +71,14 @@ extern int yydebug;
     CONSTANT = 277,
     UNRECOGNIZED_TOKEN = 278,
     INVALID_IDENTIFIER = 279,
-    INVALID_CHAR_CONST = 280
+    INVALID_CHAR_CONST = 280,
+    TYPE = 281,
+    LIST = 282,
+    FUN_DEF = 283,
+    FUN_CALL = 284,
+    DECL_VAR = 285,
+    DECL_VEC = 286,
+    VEC_INDEX = 287
   };
 #endif
 
@@ -83,7 +90,7 @@ union YYSTYPE
 
 	struct node * node;
 
-#line 87 "src/parser.h"
+#line 94 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -96,10 +103,10 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 32 "language.y"
+#line 40 "language.y"
 
 	void yyerror (char const *);	
 
-#line 104 "src/parser.h"
+#line 111 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */
