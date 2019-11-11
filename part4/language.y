@@ -62,7 +62,7 @@ declaration_list
 
 declaration
 	: function_declarator ';'                
-	| function_declarator compound_statement { $$ = nl_push(node_list, node_init('F', "function-definition", $1, $2, NULL)); assign($$); /*add_symbol_fun($$);*/ }
+	| function_declarator compound_statement { $$ = nl_push(node_list, node_init('F', "function-definition", $1, $2, NULL)); assign($$); enclose($2, add_symbol_fun($$)); }
 	| init_declarator ';'                    
 	| error ';'                              { }
 	| error compound_statement               { }
@@ -91,9 +91,9 @@ initializer_list
 	;
 
 function_declarator
-	: type IDENTIFIER '(' parameter_list ')' { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2, $4, NULL)); assign($$); add_symbol_fun($$); }
-	| type IDENTIFIER '(' ')'                { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2,     NULL)); assign($$); add_symbol_fun($$); }
-	| type IDENTIFIER '(' VOID ')'           { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2,     NULL)); assign($$); add_symbol_fun($$); }
+	: type IDENTIFIER '(' parameter_list ')' { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2, $4, NULL)); assign($$); }
+	| type IDENTIFIER '(' ')'                { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2,     NULL)); assign($$); }
+	| type IDENTIFIER '(' VOID ')'           { $$ = nl_push(node_list, node_init('F', "function-declarator", $1, $2,     NULL)); assign($$); }
 	| type IDENTIFIER '(' error ')'          { }
 	;
 
@@ -103,9 +103,9 @@ parameter_list
 	;
 
 parameter
-	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init('D', "declarator-variable", $1, $2    , NULL)); assign($$); }
-	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2    , NULL)); assign($$); }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2, $4, NULL)); assign($$); }
+	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init('D', "declarator-variable", $1, $2    , NULL)); /*assign($$);*/ }
+	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2    , NULL)); /*assign($$);*/ }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init('E', "declarator-array"   , $1, $2, $4, NULL)); /*assign($$);*/ }
 	;
 
 compound_statement
@@ -130,19 +130,19 @@ statement
 	| assignment_expression ';' 
 	| conditional_statement     
 	| iteration_statement       
-	| compound_statement        { $$ = $1; }
+	| compound_statement        { enclose($1,NULL); $$ = $1; }
 	| return_statement ';'      
 	| error ';'                 { }
 	;
 
 conditional_statement
-	: IF '(' assignment_expression ')' compound_statement                          { $$ = nl_push(node_list, node_init(IF  , "if"     , $3, $5,     NULL)); assign($$); }
-	| IF '(' assignment_expression ')' compound_statement ELSE compound_statement  { $$ = nl_push(node_list, node_init(ELSE, "if-else", $3, $5, $7, NULL)); assign($$); }
+	: IF '(' assignment_expression ')' compound_statement                                                { enclose($5,NULL); $$ = nl_push(node_list, node_init(IF  , "if"     , $3, $5,     NULL)); assign($$); }
+	| IF '(' assignment_expression ')' compound_statement { enclose($5,NULL); } ELSE compound_statement  { enclose($8,NULL); $$ = nl_push(node_list, node_init(ELSE, "if-else", $3, $5, $8, NULL)); assign($$); }
 	;
 
 iteration_statement
-	: WHILE '(' assignment_expression ')' compound_statement          { $$ = nl_push(node_list, node_init(WHILE, "while"   , $3, $5, NULL)); assign($$); }
-	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { $$ = nl_push(node_list, node_init(DO   , "do-while", $2, $5, NULL)); assign($$); }
+	: WHILE '(' assignment_expression ')' compound_statement          { enclose($5,NULL); $$ = nl_push(node_list, node_init(WHILE, "while"   , $3, $5, NULL)); assign($$); }
+	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { enclose($2,NULL); $$ = nl_push(node_list, node_init(DO   , "do-while", $2, $5, NULL)); assign($$); }
 	;
 
 return_statement

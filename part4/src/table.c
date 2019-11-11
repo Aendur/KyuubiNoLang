@@ -146,18 +146,18 @@ Table * table_rehash (Table ** tab) {
 #include "node.h"
 #endif
 // Print table
-void table_printf (Table* tab) {
+// void table_printf (Table* tab) {
+void table_printf (Table* tab, int level) {
+	if (tab == NULL) { return; }
 	for (unsigned int i = 0; i < tab->n_buckets; ++i) {
 		struct pair * pair = tab->buckets[i].first;
 		while(pair != NULL) {
-			printf("%s %p ",pair->key, (void*) pair->attr);
-			if(pair->attr != NULL) {
-				printf("%s\n", pair->attr->node->name);
-			} else {
-				printf("NULL\n");
-			}
-			//pair_print(pair);
+			for (int lvl = 0; lvl < level; ++lvl) { printf("   "); } // indent
+			printf("%s\n",pair->key); //, (void*) pair->attr);
 
+			if (pair->attr->context != NULL) {
+				table_printf(pair->attr->context, level+1);
+			}
 			pair = pair->next;
 		}
 	}

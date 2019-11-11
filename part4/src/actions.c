@@ -11,30 +11,111 @@ void assign(Node * node) {
 	node->context = context_stack->top;
 }
 
+Table * enclose(Node * node, const char * name) {
+	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
+
+	Table * leaf_context = ts_pull(context_stack);
+	leaf_context->root = context_stack->top;
+
+	struct pair * pair;
+	if (name == NULL) {
+		char * key = malloc(3 * sizeof(unsigned long));
+		snprintf(key, 20, "%p", (void*) leaf_context);
+		pair = table_insert(context_stack->top, key);
+		free(key);
+	} else {
+		pair = table_insert(context_stack->top, name);
+	}
+
+	pair->attr->node    = node;
+	pair->attr->context = leaf_context;
+	return leaf_context;
+}
+
 void add_symbol_var(Node * node) {
-	// (void) node;
-	// printf("Include variable in table.\n");
-	
+	if(node == NULL) { fprintf(stderr, "add var from null node\n"); return; }
+	// DISCOVER TYPE
 	// type = node->leaf[0];
+
+	// DISCOVER NAME
 	const char * key;
 	if (node->nleaves > 1) {
 		key = node->leaf[1]->name;
 	} else {
-		fprintf(stderr, "node has no identifier");
+		fprintf(stderr, "node has no identifier\n");
 	}
 	
 	struct pair * pair = table_insert(context_stack->top, key);
 	pair->attr->node = node;
 }
 
-void add_symbol_fun(Node * node) {
-	(void) node;
-	printf("Include function in table.\n");
+const char* add_symbol_fun(Node * node) {
+	if(node == NULL) { fprintf(stderr, "add func from null node\n"); return NULL; }
+	
+	// node->leaf[0] = function-declarator
+	Node * fnode; 
+	if (node->nleaves > 0) { fnode = node->leaf[0]; }
+	else { fprintf(stderr, "func has no declarator\n"); return NULL; }
+	
+	// DISCOVER RETURN TYPE
+	// fnode->leaf[0] // type
+	
+	// DISCOVER FUNCTN NAME
+	// fnode->leaf[1] // IDENTIFIER
+	const char * key;
+	if (fnode->nleaves > 1) { key = fnode->leaf[1]->name; }
+	else { fprintf(stderr, "func node has no identifier\n"); return NULL; }
+	
+	// DISCOVER PARAMS
+	// fnode->leaf[2] // parameter-list
+	if (fnode->nleaves > 2) {
+		Node * plist = fnode->leaf[2];
+		Node * param;
+		while(plist->nleaves > 1 && plist->type == 'L') {
+			param = plist->leaf[1];
+
+			// DISCOVER PARAM TYPE
+			// type = param->leaf[0]
+			// if(param->nleaves > 0) {}
+			
+			// DISCOVER PARAM ID
+			// ID   = param->leaf[1]
+			if (param->type == 'D') { add_symbol_var(param); }
+			else if (param->type == 'E') { add_symbol_arr(param); }
+			
+			// get next
+			plist = plist->leaf[0];
+		}
+
+		// LAST PARAM
+		// DISCOVER PARAM TYPE
+		// type = param->leaf[0]
+		// if(param->nleaves > 0) {}
+			
+		// DISCOVER PARAM ID
+		// ID   = param->leaf[1]
+		if (plist->type == 'D') { add_symbol_var(plist); }
+		else if (plist->type == 'E') { add_symbol_arr(plist); }
+	}
+
+	return key;
 }
 
 void add_symbol_arr(Node * node) {
-	(void) node;
-	printf("Include array in table.\n");
+	if(node == NULL) { fprintf(stderr, "add arr from null node\n"); return; }
+	// DISCOVER TYPE
+	// type = node->leaf[0];
+
+	// DISCOVER NAME
+	const char * key;
+	if (node->nleaves > 1) {
+		key = node->leaf[1]->name;
+	} else {
+		fprintf(stderr, "node has no identifier\n");
+	}
+	
+	struct pair * pair = table_insert(context_stack->top, key);
+	pair->attr->node = node;
 }
 
 /*
@@ -42,21 +123,6 @@ void add_symbol_var(Node* node) {
 	char * name = node->leaf[1]->name;
 	if(symtab_find(symbol_table, name) == NULL) {
 		symtab_insert(&symbol_table, name, node);
-	}
-}
-
-void recurse_types(Node * n0, char ** str) {
-	if (n0 == NULL) { return; }
-	if (n0->type == 'D' && n0->nleaves > 0) {
-		**str = n0->leaf[0]->name[0];
-		*str = (*str) + 1;
-	} else if (n0->type == 'E' && n0->nleaves > 0) {
-		**str = n0->leaf[0]->name[0] - 0x20;
-		*str = (*str) + 1;
-	} else {
-		for(int i = 0; i < n0->nleaves; ++i) {
-			recurse_types(n0->leaf[i], str);
-		}
 	}
 }
 

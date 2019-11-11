@@ -92,7 +92,7 @@ void ts_printf(Tablestack * ts) {
 	tab = ts->top;
 	while (tab != NULL) {
 		printf("%p (%lu)\n", (void*) tab, ts->size);
-		table_printf(tab);
+		table_printf(tab, 0);
 		tab = tab->next;
 		printf("-----\n");
 	}

@@ -7,11 +7,12 @@
 
 
 void add_symbol_var(Node* node);
-void add_symbol_fun(Node* node);
+const char* add_symbol_fun(Node* node);
 void add_symbol_arr(Node* node);
-void recurse_types(Node * n0, char ** str);
+//void recurse_types(Node * n0, char ** str);
 
 void assign(Node * node);
+Table * enclose(Node * node, const char * name);
 
 #endif
 

@@ -65,7 +65,7 @@ struct pair * pair_init(const char * key); //, struct attr * val);
 void pair_print(struct pair * pair);
 
 void table_printm (Table* tab);
-void table_printf (Table* tab);
+void table_printf (Table* tab, int level);
 
 unsigned long round_to_2(unsigned long x);
 
