@@ -1,4 +1,4 @@
-- Usando makefile, eu obtenho o seguinte erro:
+﻿- Usando makefile, eu obtenho o seguinte erro:
 
 [claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ make
 flex language.l
@@ -31,7 +31,6 @@ ser ligada com a flag -lfl. De todo modo, adicionei a diretiva %noyywrap para ev
 
 
 
-
 - Suas mensagens de erro não parecem condizer com a gramática: == não é reconhecido?
 
 [claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ ./a.out tests/test_error1.c
@@ -41,17 +40,17 @@ Line 2, column 22: syntax error, unexpected UNRECOGNIZED_TOKEN
 Line 2, column 26: lexical error, unrecognized token
 Line 2, column 28: lexical error, invalid character constant.
 
+[claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ cat tests/test_error1.c
+char main(int argc, char** argv) {
+return argc == 0 ? 0 : 'abcdef';
+}
+
 
 => As mensagens de erros referente aos tokens não reconhecidos se referem respectivamente a '?' e a ':'.
 Pode ter havido confusão pois a contagem das colunas quando há tabulação não está boa. Modifiquei
 as mensagens de erro para informar a que eles se referem quando isso acontecer.
 
 
-
-[claudia@cavalhada Diogo César Ferreira_2126242_assignsubmission_file_]$ cat tests/test_error1.c
-char main(int argc, char** argv) {
-return argc == 0 ? 0 : 'abcdef';
-}
 
 - Em test_error2.c:
 
@@ -67,6 +66,8 @@ Você forçou o reinício do reconhecimento no próximo ';'?
 
 => Esta construção está correta, esta linha era para testar se o parser iria
 reconhecê-la. É possível fazer isso em C também.
+
+
 
 - Em text_valid1.c: sua tabela de símbolos não está completa. Você vai precisar inserir todos os identificadores, incluindo funções.
 
