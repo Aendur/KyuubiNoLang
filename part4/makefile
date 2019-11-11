@@ -7,7 +7,7 @@ bison:
 	bison -Wall language.y
 
 dbg:
-	gcc -std=c18 -m64 -g -Wall -Wextra -Wpedantic \
+	gcc -std=c18 -m64 -g -Wall -Wextra -Wpedantic -DDEBUG \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \

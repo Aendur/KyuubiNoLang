@@ -14,7 +14,7 @@ Node * node_init(int type, const char * name, ...) {
 	n0->root = NULL;
 	n0->type = type;
 	n0->name = malloc(strlen(name) + 1);
-	//n0->symtab_entry = NULL;
+	n0->context = NULL;
 	strcpy(n0->name, name);
 
 	// init va
@@ -74,7 +74,11 @@ void print_node(Node * n) {
 void print_tree(Node * root, int level) {
 	int lvl = 0;
 	while(lvl++ < level) { printf("   "); }
+	#ifndef DEBUG
 	printf("%-s\n", root->name);
+	#else
+	printf("%-s %p\n", root->name, (void*) root->context);
+	#endif
 	for(int l = 0; l < root->nleaves; ++l) { print_tree(root->leaf[l], level+1); }
 }
 

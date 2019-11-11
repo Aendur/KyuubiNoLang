@@ -25,7 +25,7 @@ struct node {
 	int  nleaves;
 	int     type;
 	char *  name;
-	//struct symtab_pair * symtab_entry;
+	struct table * context;
 };
 
 Node * node_init(int, const char *, ...);

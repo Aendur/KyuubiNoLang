@@ -14,7 +14,9 @@ Tablestack * ts_init(void);
 void ts_free(Tablestack ** ts);
 Table * ts_push(Tablestack * ts, Table * tab);
 Table * ts_pull(Tablestack * ts);
-void ts_print(Tablestack * ts);
+void ts_printf(Tablestack * ts);
+void ts_printm(Tablestack * ts);
+//void ts_printt(Tablestack * ts);
 
 #endif
 

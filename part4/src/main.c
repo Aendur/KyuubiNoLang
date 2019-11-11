@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 		printf("SYMBOL TABLE\n");
 		printf("------------------------------\n");
 		// table_printf(context_stack->bot);
-		ts_print(context_stack);
+		ts_printf(context_stack);
 	}
 
 

@@ -43,7 +43,7 @@ void table_free (Table** tab) {
 		while (pair != NULL) {
 			next = pair->next;
 			free((char*) pair->key); pair->key = NULL;
-			//free(pair->val); pair->val = NULL;
+			//free(pair->val); pair->val = NULL; // FIX THIS
 			free(pair);
 			pair = next;
 			table->buckets[i].size--;
@@ -135,7 +135,14 @@ Table * table_rehash (Table ** tab) {
 
 // Print table
 void table_printf (Table* tab) {
-	table_printm(tab);
+	for (unsigned int i = 0; i < tab->n_buckets; ++i) {
+		struct pair * pair = tab->buckets[i].first;
+		while(pair != NULL) {
+			printf("%s %p\n",pair->key, (void*) pair->val);
+			pair = pair->next;
+		}
+	}
+	//table_printm(tab);
 }
 
 // Print table metadata

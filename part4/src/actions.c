@@ -3,12 +3,24 @@
 #include <string.h>
 #include <stdio.h>
 
-extern Table * symbol_table;
+//extern Table * symbol_table;
+extern Tablestack * context_stack;
 
+
+void assign(Node * node) {
+	node->context = context_stack->top;
+}
 
 void add_symbol_var(Node * node) {
-	(void) node;
-	printf("Include variable in table.\n");
+	// (void) node;
+	// printf("Include variable in table.\n");
+	struct symbol * val = calloc(1, sizeof(struct symbol));
+	val->node = node;
+
+	// type = node->leaf[0];
+	const char * key;
+	if (node->nleaves > 1) { key = node->leaf[1]->name; } else { fprintf(stderr, "node has no identifier"); }
+	table_insert(context_stack->top, key, val);
 }
 
 void add_symbol_fun(Node * node) {

@@ -15,22 +15,22 @@ struct arg_type {
 	int type;
 	struct arg_type * next;
 };
-
+*/
 struct symbol {
-	int n_args;
-	struct arg_type * first_arg;
-	struct arg_type * last_arg;
-	union {
-		float fval;
-		int   ival;
-		char  cval;
-		char* sval;
-	} value;
-	struct symtab_table * root;
-	struct symtab_table * leaf;
+	// int n_args;
+	// struct arg_type * first_arg;
+	// struct arg_type * last_arg;
+	// union {
+	// 	float fval;
+	// 	int   ival;
+	// 	char  cval;
+	// 	char* sval;
+	// } value;
+	// struct symtab_table * root;
+	// struct symtab_table * leaf;
 	struct node * node;
 };
-*/
+
 
 struct bucket {
 	struct pair * first;
