@@ -16,7 +16,7 @@ struct arg_type {
 	struct arg_type * next;
 };
 */
-struct symbol {
+struct attr {
 	// int n_args;
 	// struct arg_type * first_arg;
 	// struct arg_type * last_arg;
@@ -27,8 +27,8 @@ struct symbol {
 	// 	char* sval;
 	// } value;
 	// struct symtab_table * root;
-	// struct symtab_table * leaf;
 	struct node * node;
+	struct table * context;
 };
 
 
@@ -40,7 +40,7 @@ struct bucket {
 
 struct pair {
 	const char * key;
-	struct symbol * val;
+	struct attr * attr;
 	struct pair * next;
 };
 
@@ -58,10 +58,10 @@ void table_free (Table** tab);
 double table_loadf (Table* tab);
 unsigned long table_hash (const char * key);
 struct pair * table_find (Table* tab, const char* key);
-struct pair * table_insert (Table* tab, const char* key, struct symbol* val);
+struct pair * table_insert (Table* tab, const char* key); //, struct attr* val);
 Table * table_rehash (Table** tab);
 
-struct pair * pair_init(const char * key, struct symbol * val);
+struct pair * pair_init(const char * key); //, struct attr * val);
 void pair_print(struct pair * pair);
 
 void table_printm (Table* tab);

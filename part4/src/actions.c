@@ -14,13 +14,17 @@ void assign(Node * node) {
 void add_symbol_var(Node * node) {
 	// (void) node;
 	// printf("Include variable in table.\n");
-	struct symbol * val = calloc(1, sizeof(struct symbol));
-	val->node = node;
-
+	
 	// type = node->leaf[0];
 	const char * key;
-	if (node->nleaves > 1) { key = node->leaf[1]->name; } else { fprintf(stderr, "node has no identifier"); }
-	table_insert(context_stack->top, key, val);
+	if (node->nleaves > 1) {
+		key = node->leaf[1]->name;
+	} else {
+		fprintf(stderr, "node has no identifier");
+	}
+	
+	struct pair * pair = table_insert(context_stack->top, key);
+	pair->attr->node = node;
 }
 
 void add_symbol_fun(Node * node) {

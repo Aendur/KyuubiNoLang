@@ -43,7 +43,7 @@ void table_free (Table** tab) {
 		while (pair != NULL) {
 			next = pair->next;
 			free((char*) pair->key); pair->key = NULL;
-			//free(pair->val); pair->val = NULL; // FIX THIS
+			free(pair->attr); pair->attr = NULL;
 			free(pair);
 			pair = next;
 			table->buckets[i].size--;
@@ -84,13 +84,15 @@ struct pair * table_find (Table* tab, const char* key) {
 }
 
 // Insert (key,val) pair in table
-struct pair* table_insert (Table* tab, const char* key, struct symbol* val) {
+// struct pair* table_insert (Table* tab, const char* key, struct attr* val) {
+struct pair* table_insert (Table* tab, const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to insert on null object\n"); return NULL; }
 	unsigned long hash = table_hash(key);
 	unsigned long index = hash % tab->n_buckets;
 
 	if (tab->buckets[index].size == 0) {
-		struct pair * pair = pair_init(key, val);
+		// struct pair * pair = pair_init(key, val);
+		struct pair * pair = pair_init(key);
 		tab->buckets[index].first = pair;
 		tab->buckets[index].last = pair;
 		tab->buckets[index].size++;
@@ -101,7 +103,8 @@ struct pair* table_insert (Table* tab, const char* key, struct symbol* val) {
 		while(pair != NULL && strcmp(pair->key, key) != 0) { pair = pair->next; }
 
 		if (pair == NULL) { // key not found
-			pair = pair_init(key, val);
+			// pair = pair_init(key, val);
+			pair = pair_init(key);
 			tab->buckets[index].last->next = pair;
 			tab->buckets[index].last = pair;
 			tab->buckets[index].size++;
@@ -124,7 +127,13 @@ Table * table_rehash (Table ** tab) {
 	for (unsigned int i = 0; i < oldtab->n_buckets; ++i) {
 		struct pair * pair = oldtab->buckets[i].first;
 		while(pair != NULL) {
-			table_insert(newtab, pair->key, pair->val);
+			// table_insert(newtab, pair->key, pair->attr);
+			struct pair * newpair = table_insert(newtab, pair->key);
+			if (newpair == NULL) { fprintf(stderr, "unable to insert newpair\n"); }
+			else {
+				// COPY VAL
+				memcpy(newpair->attr, pair->attr, sizeof(struct attr));
+			}
 			pair = pair->next;
 		}
 	}
@@ -133,12 +142,22 @@ Table * table_rehash (Table ** tab) {
 	return newtab;
 }
 
+#ifdef DEBUG
+#include "node.h"
+#endif
 // Print table
 void table_printf (Table* tab) {
 	for (unsigned int i = 0; i < tab->n_buckets; ++i) {
 		struct pair * pair = tab->buckets[i].first;
 		while(pair != NULL) {
-			printf("%s %p\n",pair->key, (void*) pair->val);
+			printf("%s %p ",pair->key, (void*) pair->attr);
+			if(pair->attr != NULL) {
+				printf("%s\n", pair->attr->node->name);
+			} else {
+				printf("NULL\n");
+			}
+			//pair_print(pair);
+
 			pair = pair->next;
 		}
 	}
@@ -177,12 +196,14 @@ void table_print_debug (Table* tab) {
 }
 
 // Construct a (key,val) pair object
-struct pair * pair_init(const char * key, struct symbol * val) {
+// struct pair * pair_init(const char * key, struct attr * val) {
+struct pair * pair_init(const char * key) {
 	size_t len = strlen(key) + 1;
 	struct pair * pair = malloc(sizeof(struct pair));
 	pair->key = malloc(len);
 	pair->key = memcpy((char*) pair->key, key, len);
-	pair->val = val;
+	// pair->attr = val;
+	pair->attr = calloc(1, sizeof(struct attr));
 	pair->next = NULL;
 	return pair;
 }
@@ -193,7 +214,7 @@ void pair_print(struct pair * pair) {
 	printf("addr: %p ", (void*) pair);
 	if (pair != NULL) {
 		printf("(\"%s\",", pair->key);
-		printf("%p,", (void*) pair->val);
+		printf("%p,", (void*) pair->attr);
 		printf("%p)", (void*) pair->next);
 	}
 	printf("\n");
