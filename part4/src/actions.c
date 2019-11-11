@@ -57,10 +57,48 @@ void add_symbol_var(Node * node) {
 		key = node->leaf[1]->name;
 	} else {
 		fprintf(stderr, "node has no identifier\n");
+		return;
 	}
 	
-	struct pair * pair = table_insert(context_stack->top, key);
-	pair->attr->node = node;
+	struct pair * pair = table_find(context_stack->top, key);
+	if (pair == NULL) {
+		pair = table_insert(context_stack->top, key);
+		pair->attr->node = node;
+	} else {
+		yynerrs++;
+		char * msg = malloc(128);
+		snprintf(msg, 128, "semantic error: redefinition of %s\n", key);
+		yyerror(msg);
+		free(msg);
+	}
+
+}
+
+void add_symbol_arr(Node * node) {
+	if(node == NULL) { fprintf(stderr, "add arr from null node\n"); return; }
+	// DISCOVER TYPE
+	// type = node->leaf[0];
+
+	// DISCOVER NAME
+	const char * key;
+	if (node->nleaves > 1) {
+		key = node->leaf[1]->name;
+	} else {
+		fprintf(stderr, "node has no identifier\n");
+		return;
+	}
+	
+	struct pair * pair = table_find(context_stack->top, key);
+	if (pair == NULL) {
+		pair = table_insert(context_stack->top, key);
+		pair->attr->node = node;
+	} else {
+		yynerrs++;
+		char * msg = malloc(128);
+		snprintf(msg, 128, "semantic error: redefinition of %s\n", key);
+		yyerror(msg);
+		free(msg);
+	}
 }
 
 const char* add_symbol_fun(Node * node) {
@@ -115,22 +153,6 @@ const char* add_symbol_fun(Node * node) {
 	return key;
 }
 
-void add_symbol_arr(Node * node) {
-	if(node == NULL) { fprintf(stderr, "add arr from null node\n"); return; }
-	// DISCOVER TYPE
-	// type = node->leaf[0];
-
-	// DISCOVER NAME
-	const char * key;
-	if (node->nleaves > 1) {
-		key = node->leaf[1]->name;
-	} else {
-		fprintf(stderr, "node has no identifier\n");
-	}
-	
-	struct pair * pair = table_insert(context_stack->top, key);
-	pair->attr->node = node;
-}
 
 /*
 void add_symbol_var(Node* node) {
