@@ -17,17 +17,7 @@ struct arg_type {
 };
 */
 struct attr {
-	// int n_args;
-	// struct arg_type * first_arg;
-	// struct arg_type * last_arg;
-	// union {
-	// 	float fval;
-	// 	int   ival;
-	// 	char  cval;
-	// 	char* sval;
-	// } value;
-	// struct symtab_table * root;
-	struct node * node;
+	//struct node * node;
 	struct table * context;
 };
 
@@ -38,6 +28,7 @@ struct bucket {
 	unsigned long size;
 };
 
+typedef struct pair Symbol;
 struct pair {
 	const char * key;
 	struct attr * attr;

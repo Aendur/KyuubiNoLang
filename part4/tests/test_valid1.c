@@ -1,7 +1,7 @@
 int gvar1;
 int gvar2 = 10;
 
-int func2(int x);
+//int func2(int x);
 int func3(int x) {
 	int y = x;
 	if(!x) {

@@ -1,49 +1,68 @@
-#include "actions.h"
-#include "parser.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
+// #include "actions.h"
+// #include "parser.h"
+// #include <stdlib.h>
+// #include <string.h>
+// #include <stdio.h>
 //extern Table * symbol_table;
-extern Tablestack * context_stack;
-extern int nline;
-extern int ncol0;
-extern int yynerrs;
+//extern Tablestack * context_stack;
+//extern int nline;
+//extern int ncol0;
+//extern int yynerrs;
 
 
-void assign(Node * node) {
+Table * assign(Node * node) {
+	if (context_stack->top == NULL) { fprintf(stderr, "assign: stack is empty\n"); return NULL; }
 	node->context = context_stack->top;
+	return context_stack->top;
 }
 
-Table * enclose(Node * node, const char * name) {
-	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
 
-	Table * leaf_context = ts_pull(context_stack);
-	leaf_context->root = context_stack->top;
+void redefinition_error(const char * name) {
+	char msg[128];
+	snprintf(msg, 128, "semantic error: redefinition of %s\n", name);
+	yyerror(msg);
+	yynerrs++;
+}
 
-	struct pair * pair;
+Table * begin(const char * name) {
+	if (context_stack->top == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
+
+	// create a new context
+	Table * new_context = table_init(16);
+
+	// name context
+	char * key;
 	if (name == NULL) {
-		char * key = malloc(3 * sizeof(unsigned long));
-		snprintf(key, 20, "%p", (void*) leaf_context);
-		pair = table_insert(context_stack->top, key);
-		free(key);
+		key = malloc(40);
+		snprintf(key, 40, "%p", (void*) new_context);;
 	} else {
-		struct pair * pair = table_find(context_stack->top, name);
-		if (pair != NULL) {
-			yynerrs++;
-			char * msg = malloc(64);
-			snprintf(msg, 64, "semantic error: redefinition of %s\n", name);
-			yyerror(msg);
-			free(msg);
-			//return pair;
-		} else {
-			pair = table_insert(context_stack->top, name);
-		}
+		key = malloc(strlen(name)+1);
+		strcpy(key, name);
+	} 
+
+	// search for key in the current context
+	Symbol * symbol = table_find(context_stack->top, key);
+	if (symbol == NULL) {
+		// insert symbol
+		symbol = table_insert(context_stack->top, key);
+		symbol->attr->context = new_context;
+
+		// push stack
+		new_context->root = context_stack->top;
+		ts_push(context_stack, new_context);
+	} else {
+		redefinition_error(key);
+		table_free(&new_context);
 	}
 
-	pair->attr->node    = node;
-	pair->attr->context = leaf_context;
-	return leaf_context;
+	free(key);
+	return new_context;
+}
+
+Table * finish(void) {
+	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
+	Table * context = ts_pull(context_stack);
+	return  context;
 }
 
 void add_symbol_var(Node * node) {
@@ -60,10 +79,10 @@ void add_symbol_var(Node * node) {
 		return;
 	}
 	
-	struct pair * pair = table_find(context_stack->top, key);
-	if (pair == NULL) {
-		pair = table_insert(context_stack->top, key);
-		pair->attr->node = node;
+	Symbol * symbol = table_find(context_stack->top, key);
+	if (symbol == NULL) {
+		symbol = table_insert(context_stack->top, key);
+		//symbol->attr->node = node;
 	} else {
 		yynerrs++;
 		char * msg = malloc(128);
@@ -88,10 +107,10 @@ void add_symbol_arr(Node * node) {
 		return;
 	}
 	
-	struct pair * pair = table_find(context_stack->top, key);
-	if (pair == NULL) {
-		pair = table_insert(context_stack->top, key);
-		pair->attr->node = node;
+	Symbol * symbol = table_find(context_stack->top, key);
+	if (symbol == NULL) {
+		symbol = table_insert(context_stack->top, key);
+		// symbol->attr->node = node;
 	} else {
 		yynerrs++;
 		char * msg = malloc(128);

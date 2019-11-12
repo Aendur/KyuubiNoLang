@@ -28,12 +28,13 @@
 %token VEC_INDEX
 
 %type <node> declaration_list declaration init_declarator declarator initializer
-%type <node> initializer_list function_declarator parameter_list compound_statement statement_list
+%type <node> initializer_list parameter_list compound_statement statement_list
 %type <node> statement conditional_statement iteration_statement return_statement assignment_expression
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
 %type <node> multiplicative_expression postfix_expression primary_expression argument_list type
 %type <node> unary_expression
 %type <node> parameter
+%type <node> function_definition
 
 %start start
 
@@ -69,8 +70,7 @@ declaration_list
 	;
 
 declaration
-	: function_declarator ';'                
-	| function_declarator compound_statement { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2, NULL)); assign($$); enclose($2, add_symbol_fun($$)); }
+	: function_definition                    
 	| init_declarator ';'                    
 	| error ';'                              { }
 	| error compound_statement               { }
@@ -98,11 +98,14 @@ initializer_list
 	| initializer_list ',' initializer { $$ = nl_push(node_list, node_init(LIST, "initializer-list", $1, $3, NULL)); assign($$); }
 	;
 
-function_declarator
-	: type IDENTIFIER '(' parameter_list ')' { $$ = nl_push(node_list, node_init(FUN_DEF, "function-declarator", $1, $2, $4, NULL)); assign($$); }
-	| type IDENTIFIER '(' ')'                { $$ = nl_push(node_list, node_init(FUN_DEF, "function-declarator", $1, $2,     NULL)); assign($$); }
-	| type IDENTIFIER '(' VOID ')'           { $$ = nl_push(node_list, node_init(FUN_DEF, "function-declarator", $1, $2,     NULL)); assign($$); }
-	| type IDENTIFIER '(' error ')'          { }
+function_definition
+	: type IDENTIFIER '(' parameter_list ')' '{' {begin($2->name);} statement_list '}' { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2, $4, $8, NULL)); assign($$); }
+	| type IDENTIFIER '(' VOID ')'           '{' {begin($2->name);} statement_list '}' { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2,     $8, NULL)); assign($$); }
+	| type IDENTIFIER '(' ')'                '{' {begin($2->name);} statement_list '}' { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2,     $7, NULL)); assign($$); }
+	| type IDENTIFIER '(' parameter_list ')' '{' '}'                { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2, $4,     NULL)); assign($$); }
+	| type IDENTIFIER '(' VOID ')'           '{' '}'                { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2,         NULL)); assign($$); }
+	| type IDENTIFIER '(' ')'                '{' '}'                { $$ = nl_push(node_list, node_init(FUN_DEF, "function-definition", $1, $2,         NULL)); assign($$); }
+	| type IDENTIFIER '(' error ')'           { }
 	;
 
 parameter_list
@@ -111,21 +114,14 @@ parameter_list
 	;
 
 parameter
-	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init(DECL_VAR, "declarator-variable", $1, $2    , NULL)); /*assign($$);*/ }
-	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2    , NULL)); /*assign($$);*/ }
-	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2, $4, NULL)); /*assign($$);*/ }
+	: type IDENTIFIER                                { $$ = nl_push(node_list, node_init(DECL_VAR, "declarator-variable", $1, $2    , NULL)); assign($$); }
+	| type IDENTIFIER '[' ']'                        { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2    , NULL)); assign($$); }
+	| type IDENTIFIER '[' assignment_expression ']'  { $$ = nl_push(node_list, node_init(DECL_VEC, "declarator-array"   , $1, $2, $4, NULL)); assign($$); }
 	;
 
 compound_statement
 	: '{' '}'	{ }
-	| '{'	{
-				Table * t =  ts_push(context_stack, table_init(16));
-				printf("enter scope (new context %p)\n", (void*) t);
-			}
-	statement_list '}' {
-				$$ = $3;
-				printf("exit scope\n");
-			}
+	| '{' {begin(NULL);} statement_list '}' { $$ = $3; finish(); }
 	;
 
 statement_list
@@ -139,19 +135,19 @@ statement
 	| assignment_expression ';' 
 	| conditional_statement     
 	| iteration_statement       
-	| compound_statement        { enclose($1,NULL); $$ = $1; }
+	| compound_statement        { $$ = $1; }
 	| return_statement ';'      
 	| error ';'                 { }
 	;
 
 conditional_statement
-	: IF '(' assignment_expression ')' compound_statement                                                { enclose($5,NULL); $$ = nl_push(node_list, node_init(IF  , "if"     , $3, $5,     NULL)); assign($$); }
-	| IF '(' assignment_expression ')' compound_statement { enclose($5,NULL); } ELSE compound_statement  { enclose($8,NULL); $$ = nl_push(node_list, node_init(ELSE, "if-else", $3, $5, $8, NULL)); assign($$); }
+	: IF '(' assignment_expression ')' compound_statement                          { $$ = nl_push(node_list, node_init(IF  , "if"     , $3, $5,     NULL)); assign($$); }
+	| IF '(' assignment_expression ')' compound_statement ELSE compound_statement  { $$ = nl_push(node_list, node_init(ELSE, "if-else", $3, $5, $7, NULL)); assign($$); }
 	;
 
 iteration_statement
-	: WHILE '(' assignment_expression ')' compound_statement          { enclose($5,NULL); $$ = nl_push(node_list, node_init(WHILE, "while"   , $3, $5, NULL)); assign($$); }
-	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { enclose($2,NULL); $$ = nl_push(node_list, node_init(DO   , "do-while", $2, $5, NULL)); assign($$); }
+	: WHILE '(' assignment_expression ')' compound_statement          { $$ = nl_push(node_list, node_init(WHILE, "while"   , $3, $5, NULL)); assign($$); }
+	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { $$ = nl_push(node_list, node_init(DO   , "do-while", $2, $5, NULL)); assign($$); }
 	;
 
 return_statement
@@ -241,3 +237,5 @@ void yyerror (char const * msg) {
 	fprintf(stderr, "Line %d, column %d: %s\n", nline, ncol0, msg);
 }
 
+
+#include "actions.c"

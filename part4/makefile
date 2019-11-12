@@ -15,7 +15,6 @@ dbg:
 	src/table-stack.c \
 	src/parser.c      \
 	src/scanner.c     \
-	src/actions.c     \
 
 rel:
 	gcc -lfl -std=c18 -m64 -O3 \
@@ -26,7 +25,6 @@ rel:
 	src/table-stack.c \
 	src/parser.c      \
 	src/scanner.c     \
-	src/actions.c     \
 
 
 test-node:
