@@ -43,7 +43,7 @@ Table * ts_push(Tablestack * ts, Table * tab) {
 		ts->size = 1;
 		return tab;
 	} else {
-		tab->next = ts->top;
+		tab->below = ts->top;
 		ts->top = tab;
 		ts->size++;
 		return tab;
@@ -56,10 +56,10 @@ Table * ts_pull(Tablestack * ts) {
 	if (ts->size == 0) { fprintf(stderr, "trying to pull from an empty stack\n"); return NULL; }
 	else {
 		Table * tab = ts->top;
-		ts->top = tab->next;
+		ts->top = tab->below;
 		ts->size--;
 		if (ts->size == 0) { ts->bot = NULL; }
-		tab->next = NULL;
+		tab->below = NULL;
 		return tab;
 	}
 }
@@ -69,14 +69,14 @@ void ts_printm(Tablestack * ts) {
 	printf("top:\n");
 	while (tab != NULL) {
 		printf("%p (%lu)\n", (void*) tab, ts->size);
-		tab = tab->next;
+		tab = tab->below;
 	}
 	printf("=====\n");
 	tab = ts->top;
 	while (tab != NULL) {
 		printf("%p (%lu)\n", (void*) tab, ts->size);
 		table_printm(tab);
-		tab = tab->next;
+		tab = tab->below;
 		printf("-----\n");
 	}
 }
@@ -86,14 +86,14 @@ void ts_printf(Tablestack * ts) {
 	printf("top:\n");
 	while (tab != NULL) {
 		printf("%p (%lu)\n", (void*) tab, ts->size);
-		tab = tab->next;
+		tab = tab->below;
 	}
 	printf("=====\n");
 	tab = ts->top;
 	while (tab != NULL) {
 		printf("%p (%lu)\n", (void*) tab, ts->size);
 		table_printf(tab, 0);
-		tab = tab->next;
+		tab = tab->below;
 		printf("-----\n");
 	}
 }

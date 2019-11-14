@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
 	// initialize context stack with global symbol table
 	context_stack = ts_init();
-	ts_push(context_stack, table_init(16));
+	ts_push(context_stack, table_init(16, ":global.scope:"));
 
 	// initialize node list
 	node_list = nl_init();

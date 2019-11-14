@@ -24,17 +24,8 @@ Table * begin(const char * name) {
 	if (context_stack->top == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
 
 	// create a new context
-	Table * new_context = table_init(16);
-
-	// name context
-	char * key;
-	if (name == NULL) {
-		key = malloc(40);
-		snprintf(key, 40, "%p", (void*) new_context);;
-	} else {
-		key = malloc(strlen(name)+1);
-		strcpy(key, name);
-	} 
+	Table * new_context = table_init(16, name);
+	const char * key = new_context->key;
 
 	// search for key in the current context
 	Symbol * symbol = table_find(context_stack->top, key);
@@ -50,8 +41,7 @@ Table * begin(const char * name) {
 		redefinition_error(key);
 		table_free(&new_context);
 	}
-
-	free(key);
+	
 	return new_context;
 }
 
