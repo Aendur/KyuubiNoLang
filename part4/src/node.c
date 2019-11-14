@@ -104,16 +104,16 @@ void print_tree(Node * root, int level) {
 #ifdef UNIT_TEST_NODE
 int main() {
 	// Nodelist * nl = nodelist_init();
-	Node * n9 = node_init(9, "node9", NULL);
-	Node * n8 = node_init(8, "node8", NULL);
-	Node * n7 = node_init(7, "node7", n9, NULL);
-	Node * n6 = node_init(6, "node6", NULL);
-	Node * n5 = node_init(5, "node5", NULL);
-	Node * n4 = node_init(4, "node4", n6, n7, n8, NULL);
-	Node * n3 = node_init(3, "node3", n4, n5, NULL);
-	Node * n2 = node_init(2, "node2", n3, NULL);
-	Node * n1 = node_init(1, "node1", NULL);
-	Node * n0 = node_init(0, "node0", n1, n2, NULL);
+	Node * n9 = node_init(9, "node9", ENDARG);
+	Node * n8 = node_init(8, "node8", ENDARG);
+	Node * n7 = node_init(7, "node7", n9, ENDARG);
+	Node * n6 = node_init(6, "node6", ENDARG);
+	Node * n5 = node_init(5, "node5", ENDARG);
+	Node * n4 = node_init(4, "node4", n6, n7, n8, ENDARG);
+	Node * n3 = node_init(3, "node3", n4, n5, ENDARG);
+	Node * n2 = node_init(2, "node2", n3, ENDARG);
+	Node * n1 = node_init(1, "node1", ENDARG);
+	Node * n0 = node_init(0, "node0", n1, n2, ENDARG);
 	
 	print_node(n0);
 	print_node(n1);

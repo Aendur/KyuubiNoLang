@@ -109,19 +109,19 @@ int main(void) {
 	printf("\ntest init\n");
 	Tablestack * ts = ts_init();
 	ts_printt(ts);
-	ts_print(ts);
+	ts_printm(ts);
 
 	printf("\ntest push\n");
-	ts_push(ts, table_init(16)); ts_print(ts);
-	ts_push(ts, table_init(16)); ts_print(ts);
-	ts_push(ts, table_init(16)); ts_print(ts);
+	ts_push(ts, table_init(16, "k0")); ts_printf(ts);
+	ts_push(ts, table_init(16, "k1")); ts_printf(ts);
+	ts_push(ts, table_init(16, "k2")); ts_printf(ts);
 
 	Table * tab;
 	printf("\ntest pull\n");
-	tab = ts_pull(ts); ts_print(ts); table_free(&tab);
-	tab = ts_pull(ts); ts_print(ts); table_free(&tab);
-	tab = ts_pull(ts); ts_print(ts); table_free(&tab);
-	tab = ts_pull(ts); ts_print(ts); table_free(&tab);
+	tab = ts_pull(ts); ts_printf(ts); table_free(&tab);
+	tab = ts_pull(ts); ts_printf(ts); table_free(&tab);
+	tab = ts_pull(ts); ts_printf(ts); table_free(&tab);
+	tab = ts_pull(ts); ts_printf(ts); table_free(&tab);
 
 
 	printf("\ntest free\n");

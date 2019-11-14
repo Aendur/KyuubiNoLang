@@ -35,11 +35,6 @@ Table * table_init (size_t size, const char * key) {
 	return tab;
 }
 
-
-
-
-
-
 // Release a table from memory
 void table_free (Table** tab) {
 	if (tab == NULL) { fprintf(stderr, "table_free ** null\n"); return; }
@@ -47,22 +42,22 @@ void table_free (Table** tab) {
 	Table * table = *tab;
 
 	for(unsigned int i = 0; i < table->n_buckets; ++i) {
-		//struct pair * pair = table->buckets[i].first;
 		struct table * pair = table->buckets[i].first;
-		//struct pair * next = NULL;
 		struct table * next = NULL;
 		while (pair != NULL) {
 			next = pair->next;
-			free((char*) pair->key); pair->key = NULL;
-			free(pair->attr); pair->attr = NULL;
-			free(pair);
+			table_free(&pair);
+			// free((char*) pair->key); pair->key = NULL;
+			// free(pair->attr); pair->attr = NULL;
+			// free(pair);
 			pair = next;
 			table->buckets[i].size--;
 		}
 	}
 
-	free(table->buckets);
-	table->buckets = NULL;
+	free((char*) table->key); table->key = NULL;
+	free(table->attr);        table->attr = NULL;
+	free(table->buckets);     table->buckets = NULL;
 	free(table);
 	*tab = NULL;
 }
@@ -102,7 +97,6 @@ struct table * table_insert (struct table * tab, const char* key) {
 	unsigned long index = hash % tab->n_buckets;
 
 	if (tab->buckets[index].size == 0) {
-		// struct pair * pair = pair_init(key);
 		struct table * pair = table_init(16, key);
 		tab->buckets[index].first = pair;
 		tab->buckets[index].last = pair;
@@ -266,7 +260,7 @@ void attr_print(struct attr * attr) {
 			default: printf("%d", attr->return_type); break;
 		}
 
-		printf(",ctx=%p", attr->context);
+		printf(",ctx=%p", (void*) attr->context);
 	}
 	printf(">");
 }
@@ -286,14 +280,15 @@ unsigned long round_to_2(unsigned long x) {
 }
 
 #ifdef UNIT_TEST_HASH
-#include <time.h>
-
-int exec_insertions(void);
 int main(void) {
-	srand(time(NULL));
-	
+	printf("\ntest round to 2\n");
+	{ unsigned long i = 254; printf("%10lu %10lu\n", i, round_to_2(i)); }
+	{ unsigned long i = 255; printf("%10lu %10lu\n", i, round_to_2(i)); }
+	{ unsigned long i = 256; printf("%10lu %10lu\n", i, round_to_2(i)); }
+	{ unsigned long i = 257; printf("%10lu %10lu\n", i, round_to_2(i)); }
+
 	printf("\ntest table init\n");
-	Table * tab = table_init(16);
+	Table * tab = table_init(16, "key1");
 	table_printm(tab);
 
 	printf("\ntest hashing / find empty\n");
@@ -302,12 +297,22 @@ int main(void) {
 	printf("str: %s addr: %p\n", str, (void*) table_find(tab, str));
 
 	printf("\ntest insertions / find not empty\n");
-	struct  pair * p;
+	struct table * p;
 	p = table_find(tab, "string1");
 	printf("find: ");
 	pair_print(p);
 
-	p = table_insert(tab, "string1", NULL);
+	p = table_insert(tab, "string1");
+	printf("insert: ");
+	pair_print(p);
+
+	//goto cleanup;
+
+	p = table_find(tab, "string1");
+	printf("find: ");
+	pair_print(p);
+
+	p = table_insert(tab, "string1");
 	printf("insert: ");
 	pair_print(p);
 
@@ -315,18 +320,13 @@ int main(void) {
 	printf("find: ");
 	pair_print(p);
 
-	p = table_insert(tab, "string1", NULL);
-	printf("insert: ");
-	pair_print(p);
-
-	p = table_find(tab, "string1");
-	printf("find: ");
-	pair_print(p);
 
 	int NMAX = 1000;
-	printf("\ntest many insertions\n"); getchar();
+	printf("\ntest many insertions\n");
+
+	//getchar();
 	for (int N = 0; N < NMAX; ++N) {
-		p = table_insert(tab, str, NULL);
+		p = table_insert(tab, str);
 		pair_print(p);
 		int i = strlen(str) - 1;
 		while (++str[i] > 'z') { str[i] = 'A'; --i; }
@@ -334,9 +334,9 @@ int main(void) {
 	table_printm(tab);
 
 	for (size_t i = 0; i < strlen(str); ++i) { str[i] = 'A'; }
-	printf("\ntest many repeated insertions\n"); getchar();
+	printf("\ntest many repeated insertions\n"); //getchar();
 	for (int N = 0; N < NMAX; ++N) {
-		p = table_insert(tab, str, NULL);
+		p = table_insert(tab, str);
 		pair_print(p);
 		int i = strlen(str) - 1;
 		while (++str[i] > 'z') { str[i] = 'A'; --i; }
@@ -344,7 +344,7 @@ int main(void) {
 	table_printm(tab);
 
 	for (size_t i = 0; i < strlen(str); ++i) { str[i] = 'A'; }
-	printf("\ntest many searches\n"); getchar();
+	printf("\ntest many searches\n"); //getchar();
 	for (int N = 0; N < NMAX; ++N) {
 		p = table_find(tab, str);
 		pair_print(p);
@@ -353,31 +353,26 @@ int main(void) {
 	}
 	table_printm(tab);
 	
-	printf("\ntest print\n"); getchar();
+	printf("\ntest print\n"); //getchar();
 	table_print_debug(tab);
 
-	printf("\ntest rehash\n"); getchar();
+	// before_rehash:
+	printf("\ntest rehash\n");
 	Table * tab2 = table_rehash(&tab);
 	table_printm(tab);
 	table_printm(tab2);
 
-	printf("\ntest print after rehash\n"); getchar();
+	printf("\ntest print after rehash\n");
 	table_print_debug(tab);
 	table_print_debug(tab2);
 
 
 	printf("\ntest free\n");
-	table_free(&tab);
-	table_printm(tab);
 	table_free(&tab2);
 	table_printm(tab2);
-
-	printf("\ntest round to 2\n");
-	{ unsigned long i = 254; printf("%10lu %10lu\n", i, round_to_2(i)); }
-	{ unsigned long i = 255; printf("%10lu %10lu\n", i, round_to_2(i)); }
-	{ unsigned long i = 256; printf("%10lu %10lu\n", i, round_to_2(i)); }
-	{ unsigned long i = 257; printf("%10lu %10lu\n", i, round_to_2(i)); }
-	
+	// cleanup:
+	table_free(&tab);
+	table_printm(tab);
 	return 0;
 }
 

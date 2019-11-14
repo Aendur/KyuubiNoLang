@@ -24,9 +24,7 @@ struct table {
 };
 
 struct bucket {
-	//struct pair * first;
 	struct table * first;
-	//struct pair * last;
 	struct table * last;
 	unsigned long size;
 };

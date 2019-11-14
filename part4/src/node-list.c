@@ -58,7 +58,7 @@ int main() {
 
 	for(int i = 0; i < 50; ++i) {
 		sprintf(name, "%d", i);
-		nl_push(nl, node_init(100,  name, NULL));
+		nl_push(nl, node_init(100,  name, ENDARG));
 		nl_print(nl);
 	}
 

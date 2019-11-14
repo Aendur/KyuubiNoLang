@@ -42,3 +42,16 @@ test-hash:
 test-tstack:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_TSTACK \
 	src/table.c src/table-stack.c
+
+
+help:
+	@echo "make targets:"
+	@echo "    flex"
+	@echo "    bison"
+	@echo "    dbg"
+	@echo "    rel"
+	@echo "    test-node"
+	@echo "    test-node-list"
+	@echo "    test-hash"
+	@echo "    test-tstack"
+
