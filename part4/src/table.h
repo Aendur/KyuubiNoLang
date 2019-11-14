@@ -1,12 +1,6 @@
 #ifndef TABLE_H
 #define TABLE_H
 
-/*typedef struct pair Symbol;
-struct pair {
-	const char * key;
-	struct attr * attr;
-	struct pair * next;
-};*/
 
 typedef struct table Symbol;
 typedef struct table Table;
@@ -32,7 +26,6 @@ struct bucket {
 struct attr {
 	int symbol_type;
 	int return_type;
-	struct table * context;
 };
 
 struct table * table_init (unsigned long size, const char * key);

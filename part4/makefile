@@ -13,6 +13,7 @@ dbg:
 	src/node-list.c   \
 	src/table.c       \
 	src/table-stack.c \
+	src/arg-list.c    \
 	src/parser.c      \
 	src/scanner.c     \
 
@@ -23,6 +24,7 @@ rel:
 	src/node-list.c   \
 	src/table.c       \
 	src/table-stack.c \
+	src/arg-list.c    \
 	src/parser.c      \
 	src/scanner.c     \
 
@@ -43,6 +45,10 @@ test-tstack:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_TSTACK \
 	src/table.c src/table-stack.c
 
+test-al:
+	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_ALIST \
+	src/arg-list.c
+
 
 help:
 	@echo "make targets:"
@@ -54,4 +60,5 @@ help:
 	@echo "    test-node-list"
 	@echo "    test-hash"
 	@echo "    test-tstack"
+	@echo "    test-al"
 

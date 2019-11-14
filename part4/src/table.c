@@ -81,6 +81,7 @@ unsigned long table_hash(const char *str) {
 // Search for key in table, returns NULL if not found
 struct table * table_find (struct table * tab, const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to search on null object\n"); return NULL; }
+	if (key == NULL) { fprintf(stderr, "Trying to search for null key\n"); return NULL; }
 	unsigned long hash = table_hash(key);
 	unsigned long index = hash % tab->n_buckets;
 	
@@ -93,30 +94,30 @@ struct table * table_find (struct table * tab, const char* key) {
 // Insert (key,val) pair in table
 struct table * table_insert (struct table * tab, const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to insert on null object\n"); return NULL; }
-	unsigned long hash = table_hash(key);
+
+	struct table * new_pair = table_init(16, key);
+
+	unsigned long hash = table_hash(new_pair->key);
 	unsigned long index = hash % tab->n_buckets;
 
 	if (tab->buckets[index].size == 0) {
-		struct table * pair = table_init(16, key);
-		tab->buckets[index].first = pair;
-		tab->buckets[index].last = pair;
+		tab->buckets[index].first = new_pair;
+		tab->buckets[index].last = new_pair;
 		tab->buckets[index].size++;
 		tab->n_keys++;
-		return pair;
+		return new_pair;
 	} else {
-		// struct pair * pair = tab->buckets[index].first;
 		struct table * pair = tab->buckets[index].first;
-		while(pair != NULL && strcmp(pair->key, key) != 0) { pair = pair->next; }
+		while(pair != NULL && strcmp(pair->key, new_pair->key) != 0) { pair = pair->next; }
 
 		if (pair == NULL) { // key not found
-			// pair = pair_init(key);
-			pair = table_init(16, key);
-			tab->buckets[index].last->next = pair;
-			tab->buckets[index].last = pair;
+			tab->buckets[index].last->next = new_pair;
+			tab->buckets[index].last = new_pair;
 			tab->buckets[index].size++;
 			tab->n_keys++;
-			return pair;
+			return new_pair;
 		} else { // key already present
+			table_free(&new_pair);
 			return NULL;
 		}
 	}
@@ -160,13 +161,10 @@ void table_printf (struct table * tab, int level) {
 		//struct pair * pair = tab->buckets[i].first;
 		struct table * pair = tab->buckets[i].first;
 		while(pair != NULL) {
-			for (int lvl = 0; lvl < level; ++lvl) { printf("   "); } // indent
-			//printf("%s\n",pair->key); //, (void*) pair->attr);
+			for (int lvl = 0; lvl < level; ++lvl) { printf("   "); }
 			pair_print(pair);
 
-			if (pair->attr->context != NULL) {
-				table_printf(pair->attr->context, level+1);
-			}
+			table_printf(pair, level+1);
 			pair = pair->next;
 		}
 	}
@@ -260,7 +258,7 @@ void attr_print(struct attr * attr) {
 			default: printf("%d", attr->return_type); break;
 		}
 
-		printf(",ctx=%p", (void*) attr->context);
+		//printf(",ctx=%p", (void*) attr->context);
 	}
 	printf(">");
 }

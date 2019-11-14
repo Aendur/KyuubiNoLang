@@ -10,6 +10,7 @@
 	struct node * node;
 	int ival;
 	const char * sval;
+	struct arg_list * al;
 }
 
 %token <ival> VOID INT FLOAT CHAR
@@ -53,13 +54,15 @@
 %token FUNCTION_CALL
 
 %type <node> declaration_list declaration init_declarator
-%type <node> initializer_list parameter_list compound_statement statement_list
+%type <node> initializer_list compound_statement statement_list
 %type <node> statement conditional_statement iteration_statement return_statement assignment_expression
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
 %type <node> multiplicative_expression postfix_expression primary_expression argument_list
 %type <node> unary_expression
-%type <node> parameter
 %type <node> function_definition
+
+%type <al> parameter_list parameter
+
 %type <ival> type
 
 
@@ -72,10 +75,12 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "node.h"
 #include "node-list.h"
 #include "table.h"
 #include "table-stack.h"
+#include "arg-list.h"
 #include "actions.h"
 int yylex (void);
 extern int nline;
@@ -118,24 +123,24 @@ initializer_list
 	;
 
 function_definition
-	: type IDENTIFIER '(' parameter_list ')' '{' { begin($2); } statement_list '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , $8  , ENDARG)); assign($$); finish(); }
-	| type IDENTIFIER '(' VOID ')'           '{' { begin($2); } statement_list '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , $8  , ENDARG)); assign($$); finish(); }
-	| type IDENTIFIER '(' ')'                '{' { begin($2); } statement_list '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , $7  , ENDARG)); assign($$); finish(); }
-	| type IDENTIFIER '(' parameter_list ')' '{'                               '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign($$);           }
-	| type IDENTIFIER '(' VOID ')'           '{'                               '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign($$);           }
-	| type IDENTIFIER '(' ')'                '{'                               '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign($$);           }
-	| type IDENTIFIER '(' error ')'                                                { $$ = NULL; }
-	| type IDENTIFIER error ';'                                                    { $$ = NULL; }
+	: type IDENTIFIER '(' parameter_list ')' '{' { begin_fun($1, $2, $4);   } statement_list '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , $8  , ENDARG)); assign($$); finish(); finish(); }
+	| type IDENTIFIER '(' VOID ')'           '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , $8  , ENDARG)); assign($$); finish(); finish(); }
+	| type IDENTIFIER '(' ')'                '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , $7  , ENDARG)); assign($$); finish(); finish(); }
+	| type IDENTIFIER '(' parameter_list ')' '{' { begin_fun($1, $2, $4);   }                '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign($$); finish(); finish(); }
+	| type IDENTIFIER '(' VOID ')'           '{' { begin_fun($1, $2, NULL); }                '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign($$); finish(); finish(); }
+	| type IDENTIFIER '(' ')'                '{' { begin_fun($1, $2, NULL); }                '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign($$); finish(); finish(); }
+	| type IDENTIFIER '(' error ')'                                                              { $$ = NULL; }
+	| type IDENTIFIER error ';'                                                                  { $$ = NULL; }
 	;
 
 parameter_list
-	: parameter                    { $$ = NULL; }
-	| parameter_list ',' parameter { $$ = NULL; } 
+	: parameter                    { $$ = $1; }
+	| parameter_list ',' parameter { $$ = al_link($1, &$3); } 
 	;
 
 parameter
-	: type IDENTIFIER          { $$ = NULL; }
-	| type IDENTIFIER '[' ']'  { $$ = NULL; }
+	: type IDENTIFIER          { $$ = al_init($1, VARIABLE, $2); }
+	| type IDENTIFIER '[' ']'  { $$ = al_init($1, ARRAY   , $2); }
 	;
 
 compound_statement
