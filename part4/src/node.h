@@ -28,7 +28,7 @@ struct node {
 	int     type;           // node type
 	char *  name;           // node name
 	struct table * context; // context in symbol table
-	struct pair  * symbol;  // entry in symbol table
+	struct table * symbol;  // entry in symbol table
 };
 
 Node * node_init(int, const char *, ...);

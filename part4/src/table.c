@@ -203,20 +203,6 @@ void table_print_debug (Table* tab) {
 	printf("collisions: %lu\n", collisions);
 }
 
-//// Construct a (key,val) pair object
-//// struct pair * pair_init(const char * key, struct attr * val) {
-//struct pair * pair_init(const char * key) {
-//	size_t len = strlen(key) + 1;
-//	struct pair * pair = malloc(sizeof(struct pair));
-//	pair->key = malloc(len);
-//	pair->key = memcpy((char*) pair->key, key, len);
-//	// pair->attr = val;
-//	pair->attr = calloc(1, sizeof(struct attr));
-//	pair->next = NULL;
-//	return pair;
-//}
-
-
 // prints a (key,val) pair object
 //void pair_print(struct pair * pair) {
 void pair_print(struct table * pair) {
@@ -234,6 +220,7 @@ void pair_print(struct table * pair) {
 
 
 #include "parser.h"
+#include "arg-list.h"
 void attr_print(struct attr * attr) {
 	printf("<");
 	if(attr==NULL) { printf("null"); }
@@ -258,7 +245,9 @@ void attr_print(struct attr * attr) {
 			default: printf("%d", attr->return_type); break;
 		}
 
-		//printf(",ctx=%p", (void*) attr->context);
+		char * args = build_key(attr->arg_list);
+		printf(",args=%s", args);
+		free(args);
 	}
 	printf(">");
 }

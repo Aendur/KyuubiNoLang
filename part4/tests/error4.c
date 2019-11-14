@@ -8,25 +8,12 @@ int min(int x, int y) {
 	return 0;
 }
 
+int min(int x, int y, int z) {
+	return 0;
+}
 
-/*
-
-
-
-
-
-
-
+int min(int x, int y) {
+	return 0;
+}
 
 
-
-
-
-
-
-
-
-
-
-*/
-/*                                  */

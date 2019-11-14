@@ -90,7 +90,8 @@ extern int yydebug;
     ARRAY = 296,
     ARRAY_INDEX = 297,
     FUNCTION = 298,
-    FUNCTION_CALL = 299
+    FUNCTION_CALL = 299,
+    DECLARATION = 300
   };
 #endif
 
@@ -105,7 +106,7 @@ union YYSTYPE
 	const char * sval;
 	struct arg_list * al;
 
-#line 109 "src/parser.h"
+#line 110 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -118,10 +119,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 71 "language.y"
+#line 72 "language.y"
 
 	void yyerror (char const *);	
+	char * build_key(struct arg_list * args);
 
-#line 126 "src/parser.h"
+#line 128 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */

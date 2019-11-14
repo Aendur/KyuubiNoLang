@@ -57,8 +57,6 @@ void al_free(struct arg_list ** alist) {
 }
 
 void al_print(struct arg_list * al) {
-	if(al == NULL) { fprintf (stderr, "null arg list\n"); return; }
-
 	struct arg * arg = al->first;
 	while(arg != NULL) {
 		printf("%d %d %s\n", arg->data_type, arg->decl_type, arg->name);

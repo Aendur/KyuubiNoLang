@@ -10,7 +10,7 @@
 //extern int yynerrs;
 
 
-#define ERROR_MSG_BUFF 128
+#define ERROR_MSG_BUFF 256
 
 
 void redefinition_error(const char * name) {
@@ -22,7 +22,7 @@ void redefinition_error(const char * name) {
 
 void redefinition_error_fun(const char * name, const char * pars) {
 	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s' with parameters %s", name, pars);
+	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s' with parameters '%s'", name, pars);
 	yyerror(msg);
 	yynerrs++;
 }
@@ -57,32 +57,33 @@ Table * begin(const char * name) {
 }
 
 char * build_key(struct arg_list * args) {
+	//float[]
 	char * key;
 	if(args == NULL) {
-		key = malloc(2);
-		key[0] = 'v';
-		key[1] = 0;
+		key = malloc(5);
+		strcpy(key, "void");
 	} else {
-		key = malloc(args->size + 1);
+		int N = 9 * args->size + 1;
+		int n = 0;
+		key = malloc(N);
 		char * pos = key;
 
 		struct arg * arg = args->first;
 		while(arg != NULL) {
 			switch(arg->data_type) {
-				case FLOAT: *pos = 'F'; break;
-				case CHAR : *pos = 'C'; break;
-				case INT  : *pos = 'I'; break;
-				default   : *pos = '?'; break;
+				case FLOAT: n = snprintf(pos, N, "float")             ; pos += n; N -= n; break;
+				case CHAR : n = snprintf(pos, N, "char" )             ; pos += n; N -= n; break;
+				case INT  : n = snprintf(pos, N, "int"  )             ; pos += n; N -= n; break;
+				default   : n = snprintf(pos, N, "%d", arg->data_type); pos += n; N -= n; break;
 			}
 			switch(arg->decl_type) {
-				case ARRAY   : break;
-				case VARIABLE: *pos += 0x20; break;
-				default      : *pos = '*'  ; break;
+				case VARIABLE: n = snprintf(pos, N, ","  )                ; pos += n; N -= n; break;
+				case ARRAY   : n = snprintf(pos, N, "[],")                ; pos += n; N -= n; break;
+				default      : n = snprintf(pos, N, "%d,", arg->decl_type); pos += n; N -= n; break;
 			}
 			arg = arg->next;
-			++pos;
 		}
-		*pos = 0;
+		*(pos-1) = 0;
 	}
 	return key;
 }
@@ -92,8 +93,8 @@ void add_symbol_args(struct arg_list * args) {
 		struct arg * arg = args->first;
 		while(arg != NULL) {
 			switch(arg->decl_type) {
-				case ARRAY   : add_symbol_var(arg->data_type, arg->name); break;
-				case VARIABLE: add_symbol_arr(arg->data_type, arg->name); break;
+				case ARRAY   : add_symbol_arr(arg->data_type, arg->name); break;
+				case VARIABLE: add_symbol_var(arg->data_type, arg->name); break;
 				default      : break;
 			}
 			arg = arg->next;
@@ -111,14 +112,15 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 		new_context = table_insert(context_stack->top, name);
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
-		ts_push(context_stack, new_context);
 	}
+	ts_push(context_stack, new_context);
 
 	new_context = table_find(context_stack->top, key);
 	if (new_context == NULL) {
 		new_context = table_insert(context_stack->top, key);
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
+		new_context->attr->arg_list = args;
 		ts_push(context_stack, new_context);
 	} else {
 		redefinition_error_fun(name, key);
@@ -130,10 +132,20 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 	return new_context;
 }
 
-Table * assign(Node * node) {
-	if (context_stack->top == NULL) { fprintf(stderr, "assign: stack is empty\n"); return NULL; }
-	node->context = context_stack->top;
-	return context_stack->top;
+void assign_context(Node * node) {
+	if (context_stack->top == NULL) {
+		fprintf(stderr, "assign context: stack is empty\n");
+	} else {
+		node->context = context_stack->top;
+	}
+}
+
+void assign_body(Node * node) {
+	if (context_stack->top == NULL) {
+		fprintf(stderr, "assign body: stack is empty\n");
+	} else {
+		context_stack->top->attr->statement_tree = node;
+	}
 }
 
 Table * finish(void) {
@@ -144,54 +156,34 @@ Table * finish(void) {
 	return  new_context;
 }
 
-void add_symbol_var(int type, const char * key) {
-	switch (type) { case VOID: case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr without type\n"); return; }
-	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return; }
+Symbol * add_symbol_var(int type, const char * key) {
+	switch (type) { case VOID: case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr without type\n"); return NULL; }
+	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return NULL; }
 	
 	Symbol * symbol = table_find(context_stack->top, key);
 	if (symbol == NULL) {
 		symbol = table_insert(context_stack->top, key);
 		symbol->attr->symbol_type = VARIABLE;
 		symbol->attr->return_type = type;
+		return symbol;
 	} else {
 		redefinition_error(key);
+		return NULL;
 	}
 }
 
-void add_symbol_arr(int type, const char * key) {
-	switch (type) { case VOID: case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr without type\n"); return; }
-	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return; }
+Symbol * add_symbol_arr(int type, const char * key) {
+	switch (type) { case VOID: case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr without type\n"); return NULL; }
+	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return NULL; }
 
 	Symbol * symbol = table_find(context_stack->top, key);
 	if (symbol == NULL) {
 		symbol = table_insert(context_stack->top, key);
 		symbol->attr->symbol_type = ARRAY;
 		symbol->attr->return_type = type;
+		return symbol;
 	} else {
 		redefinition_error(key);
-	}
-}
-
-/*
-Symbol * add_symbol_fun(int type, const char * id, Node* params) {
-	//int nparams = 0
-	//if(params == NULL);
-
-
-	Symbol * symbol = table_find(context_stack->top, id);
-	if (symbol != NULL) {
-		yynerrs++;
-		char * msg = malloc(ERROR_MSG_BUFF);
-		snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of function %s\n", key);
-		yyerror(msg);
-		free(msg);
 		return NULL;
-	} else {
-		symbol = table_insert(context_stack->top, id);
 	}
-
-
-	return "";
 }
-
-*/

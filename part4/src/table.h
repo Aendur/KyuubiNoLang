@@ -7,7 +7,6 @@ typedef struct table Table;
 struct table {
 	const char * key;
 	struct attr * attr;
-	// struct pair * next;
 	struct table * next;
 
 	unsigned long n_buckets;
@@ -26,6 +25,8 @@ struct bucket {
 struct attr {
 	int symbol_type;
 	int return_type;
+	struct arg_list * arg_list;
+	struct node * statement_tree;
 };
 
 struct table * table_init (unsigned long size, const char * key);
