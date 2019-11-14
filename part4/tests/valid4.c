@@ -1,19 +1,15 @@
 // test function declaration 
-void write(void);
-void write(int x);
-void write(float x);
-void write(char x);
-void write(char x[]);
-void write(char x[10]) { return; } // also test return without argument
-void write(char c1, int c2, float c3, char c4[]) { return; }
+void write(char x[]) { return; } // test return without argument
+//void write(char c1, int c2, float c3, char c4[]) { return; }
 
 // test function definition
+/*
 int min(int x, int y) {
 	// test if-else statement
 	if (x < y) { return x; }
 	else { return y; }
 }
-
+*/
 int min(int v[], int n) {
 	// test variable decl
 	int r;

@@ -20,11 +20,12 @@ extern int yynerrs;
 extern int nline;
 extern int ncol0;
 extern int ncol1;
-extern Nodelist * node_list;
+//extern Nodelist * node_list;
 
 static void update_position(void);
 static int  identifier(void);
 static int  character_const(void);
+static void copy_yy_string(void);
 %}
 
 %%
@@ -47,10 +48,10 @@ static int  character_const(void);
 "return"	{ update_position(); int t = RETURN; return t; }
 
 			/* data types */
-"void"		{ update_position(); int t = VOID ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
-"char"		{ update_position(); int t = CHAR ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
-"int"		{ update_position(); int t = INT  ; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
-"float"		{ update_position(); int t = FLOAT; yylval.node = nl_push(node_list, node_init(TYPE, yytext, NULL)); return t; }
+"void"		{ update_position(); int t = VOID ; yylval.ival = t; return t; }
+"char"		{ update_position(); int t = CHAR ; yylval.ival = t; return t; }
+"int"		{ update_position(); int t = INT  ; yylval.ival = t; return t; }
+"float"		{ update_position(); int t = FLOAT; yylval.ival = t; return t; }
 
 			/* Arithmetical operators */
 "+"			{ update_position(); int t = '+'   ; return t; }
@@ -86,13 +87,18 @@ static int  character_const(void);
 "="			{ update_position(); return '=';}
 
 					/* Numerical constants */
-[\-\+]?0[xX]{H}+	{ update_position(); int t = CONSTANT; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
-[\-\+]?{D}+			{ update_position(); int t = CONSTANT; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
-[\-\+]?{D}+"."{D}* 	{ update_position(); int t = CONSTANT; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+[\-\+]?0[xX]{H}+	{ update_position(); int t = CONSTANT_HEX;   copy_yy_string(); return t; }
+[\-\+]?{D}+			{ update_position(); int t = CONSTANT_INT;   copy_yy_string(); return t; }
+[\-\+]?{D}+"."{D}* 	{ update_position(); int t = CONSTANT_FLOAT; copy_yy_string(); return t; }
 
 					/* Characters and string literals */
 '(\\.|[^\\'])+'		{ update_position(); return character_const(); }
-\"(\\.|[^\\"])*\"	{ update_position(); int t = STRING_LITERAL; yylval.node = nl_push(node_list, node_init(t, yytext, NULL)); return t; }
+\"(\\.|[^\\"])*\"	{
+						update_position();
+						int t = STRING_LITERAL;
+						copy_yy_string();
+						return t;
+					}
 
 				/* Identifiers */
 {L}({L}|{D})*	{ update_position(); return identifier(); }
@@ -134,13 +140,17 @@ static void update_position(void) {
 static int identifier(void) {
 	if (yyleng > 32) {
 		yyerror("warning (lexical), identifier exceeds 32 characters.");
-		//yynerrs++;
-		return IDENTIFIER;
-	} else {
-		int t = IDENTIFIER; 
-		yylval.node = nl_push(node_list, node_init(t, yytext, NULL));
-		return t;
 	}
+
+	int t = IDENTIFIER; 
+	copy_yy_string();
+	//yylval.node = nl_push(node_list, node_init(t, yytext, NULL));
+	return t;
+}
+
+void copy_yy_string(void) {
+	yylval.sval = malloc(yyleng + 1);
+	strcpy((char*) yylval.sval, yytext);
 }
 
 // handles character constants
@@ -148,10 +158,11 @@ static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
 		yyerror("lexical error, invalid character constant.");
 		yynerrs++;
+		yylval.sval = NULL;
 		return INVALID_CHAR_CONST;
 	} else {
-		int t = CONSTANT;
-		yylval.node = nl_push(node_list, node_init(t, yytext, NULL));
+		int t = CONSTANT_CHAR;
+		copy_yy_string();
 		return t;
 	}
 }

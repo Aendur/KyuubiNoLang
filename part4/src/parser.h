@@ -53,32 +53,44 @@ extern int yydebug;
     INT = 259,
     FLOAT = 260,
     CHAR = 261,
-    IF = 262,
-    ELSE = 263,
-    WHILE = 264,
-    DO = 265,
-    RETURN = 266,
-    OP_INC = 267,
-    OP_DEC = 268,
-    OP_GE = 269,
-    OP_LE = 270,
-    OP_EQ = 271,
-    OP_NE = 272,
-    OP_AND = 273,
-    OP_OR = 274,
-    IDENTIFIER = 275,
-    STRING_LITERAL = 276,
-    CONSTANT = 277,
-    UNRECOGNIZED_TOKEN = 278,
-    INVALID_IDENTIFIER = 279,
-    INVALID_CHAR_CONST = 280,
-    TYPE = 281,
-    LIST = 282,
-    FUN_DEF = 283,
-    FUN_CALL = 284,
-    DECL_VAR = 285,
-    DECL_VEC = 286,
-    VEC_INDEX = 287
+    IDENTIFIER = 262,
+    STRING_LITERAL = 263,
+    CONSTANT_FLOAT = 264,
+    CONSTANT_INT = 265,
+    CONSTANT_HEX = 266,
+    CONSTANT_CHAR = 267,
+    IF = 268,
+    ELSE = 269,
+    WHILE = 270,
+    DO = 271,
+    RETURN = 272,
+    OP_INC = 273,
+    OP_DEC = 274,
+    OP_NOT = 275,
+    OP_MUL = 276,
+    OP_DIV = 277,
+    OP_MOD = 278,
+    OP_ADD = 279,
+    OP_NEG = 280,
+    OP_SUB = 281,
+    OP_LT = 282,
+    OP_GT = 283,
+    OP_LE = 284,
+    OP_GE = 285,
+    OP_EQ = 286,
+    OP_NE = 287,
+    OP_OR = 288,
+    OP_AND = 289,
+    OP_ASSIGN = 290,
+    UNRECOGNIZED_TOKEN = 291,
+    INVALID_IDENTIFIER = 292,
+    INVALID_CHAR_CONST = 293,
+    LIST = 294,
+    VARIABLE = 295,
+    ARRAY = 296,
+    ARRAY_INDEX = 297,
+    FUNCTION = 298,
+    FUNCTION_CALL = 299
   };
 #endif
 
@@ -89,8 +101,10 @@ union YYSTYPE
 #line 9 "language.y"
 
 	struct node * node;
+	int ival;
+	const char * sval;
 
-#line 94 "src/parser.h"
+#line 108 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -103,10 +117,10 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 41 "language.y"
+#line 68 "language.y"
 
 	void yyerror (char const *);	
 
-#line 111 "src/parser.h"
+#line 125 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */

@@ -12,7 +12,7 @@ extern int yynerrs;
 int nline = 1;
 int ncol0 = 1;
 int ncol1 = 1;
-Node * root;
+Node * root = NULL;
 Nodelist * node_list;
 //Table * symbol_table;
 Tablestack * context_stack;
@@ -52,12 +52,17 @@ int main(int argc, char** argv) {
 		printf("SYNTAX TREE\n");
 		printf("------------------------------\n");
 		print_tree(root, 0);
-		printf("------------------------------\n");
-		printf("SYMBOL TABLE\n");
-		printf("------------------------------\n");
-		// table_printf(context_stack->bot);
-		ts_printf(context_stack);
 	}
+
+	//#if DEBUG
+	//nl_print(node_list);
+	//#endif
+
+	printf("------------------------------\n");
+	printf("SYMBOL TABLE\n");
+	printf("------------------------------\n");
+	// table_printf(context_stack->bot);
+	ts_printf(context_stack);
 
 
 	// close input file

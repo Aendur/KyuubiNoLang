@@ -3,16 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-/*
-typedef struct table Table;
-struct table {
-	size_t n_buckets;
-	size_t n_keys;
-	struct table  *  root;
-	struct bucket ** buckets;
-};
-*/
-
 // Initialize a new table with <size> buckets
 Table * table_init (size_t size) {
 	if (size < 16) {
@@ -142,18 +132,19 @@ Table * table_rehash (Table ** tab) {
 	return newtab;
 }
 
-#ifdef DEBUG
-#include "node.h"
-#endif
+// #ifdef DEBUG
+// #include "node.h"
+// #endif
+
 // Print table
-// void table_printf (Table* tab) {
 void table_printf (Table* tab, int level) {
 	if (tab == NULL) { return; }
 	for (unsigned int i = 0; i < tab->n_buckets; ++i) {
 		struct pair * pair = tab->buckets[i].first;
 		while(pair != NULL) {
 			for (int lvl = 0; lvl < level; ++lvl) { printf("   "); } // indent
-			printf("%s\n",pair->key); //, (void*) pair->attr);
+			//printf("%s\n",pair->key); //, (void*) pair->attr);
+			pair_print(pair);
 
 			if (pair->attr->context != NULL) {
 				table_printf(pair->attr->context, level+1);
@@ -211,13 +202,47 @@ struct pair * pair_init(const char * key) {
 
 // prints a (key,val) pair object
 void pair_print(struct pair * pair) {
-	printf("addr: %p ", (void*) pair);
 	if (pair != NULL) {
-		printf("(\"%s\",", pair->key);
-		printf("%p,", (void*) pair->attr);
-		printf("%p)", (void*) pair->next);
+		printf("(key=\"%s\",", pair->key);
+		printf("attr=");
+		//printf("attr=%p,", (void*) pair->attr);
+		//printf("next=%p) ", (void*) pair->next);
+		attr_print(pair->attr);
+		printf(")\n");
+	} else {
+		printf("(null)");
 	}
-	printf("\n");
+}
+
+
+#include "parser.h"
+void attr_print(struct attr * attr) {
+	printf("<");
+	if(attr==NULL) { printf("null"); }
+	else {
+		printf("s_type=");
+		switch(attr->symbol_type) {
+			case LIST:          printf("LIST");          break;
+			case VARIABLE:      printf("VARIABLE");      break;
+			case ARRAY:         printf("ARRAY");         break;
+			case ARRAY_INDEX:   printf("ARRAY_INDEX");   break;
+			case FUNCTION:      printf("FUNCTION");      break;
+			case FUNCTION_CALL: printf("FUNCTION_CALL"); break;
+			default: printf("%d", attr->symbol_type); break;
+		}
+
+		printf(",r_type=");
+		switch(attr->return_type) {
+			case INT:   printf("int");   break;
+			case VOID:  printf("void");  break;
+			case CHAR:  printf("char");  break;
+			case FLOAT: printf("float"); break;
+			default: printf("%d", attr->return_type); break;
+		}
+
+		printf(",ctx=%p", attr->context);
+	}
+	printf(">");
 }
 
 

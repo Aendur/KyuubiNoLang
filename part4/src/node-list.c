@@ -45,7 +45,8 @@ void nl_free(Nodelist** nl) {
 void nl_print(Nodelist* nl) {
 	printf("Nodes: %d Cap: %d\n", nl->size, nl->capacity);
 	for(int i = 0; i < nl->size; ++i) {
-		printf("ADDR %p\n", (void*)nl->nodes[i]);
+		print_node(nl->nodes[i]);
+		//printf("ADDR %p\n", (void*)nl->nodes[i]);
 	}
 }
 

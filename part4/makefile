@@ -7,7 +7,7 @@ bison:
 	bison -Wall language.y
 
 dbg:
-	gcc -std=c18 -m64 -g -Wall -Wextra -Wpedantic -DDEBUG \
+	gcc -std=c18 -m64 -g -Wall -Wextra -DDEBUG \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \
@@ -17,7 +17,7 @@ dbg:
 	src/scanner.c     \
 
 rel:
-	gcc -lfl -std=c18 -m64 -O3 \
+	gcc -std=c18 -m64 -O3 \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \

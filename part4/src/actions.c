@@ -10,16 +10,12 @@
 //extern int yynerrs;
 
 
-Table * assign(Node * node) {
-	if (context_stack->top == NULL) { fprintf(stderr, "assign: stack is empty\n"); return NULL; }
-	node->context = context_stack->top;
-	return context_stack->top;
-}
+#define ERROR_MSG_BUFF 128
 
 
 void redefinition_error(const char * name) {
-	char msg[128];
-	snprintf(msg, 128, "semantic error: redefinition of %s\n", name);
+	char msg[ERROR_MSG_BUFF];
+	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of %s\n", name);
 	yyerror(msg);
 	yynerrs++;
 }
@@ -59,141 +55,74 @@ Table * begin(const char * name) {
 	return new_context;
 }
 
+Table * assign(Node * node) {
+	if (context_stack->top == NULL) { fprintf(stderr, "assign: stack is empty\n"); return NULL; }
+	node->context = context_stack->top;
+	return context_stack->top;
+}
+
 Table * finish(void) {
 	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
 	Table * context = ts_pull(context_stack);
 	return  context;
 }
 
-void add_symbol_var(Node * node) {
-	if(node == NULL) { fprintf(stderr, "add var from null node\n"); return; }
-	// DISCOVER TYPE
-	// type = node->leaf[0];
-
-	// DISCOVER NAME
-	const char * key;
-	if (node->nleaves > 1) {
-		key = node->leaf[1]->name;
-	} else {
-		fprintf(stderr, "node has no identifier\n");
-		return;
-	}
+void add_symbol_var(int type, const char * key) {
+	switch (type) { case VOID: case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr without type\n"); return; }
+	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return; }
 	
 	Symbol * symbol = table_find(context_stack->top, key);
 	if (symbol == NULL) {
 		symbol = table_insert(context_stack->top, key);
-		//symbol->attr->node = node;
+		symbol->attr->symbol_type = VARIABLE;
+		symbol->attr->return_type = type;
 	} else {
 		yynerrs++;
-		char * msg = malloc(128);
-		snprintf(msg, 128, "semantic error: redefinition of %s\n", key);
-		yyerror(msg);
-		free(msg);
-	}
-
-}
-
-void add_symbol_arr(Node * node) {
-	if(node == NULL) { fprintf(stderr, "add arr from null node\n"); return; }
-	// DISCOVER TYPE
-	// type = node->leaf[0];
-
-	// DISCOVER NAME
-	const char * key;
-	if (node->nleaves > 1) {
-		key = node->leaf[1]->name;
-	} else {
-		fprintf(stderr, "node has no identifier\n");
-		return;
-	}
-	
-	Symbol * symbol = table_find(context_stack->top, key);
-	if (symbol == NULL) {
-		symbol = table_insert(context_stack->top, key);
-		// symbol->attr->node = node;
-	} else {
-		yynerrs++;
-		char * msg = malloc(128);
-		snprintf(msg, 128, "semantic error: redefinition of %s\n", key);
+		char * msg = malloc(ERROR_MSG_BUFF);
+		snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of variable %s\n", key);
 		yyerror(msg);
 		free(msg);
 	}
 }
 
-const char* add_symbol_fun(Node * node) {
-	if(node == NULL) { fprintf(stderr, "add func from null node\n"); return NULL; }
-	
-	// node->leaf[0] = function-declarator
-	Node * fnode; 
-	if (node->nleaves > 0) { fnode = node->leaf[0]; }
-	else { fprintf(stderr, "func has no declarator\n"); return NULL; }
-	
-	// DISCOVER RETURN TYPE
-	// fnode->leaf[0] // type
-	
-	// DISCOVER FUNCTN NAME
-	// fnode->leaf[1] // IDENTIFIER
-	const char * key;
-	if (fnode->nleaves > 1) { key = fnode->leaf[1]->name; }
-	else { fprintf(stderr, "func node has no identifier\n"); return NULL; }
-	
-	// DISCOVER PARAMS
-	// fnode->leaf[2] // parameter-list
-	if (fnode->nleaves > 2) {
-		Node * plist = fnode->leaf[2];
-		Node * param;
-		while(plist->nleaves > 1 && plist->type == LIST) {
-			param = plist->leaf[1];
+void add_symbol_arr(int type, const char * key) {
+	switch (type) { case VOID: case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr without type\n"); return; }
+	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return; }
 
-			// DISCOVER PARAM TYPE
-			// type = param->leaf[0]
-			// if(param->nleaves > 0) {}
-			
-			// DISCOVER PARAM ID
-			// ID   = param->leaf[1]
-			if (param->type == DECL_VAR) { add_symbol_var(param); }
-			else if (param->type == DECL_VEC) { add_symbol_arr(param); }
-			
-			// get next
-			plist = plist->leaf[0];
-		}
-
-		// LAST PARAM
-		// DISCOVER PARAM TYPE
-		// type = param->leaf[0]
-		// if(param->nleaves > 0) {}
-			
-		// DISCOVER PARAM ID
-		// ID   = param->leaf[1]
-		if (plist->type == DECL_VAR) { add_symbol_var(plist); }
-		else if (plist->type == DECL_VEC) { add_symbol_arr(plist); }
+	Symbol * symbol = table_find(context_stack->top, key);
+	if (symbol == NULL) {
+		symbol = table_insert(context_stack->top, key);
+		symbol->attr->symbol_type = ARRAY;
+		symbol->attr->return_type = type;
+	} else {
+		yynerrs++;
+		char * msg = malloc(ERROR_MSG_BUFF);
+		snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of variable %s\n", key);
+		yyerror(msg);
+		free(msg);
 	}
-
-	return key;
 }
-
 
 /*
-void add_symbol_var(Node* node) {
-	char * name = node->leaf[1]->name;
-	if(symtab_find(symbol_table, name) == NULL) {
-		symtab_insert(&symbol_table, name, node);
+Symbol * add_symbol_fun(int type, const char * id, Node* params) {
+	//int nparams = 0
+	//if(params == NULL);
+
+
+	Symbol * symbol = table_find(context_stack->top, id);
+	if (symbol != NULL) {
+		yynerrs++;
+		char * msg = malloc(ERROR_MSG_BUFF);
+		snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of function %s\n", key);
+		yyerror(msg);
+		free(msg);
+		return NULL;
+	} else {
+		symbol = table_insert(context_stack->top, id);
 	}
+
+
+	return "";
 }
 
-void add_symbol_fun(Node* node) {
-	char * name = malloc(strlen(node->leaf[1]->name) * 2);
-	strcpy(name, node->leaf[1]->name);
-	char * pos = &name[strlen(name)];
-	*pos = '_'; ++pos;
-	if (node->nleaves == 2) {
-		*pos = 'v'; ++pos;
-		*pos = 0;
-	} else {
-		recurse_types(node, &pos);
-		*pos = 0;
-	}
-	symtab_insert(&symbol_table, name, node);
-	free(name);
-}
 */

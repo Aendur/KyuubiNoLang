@@ -6,9 +6,10 @@
 // #include "table-stack.h"
 
 
-void add_symbol_var(Node* node);
-const char* add_symbol_fun(Node* node);
-void add_symbol_arr(Node* node);
+void add_symbol_var(int type, const char * key);
+void add_symbol_arr(int type, const char * key);
+Symbol * add_symbol_fun(int type, const char * id, Node* params);
+Symbol * add_symbol_par(Node* params);
 
 Table * begin(const char * name);
 Table * assign(Node * node);

@@ -15,6 +15,7 @@ Node * node_init(int type, const char * name, ...) {
 	n0->type = type;
 	n0->name = malloc(strlen(name) + 1);
 	n0->context = NULL;
+	n0->symbol  = NULL;
 	strcpy(n0->name, name);
 
 	// init va
@@ -25,20 +26,33 @@ Node * node_init(int type, const char * name, ...) {
 	// count number of args
 	n0->nleaves = 0;
 	Node * n1;
-	while((n1 = va_arg(argn, Node*)) != NULL) { ++n0->nleaves; }
+	while((n1 = va_arg(argn, Node*)) != ENDARG) { ++n0->nleaves; }
 	va_end(argn);
+
+	// #ifdef DEBUG
+	// printf("creating node %s with %d leaves\n", n0->name, n0->nleaves);
+	// #endif
 
 	// append nodes
 	if (n0->nleaves > 0) {
 		n0->leaf = malloc(n0->nleaves * sizeof(Node*));
 		for(int l = 0; l < n0->nleaves; ++l) {
+			n0->leaf[l] = NULL;
 			n1 = va_arg(args, Node*);
-			n0->leaf[l] = n1;
-			n1->root = n0;
+
+			if (n1 == ENDARG) {
+				fprintf(stderr, "endarg child\n");
+			} else if (n1 == NULL) {
+				//fprintf(stderr, "null child\n");
+			} else {
+				n0->leaf[l] = n1;
+				n1->root = n0;
+			}
 		}
 	} else {
 		n0->leaf = NULL;
 	}
+
 	va_end(args);
 
 	return n0;
@@ -66,6 +80,7 @@ void node_free_recursive(Node ** n) {
 }
 
 void print_node(Node * n) {
+	if (n == NULL) { fprintf(stderr, "trying to print null node\n"); return;}
 	printf("%p %p %p %d %d %s", (void*) n, (void*) n->root, (void*) n->leaf, n->nleaves, n->type, n->name);
 	for (int i =0; i < n->nleaves; ++i) { printf(" %p", (void*) n->leaf[i]); }
 	printf("\n");
@@ -74,12 +89,15 @@ void print_node(Node * n) {
 void print_tree(Node * root, int level) {
 	int lvl = 0;
 	while(lvl++ < level) { printf("   "); }
-	#ifndef DEBUG
-	printf("%-s\n", root->name);
-	#else
-	printf("%-s %p\n", root->name, (void*) root->context);
-	#endif
-	for(int l = 0; l < root->nleaves; ++l) { print_tree(root->leaf[l], level+1); }
+
+	if (root == NULL) {
+		printf("(null)\n");
+	} else {
+		printf("%-s\n", root->name);
+		for(int l = 0; l < root->nleaves; ++l) {
+			print_tree(root->leaf[l], level+1);
+		}
+	}
 }
 
 

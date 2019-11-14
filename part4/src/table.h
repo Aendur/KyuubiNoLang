@@ -3,24 +3,11 @@
 
 #include <stdbool.h>
 
-/*
-enum symtab_type {
-	SYMTAB_FUNCTION,
-	SYMTAB_VARIABLE,
-	SYMTAB_ARRAY,
-	SYMTAB_SCOPE,
-};
-
-struct arg_type {
-	int type;
-	struct arg_type * next;
-};
-*/
 struct attr {
-	//struct node * node;
+	int symbol_type;
+	int return_type;
 	struct table * context;
 };
-
 
 struct bucket {
 	struct pair * first;
@@ -54,6 +41,7 @@ Table * table_rehash (Table** tab);
 
 struct pair * pair_init(const char * key); //, struct attr * val);
 void pair_print(struct pair * pair);
+void attr_print(struct attr * attr);
 
 void table_printm (Table* tab);
 void table_printf (Table* tab, int level);
