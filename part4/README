@@ -3,9 +3,9 @@ The program takes one argument which should be a path to the input file.
 
 $ ./a.out <input_file>
 
-The program will then output a preliminary version of the symbol table along with the syntax tree
-generated from the input file, if it is part of the language.
-Should there be lexical or syntax errors, the program will instead list them along with their
+The program will then output a preliminary version of the symbol table along with the
+annotated syntax tree generated from the input file, if it is part of the language.
+Should there be errors, the program will instead list them along with their
 positions in the text (line and column numbers, where tabs count as 4 columns).
 
 
@@ -19,7 +19,7 @@ $ flex language.l
 $ bison language.y
 
 3. Compile the program
-$ gcc -lfl -std=c11 -m64 -O3 src/main.c src/node.c src/table.c src/parser.c src/scanner.c
+$ gcc -std=c18 -m64 -O3 src/main.c src/node.c src/node-list.c src/table.c src/table-stack.c src/arg-list.c src/parser.c src/scanner.c
 
 - Alternatively, a makefile has also been provided which will run all commands
 $ make
@@ -30,12 +30,11 @@ $ make rel    # for step 3
 
 
 
-Specs
+Specs:
 
-Operating system: Debian GNU/Linux 10 (buster)
-Compiler version: gcc (Debian 8.3.0-7) 8.3.0
+Compiler version: gcc (Debian 9.2.1-17) 9.2.1 20191102
 FLEX version: flex 2.6.4
-GNU Bison version: bison (GNU Bison) 3.4.1
+GNU Bison version: bison (GNU Bison) 3.4.2
 
 
 
@@ -45,27 +44,8 @@ Attached files:
 ./language.l  - FLEX definitions file
 ./language.y  - BISON definitions file
 ./makefile    - 
-./report3.pdf - 
 
-Source files:
+Folders:
+./src/        - Source code
+./tests/      - Test input files
 
-./src/main.c     - Program entry point
-./src/node.c     - Tree nodes data structures (source)
-./src/node.h     - Tree nodes data structures (header)
-./src/parser.c   - GNU Bison generated code (source)
-./src/parser.h   - GNU Bison generated code (header)
-./src/scanner.c  - FLEX generated code (source)
-./src/scanner.h  - FLEX generated code (header)
-./src/table.c    - Hash table data structures (source)
-./src/table.h    - Hash table data structures (header)
-
-Sample test files:
-
-./tests/test_error1.c
-./tests/test_error2.c
-./tests/test_error3.c
-./tests/test_valid1.c
-./tests/test_valid2.c
-./tests/test_valid3.c
-./tests/test_valid4.c
-./tests/test_valid5.c

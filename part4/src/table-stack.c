@@ -26,7 +26,11 @@ Tablestack * ts_init(void) {
 void ts_free(Tablestack ** ts) {
 	if (ts == NULL) { fprintf(stderr, "null ** tablestack\n"); return; }
 	if (*ts == NULL) { fprintf(stderr, "null * tablestack\n"); return; }
-	//Tablestack * tabs = *ts;
+
+	while ((*ts)->size > 0) {
+		Table * tab = ts_pull(*ts);
+		table_free(&tab);
+	}
 	free(*ts);
 	*ts = NULL;
 }
