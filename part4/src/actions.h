@@ -1,6 +1,8 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
+#include <stdbool.h>
+
 Symbol * add_symbol(int symbol_type, int data_type, const char * key);
 Symbol * add_symbol_var(int type, const char * key);
 Symbol * add_symbol_arr(int type, const char * key);
@@ -18,7 +20,7 @@ void assign_body(Node * node);
 char * str_ptr(const char * prefix, void* address, const char * suffix);
 
 Symbol * evaluate(Node * node);
-int typecheck(Node * node);
+Symbol * typecheck_lazy(Node * node);
 
 #endif
 

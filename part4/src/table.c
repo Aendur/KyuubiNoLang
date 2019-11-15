@@ -169,7 +169,6 @@ struct table * table_rehash (struct table ** tab) {
 void table_printf (struct table * tab, int level) {
 	if (tab == NULL) { return; }
 	for (unsigned int i = 0; i < tab->n_buckets; ++i) {
-		//struct pair * pair = tab->buckets[i].first;
 		struct table * pair = tab->buckets[i].first;
 		while(pair != NULL) {
 			for (int lvl = 0; lvl < level; ++lvl) { printf("   "); }
@@ -218,12 +217,12 @@ void table_print_debug (Table* tab) {
 //void pair_print(struct pair * pair) {
 void pair_print(struct table * pair) {
 	if (pair != NULL) {
-		printf("(key=\"%s\",", pair->key);
-		printf("attr=");
-		//printf("attr=%p,", (void*) pair->attr);
-		//printf("next=%p) ", (void*) pair->next);
+		//printf("(key=\"%s\",", pair->key);
+		//printf("attr=");
+		//printf(")\n");
+		printf("%s  ", pair->key);
 		attr_print(pair->attr);
-		printf(")\n");
+		printf("\n");
 	} else {
 		printf("(null)");
 	}

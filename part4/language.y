@@ -13,7 +13,7 @@
 	struct arg_list * al;
 }
 
-%token <ival> VOID INT FLOAT CHAR STRING
+%token <ival> VOID INT FLOAT CHAR STRING UNDEFINED
 %token <sval> IDENTIFIER
 %token <sval> STRING_LITERAL
 %token <sval> CONSTANT_FLOAT
@@ -123,7 +123,7 @@ init_declarator
 
 initializer_list
 	: assignment_expression                      { $$ = $1; }
-	| initializer_list ',' assignment_expression { $$ = nl_push(node_list, node_init(LIST, "initializer-list" , $1, $3, ENDARG)); assign_context($$); }
+	| initializer_list ',' assignment_expression { $$ = nl_push(node_list, node_init(LIST, "initializer-list" , $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 function_definition
@@ -138,7 +138,7 @@ function_definition
 	;
 
 argument_list
-	: argument                    { $$ = $1; }
+	: argument                   { $$ = $1; }
 	| argument_list ',' argument { $$ = al_link($1, &$3); } 
 	;
 
@@ -185,52 +185,52 @@ return_statement
 
 assignment_expression
 	: logical_or_expression                         { $$ = $1; }
-	| postfix_expression '=' logical_or_expression  { $$ = nl_push(node_list, node_init(OP_ASSIGN, "=", $1, $3, ENDARG)); assign_context($$); }
+	| postfix_expression '=' logical_or_expression  { $$ = nl_push(node_list, node_init(OP_ASSIGN, "=", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 logical_or_expression
 	: logical_and_expression                              { $$ = $1; }
-	| logical_or_expression OP_OR logical_and_expression  { $$ = nl_push(node_list, node_init(OP_OR, "||", $1, $3, ENDARG)); assign_context($$); }
+	| logical_or_expression OP_OR logical_and_expression  { $$ = nl_push(node_list, node_init(OP_OR, "||", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	; 
 
 logical_and_expression
 	: equality_expression                                 { $$ = $1; }
-	| logical_and_expression OP_AND equality_expression   { $$ = nl_push(node_list, node_init(OP_AND, "&&", $1, $3, ENDARG)); assign_context($$); }
+	| logical_and_expression OP_AND equality_expression   { $$ = nl_push(node_list, node_init(OP_AND, "&&", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$);}
 	;
 
 equality_expression
 	: relational_expression                             { $$ = $1; }
-	| equality_expression OP_EQ relational_expression   { $$ = nl_push(node_list, node_init(OP_EQ, "==", $1, $3, ENDARG)); assign_context($$); }
-	| equality_expression OP_NE relational_expression   { $$ = nl_push(node_list, node_init(OP_NE, "!=", $1, $3, ENDARG)); assign_context($$); }
+	| equality_expression OP_EQ relational_expression   { $$ = nl_push(node_list, node_init(OP_EQ, "==", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| equality_expression OP_NE relational_expression   { $$ = nl_push(node_list, node_init(OP_NE, "!=", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 relational_expression
 	: additive_expression                               { $$ = $1; }
-	| relational_expression '<'   additive_expression   { $$ = nl_push(node_list, node_init(OP_LT, "<" , $1, $3, ENDARG)); assign_context($$); }
-	| relational_expression '>'   additive_expression   { $$ = nl_push(node_list, node_init(OP_GT, ">" , $1, $3, ENDARG)); assign_context($$); }
-	| relational_expression OP_LE additive_expression   { $$ = nl_push(node_list, node_init(OP_LE, "<=", $1, $3, ENDARG)); assign_context($$); }
-	| relational_expression OP_GE additive_expression   { $$ = nl_push(node_list, node_init(OP_GE, ">=", $1, $3, ENDARG)); assign_context($$); }
+	| relational_expression '<'   additive_expression   { $$ = nl_push(node_list, node_init(OP_LT, "<" , $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| relational_expression '>'   additive_expression   { $$ = nl_push(node_list, node_init(OP_GT, ">" , $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| relational_expression OP_LE additive_expression   { $$ = nl_push(node_list, node_init(OP_LE, "<=", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| relational_expression OP_GE additive_expression   { $$ = nl_push(node_list, node_init(OP_GE, ">=", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 additive_expression
 	: multiplicative_expression                           { $$ = $1; }
-	| additive_expression '+' multiplicative_expression   { $$ = nl_push(node_list, node_init(OP_ADD, "+", $1, $3, ENDARG)); assign_context($$); }
-	| additive_expression '-' multiplicative_expression   { $$ = nl_push(node_list, node_init(OP_SUB, "-", $1, $3, ENDARG)); assign_context($$); }
+	| additive_expression '+' multiplicative_expression   { $$ = nl_push(node_list, node_init(OP_ADD, "+", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| additive_expression '-' multiplicative_expression   { $$ = nl_push(node_list, node_init(OP_SUB, "-", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 multiplicative_expression
 	: unary_expression                                  { $$ = $1; }
-	| multiplicative_expression '*' unary_expression    { $$ = nl_push(node_list, node_init(OP_MUL, "*", $1, $3, ENDARG)); assign_context($$); }
-	| multiplicative_expression '/' unary_expression    { $$ = nl_push(node_list, node_init(OP_DIV, "/", $1, $3, ENDARG)); assign_context($$); }
-	| multiplicative_expression '%' unary_expression    { $$ = nl_push(node_list, node_init(OP_MOD, "%", $1, $3, ENDARG)); assign_context($$); }
+	| multiplicative_expression '*' unary_expression    { $$ = nl_push(node_list, node_init(OP_MUL, "*", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| multiplicative_expression '/' unary_expression    { $$ = nl_push(node_list, node_init(OP_DIV, "/", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| multiplicative_expression '%' unary_expression    { $$ = nl_push(node_list, node_init(OP_MOD, "%", $1, $3, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 unary_expression
 	: postfix_expression         { $$ = $1; }
-	| '!' unary_expression       { $$ = nl_push(node_list, node_init(OP_NOT, "!",  $2, ENDARG)); assign_context($$); }
-	| '-' unary_expression       { $$ = nl_push(node_list, node_init(OP_NEG, "-",  $2, ENDARG)); assign_context($$); }
-	| OP_INC unary_expression    { $$ = nl_push(node_list, node_init(OP_INC, "++", $2, ENDARG)); assign_context($$); }
-	| OP_DEC unary_expression    { $$ = nl_push(node_list, node_init(OP_DEC, "--", $2, ENDARG)); assign_context($$); }
+	| '!' unary_expression       { $$ = nl_push(node_list, node_init(OP_NOT, "!",  $2, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| '-' unary_expression       { $$ = nl_push(node_list, node_init(OP_NEG, "-",  $2, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| OP_INC unary_expression    { $$ = nl_push(node_list, node_init(OP_INC, "++", $2, ENDARG)); assign_context($$); typecheck_lazy($$); }
+	| OP_DEC unary_expression    { $$ = nl_push(node_list, node_init(OP_DEC, "--", $2, ENDARG)); assign_context($$); typecheck_lazy($$); }
 	;
 
 postfix_expression

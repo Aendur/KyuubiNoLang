@@ -1,4 +1,4 @@
-default: flex bison dbg
+default: flex bison rel
 
 flex:
 	flex language.l
