@@ -91,6 +91,17 @@ struct table * table_find (struct table * tab, const char* key) {
 	return pair;
 }
 
+// Search for key in all tables from current to root, returns NULL if not found
+struct table * table_find_back (struct table * tab, const char* key) {
+	if (tab == NULL) { fprintf(stderr, "Trying to search on null object\n"); return NULL; }
+	struct table * pair;
+	do {
+		pair = table_find(tab, key);
+		tab = tab->root;
+	} while (tab != NULL && pair == NULL);
+	return pair;
+}
+
 // Insert (key,val) pair in table
 struct table * table_insert (struct table * tab, const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to insert on null object\n"); return NULL; }
@@ -229,10 +240,13 @@ void attr_print(struct attr * attr) {
 		switch(attr->symbol_type) {
 			case LIST:          printf("LIST");          break;
 			case VARIABLE:      printf("VARIABLE");      break;
+			case CONSTANT:      printf("CONSTANT");      break;
 			case ARRAY:         printf("ARRAY");         break;
 			case ARRAY_INDEX:   printf("ARRAY_INDEX");   break;
 			case FUNCTION:      printf("FUNCTION");      break;
 			case FUNCTION_CALL: printf("FUNCTION_CALL"); break;
+			case DECLARATION:   printf("DECLARATION");   break;
+			case GENERIC_NODE:  printf("GENERIC_NODE");  break;
 			default: printf("%d", attr->symbol_type); break;
 		}
 

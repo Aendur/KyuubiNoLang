@@ -53,45 +53,48 @@ extern int yydebug;
     INT = 259,
     FLOAT = 260,
     CHAR = 261,
-    IDENTIFIER = 262,
-    STRING_LITERAL = 263,
-    CONSTANT_FLOAT = 264,
-    CONSTANT_INT = 265,
-    CONSTANT_HEX = 266,
-    CONSTANT_CHAR = 267,
-    IF = 268,
-    ELSE = 269,
-    WHILE = 270,
-    DO = 271,
-    RETURN = 272,
-    OP_INC = 273,
-    OP_DEC = 274,
-    OP_NOT = 275,
-    OP_MUL = 276,
-    OP_DIV = 277,
-    OP_MOD = 278,
-    OP_ADD = 279,
-    OP_NEG = 280,
-    OP_SUB = 281,
-    OP_LT = 282,
-    OP_GT = 283,
-    OP_LE = 284,
-    OP_GE = 285,
-    OP_EQ = 286,
-    OP_NE = 287,
-    OP_OR = 288,
-    OP_AND = 289,
-    OP_ASSIGN = 290,
-    UNRECOGNIZED_TOKEN = 291,
-    INVALID_IDENTIFIER = 292,
-    INVALID_CHAR_CONST = 293,
-    LIST = 294,
-    VARIABLE = 295,
-    ARRAY = 296,
-    ARRAY_INDEX = 297,
-    FUNCTION = 298,
-    FUNCTION_CALL = 299,
-    DECLARATION = 300
+    STRING = 262,
+    IDENTIFIER = 263,
+    STRING_LITERAL = 264,
+    CONSTANT_FLOAT = 265,
+    CONSTANT_INT = 266,
+    CONSTANT_HEX = 267,
+    CONSTANT_CHAR = 268,
+    IF = 269,
+    ELSE = 270,
+    WHILE = 271,
+    DO = 272,
+    RETURN = 273,
+    OP_INC = 274,
+    OP_DEC = 275,
+    OP_NOT = 276,
+    OP_MUL = 277,
+    OP_DIV = 278,
+    OP_MOD = 279,
+    OP_ADD = 280,
+    OP_NEG = 281,
+    OP_SUB = 282,
+    OP_LT = 283,
+    OP_GT = 284,
+    OP_LE = 285,
+    OP_GE = 286,
+    OP_EQ = 287,
+    OP_NE = 288,
+    OP_OR = 289,
+    OP_AND = 290,
+    OP_ASSIGN = 291,
+    UNRECOGNIZED_TOKEN = 292,
+    INVALID_IDENTIFIER = 293,
+    INVALID_CHAR_CONST = 294,
+    LIST = 295,
+    VARIABLE = 296,
+    CONSTANT = 297,
+    ARRAY = 298,
+    ARRAY_INDEX = 299,
+    FUNCTION = 300,
+    FUNCTION_CALL = 301,
+    DECLARATION = 302,
+    GENERIC_NODE = 303
   };
 #endif
 
@@ -106,7 +109,7 @@ union YYSTYPE
 	const char * sval;
 	struct arg_list * al;
 
-#line 110 "src/parser.h"
+#line 113 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -119,11 +122,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 72 "language.y"
+#line 74 "language.y"
 
 	void yyerror (char const *);	
 	char * build_key(struct arg_list * args);
 
-#line 128 "src/parser.h"
+#line 131 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */

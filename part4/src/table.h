@@ -25,6 +25,12 @@ struct bucket {
 struct attr {
 	int symbol_type;
 	int return_type;
+	union {
+		int   ival;
+		char  cval;
+		const char* sval;
+		float fval;
+	} value;
 	struct arg_list * arg_list;
 	struct node * statement_tree;
 };
@@ -34,6 +40,7 @@ void table_free (Table** tab);
 double table_loadf (Table* tab);
 unsigned long table_hash (const char * key);
 struct table * table_find (Table* tab, const char* key);
+struct table * table_find_back (Table* tab, const char* key);
 struct table * table_insert (Table* tab, const char* key); //, struct attr* val);
 struct table * table_rehash (Table** tab);
 

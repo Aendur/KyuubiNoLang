@@ -86,6 +86,7 @@ void print_node(Node * n) {
 	printf("\n");
 }
 
+#include "table.h"
 void print_tree(Node * root, int level) {
 	int lvl = 0;
 	while(lvl++ < level) { printf("   "); }
@@ -93,7 +94,10 @@ void print_tree(Node * root, int level) {
 	if (root == NULL) {
 		printf("(null)\n");
 	} else {
-		printf("%-s\n", root->name);
+		printf("%-s ", root->name);
+		if(root->symbol != NULL) { attr_print(root->symbol->attr); }
+		printf("\n");
+
 		for(int l = 0; l < root->nleaves; ++l) {
 			print_tree(root->leaf[l], level+1);
 		}

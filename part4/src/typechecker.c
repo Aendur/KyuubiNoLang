@@ -1,4 +1,17 @@
+// #include "actions.h"
+// #include "parser.h"
+// #include <stdlib.h>
+// #include <string.h>
+// #include <stdio.h>
+//extern Table * symbol_table;
+//extern Tablestack * context_stack;
+//extern int nline;
+//extern int ncol0;
+//extern int yynerrs;
+
+
 #define ERROR_MSG_BUFF 256
+
 
 void redefinition_error(const char * name) {
 	char msg[ERROR_MSG_BUFF];
@@ -38,7 +51,6 @@ Table * begin(const char * name) {
 		return NULL;
 	} else {
 		// otherwise push it into the stack
-		new_context->root = context_stack->top;
 		ts_push(context_stack, new_context);
 		return new_context;
 	}
@@ -101,7 +113,6 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
 	}
-	new_context->root = context_stack->top;
 	ts_push(context_stack, new_context);
 
 	new_context = table_find(context_stack->top, key);
@@ -110,7 +121,6 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
 		new_context->attr->arg_list = args;
-		new_context->root = context_stack->top;
 		ts_push(context_stack, new_context);
 	} else {
 		redefinition_error_fun(name, key);
@@ -140,7 +150,9 @@ void assign_body(Node * node) {
 
 Table * finish(void) {
 	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
+
 	Symbol * new_context = ts_pull(context_stack);
+	new_context->root = context_stack->top;
 	return  new_context;
 }
 
@@ -173,178 +185,5 @@ Symbol * add_symbol_arr(int type, const char * key) {
 	} else {
 		redefinition_error(key);
 		return NULL;
-	}
-}
-
-Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
-	switch (data_type) { case VOID: case INT: case CHAR: case FLOAT: case STRING: break; default: fprintf(stderr, "undefined type\n"); return NULL; }
-	if(key  == NULL) { fprintf(stderr, "add symbol with null key\n"); return NULL; }
-
-	Symbol * symbol = table_find(context_stack->top, key);
-	if (symbol == NULL) {
-		symbol = table_insert(context_stack->top, key);
-		symbol->attr->symbol_type = symbol_type;
-		symbol->attr->return_type = data_type;
-		return symbol;
-	} else {
-		redefinition_error(key);
-		return NULL;
-	}
-}
-
-Symbol * retrieve(Node * node, const char * key) {
-	Symbol * s = table_find_back(node->context, key);
-	if (s == NULL) {
-		char msg[ERROR_MSG_BUFF];
-		snprintf(msg, ERROR_MSG_BUFF, "semantic error: undeclared symbol '%s'", key);
-		yyerror(msg);
-		yynerrs++;
-
-		//printf("%p\n", (void*)node->context);
-		table_printf(node->context, 0);
-		getchar();
-		return NULL;
-	} else {
-		node->symbol = s;
-		return s;
-	}
-}
-
-char * str_ptr(const char * prefix, void* address, const char * suffix) {
-	unsigned long size = 24;
-	if(prefix != NULL) { size += strlen(prefix); }
-	if(suffix != NULL) { size += strlen(suffix); }
-	char * str = calloc(size, sizeof(char));
-
-	if (prefix == NULL && suffix == NULL) {
-		snprintf(str, size, "%p", address);
-	} else if (prefix != NULL && suffix == NULL) {
-		snprintf(str, size, "%s:%p", prefix, address);
-	} else if (prefix == NULL && suffix != NULL) {
-		snprintf(str, size, "%p:%s", address, suffix);
-	} else {
-		snprintf(str, size, "%s:%p:%s", prefix, address, suffix);
-	}
-	return str;
-}
-
-// Symbol * evaluate(Node * node) {
-// 	if (node == NULL) {
-// 		return NULL;
-// 	}
-// // %token OP_INC "++"
-// // %token OP_DEC "--"
-// // %token OP_NOT "!"
-// // %token OP_MUL "*"
-// // %token OP_DIV "/"
-// // %token OP_MOD "%"
-// // %token OP_ADD "+"
-// // %token OP_NEG
-// // %token OP_SUB "-"
-// // %token OP_LT "<" 
-// // %token OP_GT ">" 
-// // %token OP_LE "<="
-// // %token OP_GE ">="
-// // %token OP_EQ "=="
-// // %token OP_NE "!="
-// // %token OP_OR "||"
-// // %token OP_AND "&&"
-// // %token OP_ASSIGN "="
-// 	switch(node->type) {
-// 		case OP_INC   :  /* "++" */ break;
-// 		case OP_DEC   :  /* "--" */ break;
-// 		case OP_NOT   :  /* "!"  */ break;
-// 		case OP_MUL   :  /* "*"  */ break;
-// 		case OP_DIV   :  /* "/"  */ break;
-// 		case OP_MOD   :  /* "%"  */ break;
-// 		case OP_ADD   :  /* "+"  */ break;
-// 		case OP_NEG   :  /* "-"  */ break;
-// 		case OP_SUB   :  /* "-"  */ break;
-// 		case OP_LT    :  /* "<"  */ break;
-// 		case OP_GT    :  /* ">"  */ break;
-// 		case OP_LE    :  /* "<=" */ break;
-// 		case OP_GE    :  /* ">=" */ break;
-// 		case OP_EQ    :  /* "==" */ break;
-// 		case OP_NE    :  /* "!=" */ break;
-// 		case OP_OR    :  /* "||" */ break;
-// 		case OP_AND   :  /* "&&" */ break;
-// 		case OP_ASSIGN:  /* "="  */ break;
-// 		default: break;
-// 	}
-// 	//node->nleaves
-// }
-
-int resolve_types(int type1, int type2) {
-	if (type1 == 0) { return type2; }
-	if (type2 == 0) { return type1; }
-	if (type1 == type2) { return type1; }
-
-	switch(type1) {
-		case STRING: switch(type2) {
-			case STRING: return STRING;
-			case FLOAT:  return -1;
-			case CHAR:   return -1;
-			case INT:    return -1;
-			case VOID:   return -1;
-			default:     return -1;
-		}
-		case FLOAT:  switch(type2) {
-			case STRING: return -1;
-			case FLOAT:  return FLOAT;
-			case CHAR:   return FLOAT;
-			case INT:    return FLOAT;
-			case VOID:   return -1;
-			default:     return -1;
-		}
-		case CHAR:   switch(type2) {
-			case STRING: return -1;
-			case FLOAT:  return FLOAT;
-			case CHAR:   return CHAR;
-			case INT:    return INT;
-			case VOID:   return -1;
-			default:     return -1;
-		}
-		case INT:    switch(type2) {
-			case STRING: return -1;
-			case FLOAT:  return FLOAT;
-			case CHAR:   return INT;
-			case INT:    return INT;
-			case VOID:   return -1;
-			default:     return -1;
-		}
-		case VOID:    switch(type2) {
-			case STRING: return -1;
-			case FLOAT:  return -1;
-			case CHAR:   return -1;
-			case INT:    return -1;
-			case VOID:   return VOID;
-			default:     return -1;
-		}
-		default: return -1;
-	}
-}
-
-int typecheck(Node * node) {
-	if (node == NULL) { return 0; }
-
-	//if (node->symbol != NULL) {
-	//	if (node->type == CONSTANT) {
-	//		return node->symbol->attr->return_type;
-	//	}
-	//}
-
-	if (node->nleaves == 0) {
-		if (node->symbol == NULL) {
-			fprintf(stderr, "0 leaves no symbol\n");
-			return -1;
-		}
-	} else if (node->nleaves == 1) {
-		return typecheck(node->leaf[0]);
-	} else /* if (node->nleaves > 1) */ {
-		int ntype = typecheck(node->leaf[0]);
-		for (int i = 1; i < node->nleaves; ++i) {
-			ntype = resolve_types(ntype, typecheck(node->leaf[i]));
-		}
-		return ntype;
 	}
 }
