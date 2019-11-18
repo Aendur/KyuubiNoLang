@@ -1,0 +1,25 @@
+\section{The language}
+\subsection{Introduction}
+Programming languages are languages that can be converted into sets of instructions to be
+executed by a computer. This conversion process is called translation (or compilation) and
+is done by software known as compilers. As programming languages evolved, we observe an
+increasing variety of abstractions to accommodate for new programming paradigms and
+techniques, which also bring them closer to the domain of the problems they are set
+out to solve and away from the specificities of architecture set implementations \cite{Aho2007}.
+
+One such abstraction is polymorphism. In typed languages, symbols (named identifiers
+for entities such as variables or functions) are constrained by their data type.
+If polymorphism is available, we are able to interact with different data types
+through a single interface, for instance, by allowing multiple types to be assigned
+to a given symbol. Polymorphism improves code readability and helps keeping the namespace
+clean by allowing functions to be identified by their expected behavior rather than
+contrived by the types of their arguments. Polymorphism is also one of the key features
+in object-oriented programming \cite{Aho2007, Strachey2000}.
+
+Aside from the possibility to perform arithmetical operations over a few different
+data types (integers, floating point and pointers), the C programming language does
+not support polymorphism. In this work we seek to provide polymorphism in the form
+of function overloading - where polymorphic functions may have multiple definitions
+according to their argument types - to a simplified subset of the C programming language.
+The grammar of the language is presented in the following subsection.
+

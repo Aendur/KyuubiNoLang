@@ -36,13 +36,19 @@ encoding=UTF-8
 highlight=LaTeX
 mode=LaTeX
 
-[item:main.tex]
+[item:introduction.tex]
 archive=true
 encoding=UTF-8
 highlight=LaTeX
 mode=LaTeX
 
-[item:part1.tex]
+[item:lexical.tex]
+archive=true
+encoding=UTF-8
+highlight=LaTeX
+mode=LaTeX
+
+[item:main.tex]
 archive=true
 encoding=UTF-8
 highlight=LaTeX
@@ -54,6 +60,12 @@ encoding=UTF-8
 highlight=BibTeX
 mode=BibTeX
 
+[item:semantics.tex]
+archive=true
+encoding=UTF-8
+highlight=LaTeX
+mode=LaTeX
+
 [item:symbol-table.tex]
 archive=true
 encoding=UTF-8
@@ -61,6 +73,12 @@ highlight=LaTeX
 mode=LaTeX
 
 [item:syntax-tree.tex]
+archive=true
+encoding=UTF-8
+highlight=LaTeX
+mode=LaTeX
+
+[item:syntax.tex]
 archive=true
 encoding=UTF-8
 highlight=LaTeX

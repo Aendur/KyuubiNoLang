@@ -1,0 +1,33 @@
+\subsection{Lexical features}
+The following table summarizes what word patterns are part of the language we are designing.
+These patterns should be recognized by the scanner, and therefore are provided as an input file
+for the FLEX \cite{FLEX} scanner generator (see attached file ``language.l''):
+
+%\paragraph{}
+\begin{tabular}{lccccccccc}
+\textbf{Data types}                      & void & char & int & float &         &      &      &   &   \\
+\textbf{Keywords}                        & if   & else & do  & while & return  &      &      &   &   \\
+\textbf{Arithmetical operators}          & $+$  & $-$  & $*$ & $/$   & $\%$    & $++$ & $--$ &   &   \\
+\textbf{Comparison operators}            & <    & >    & <=  & >=    & ==      & !=   &      &   &   \\
+\textbf{Logical operators}               & \&\& & ||   & !   &       &         &      &      &   &   \\
+\textbf{Assignment operator}             & =    &      &     &       &         &      &      &   &   \\
+\textbf{Character/string delimiters}     & '    & "    &     &       &         &      &      &   &   \\
+\textbf{Array indexers}                  & [    & ]    &     &       &         &      &      &   &   \\
+\textbf{Scope delims./init lists}        & \{   & \}   &     &       &         &      &      &   &   \\
+\textbf{End of statement mark}           & ;    &      &     &       &         &      &      &   &   \\
+\textbf{Function args/calls}             & (    & )    &     &       &         &      &      &   &   \\
+\textbf{List element separator}          & ,    &      &     &       &         &      &      &   &   \\
+\textbf{Comment delimiters}              & /*   & */   & //  &       &         &      &      &   &   \\
+\end{tabular}
+
+\vspace*{1cm}
+
+\begin{tabular}{ll}
+\textbf{Character constants}            & text delimited by single quotation marks (') \\
+\textbf{String literals}                & text delimited by double quotation marks (") \\
+\textbf{Integer decimal constants}      & e.g. 1, 2, 100, -5, +7                       \\
+\textbf{Integer hexadecimal constants}  & e.g. 0x01, -0xA, +0x123                      \\
+\textbf{Floating-point constants}       & g.g. 0.0, -1.234, +3.14                      \\
+\textbf{Comments and white space}       & are ignored.                                 \\
+\end{tabular}
+

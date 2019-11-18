@@ -14,33 +14,29 @@
 %\usepackage{titlesec}
 
 
-
-%\titlespacing{\paragraph}{1.5em}{0.5em}{0.5em}
 \titlespacing{\paragraph}{\parindent}{0.5em}{0.5em}
-
 \addbibresource{refs.bib}
 \renewcommand{\baselinestretch}{1.05}
-%\renewcommand{\familydefault}{\sfdefault}
-
 \lstset{basicstyle=\ttfamily\fontseries{lc}\selectfont,breaklines=true,tabsize=4}
 
 \begin{document}
-
 \title{Building a compiler\\\Large for an yet unnamed language\\\small Polymorphism in a C-like programming language}
-
 \author{Diogo César Ferreira\\11/0027931}
 \affil{University of Brasília}
 \maketitle
 
-
 % section 1 - introduction
-\input{part1.tex} 
+\input{introduction.tex} 
+\input{lexical.tex} 
+\input{syntax.tex} 
+\input{semantics.tex} 
+\input{use-cases.tex} 
 \clearpage
 
 % section 2 - the compiler
 \input{compiler.tex}
-\input{syntax-tree.tex}
 \input{symbol-table.tex}
+\input{syntax-tree.tex}
 \input{error-handling.tex}
 \input{tests.tex}
 

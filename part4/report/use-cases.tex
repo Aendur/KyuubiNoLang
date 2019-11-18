@@ -1,0 +1,46 @@
+\subsection{Use-cases}
+We present some use cases in which polymorphic functions would be useful. Functions with the same behavior, but different argument types:
+
+\begin{lstlisting}[language=C]
+int   i = -1;
+float f = -1.0;
+abs(i); // return the absolute value of i
+abs(f); // return the absolute value of f
+        // In C, abs does not accept a floating-point argument
+        // we must use fabs instead
+\end{lstlisting}
+
+In this simple example, the abs function could compute the absolute of any numeric value passed as argument. The type constrains in C, however, do not allow the abs function to be called with a floating-point argument.
+
+Functions with different behavior, but the same "intuitive meaning" for the programmer
+
+\begin{lstlisting}[language=C]
+int  i[3] = { 9, 2, 5 };
+char w[][9] = { "word", "vocable", "locution" };
+
+sort(i); // The user implements a sorting function for integer vectors
+sort(w); // The user implements a lexicographic or alphabetic
+         // sorting function for string vectors
+\end{lstlisting}
+
+The implementation of a sorting function for integers and strings would be considerably distinct. However, intuitively a programmer might expect some notion of ordering to be present in arrays of strings. This can also be applied to functions with different number of arguments:
+
+\begin{lstlisting}[language=C]
+// Should return the lowest of either x or y
+int min(int x, int y) {
+	if (x <= y) { return x; }
+	else { return y; }
+}
+
+// Should also return the lowest of either x, y or z
+int min(int x, int y, int z) {
+	if (x <= y) {
+		if (x <= z) { return x; }
+		else { return z; }
+	} else {
+		if (y <= z) { return y; }
+		else { return z; }
+	}
+}
+\end{lstlisting}
+
