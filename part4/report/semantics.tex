@@ -1,4 +1,5 @@
 \subsection{Semantics}
+\label{section:semantics}
 
 \subsubsection{Scope}
 
@@ -9,7 +10,7 @@ declare and initialize (but not assign) global variables and to
 define functions. Functions can be defined only in the global scope.
 
 The body of a function is treated as a compound statement itself 
-and comopund statements can be nested. Within compound statements,
+and compound statements can be nested. Within compound statements,
 there can be variable declaration, initialization and assignment,
 arithmetic and logical expressions, flow control statements
 (conditional and loops) and jump statements (return).
@@ -36,6 +37,7 @@ by the function's body.
 
 
 \subsubsection{Implicit type conversion}
+\label{section:types}
 
 Our language is comprised of five basic types:
 \texttt{void} (no type), 
@@ -57,8 +59,9 @@ and pointers in the form of arrays of one of the basic types:
  \item \textbf{Arrays} cannot be implicitly converted to another type.
 \end{itemize}
 
-Essentialy, a value can be implicitly converted to another type with larger storage size.
-For functions, the same rules should apply after the function's return value has been resolved.
+Essentially, a value can be implicitly converted to another type with larger storage size.
+For function calls, the same rules should apply after the function's return value has been
+resolved. However, types are not implicitly converted on the arguments of a function call.
 
 \subsubsection{Explicit type conversion}
 

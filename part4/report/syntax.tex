@@ -1,9 +1,9 @@
 \subsection{Language syntax}
 
-Our languate's grammar contains elements taken from the one presented by \textcite{Harbison2002},
+Our language's grammar contains elements taken from the one presented by \textcite{Harbison2002},
 which is a compilation from the many versions of the C grammar specified by the ISO C Standard
 along the years. Our grammar follows the general structure of the C language's grammar.
-We aim to provide a simplified version of the C language with support for polymophic function
+We aim to provide a simplified version of the C language with support for polymorphic function
 definitions, that is, which allows the programmer to define multiple function with the same name
 but different argument types. The following grammar is also provided as an input file for the
 GNU Bison \cite{BISON} parser generator (see attached file ``language.y''). Strikenthrough
@@ -20,7 +20,7 @@ rules are the ones that have been removed or changed from the previous version o
 
 \item \begin{tabbing} declaration \= $\rightarrow$ \= \sout{function-declarator \textbf{;}} \\
 	\> \hspace*{0.05cm} | \> \sout{function-declarator compound-statement} \\
-	\> \hspace*{0.05cm} | \> function-definiton \\
+	\> \hspace*{0.05cm} | \> function-definition \\
 	\> \hspace*{0.05cm} | \> init-declarator \textbf{;} \\
 \end{tabbing}
 
@@ -177,13 +177,13 @@ rules are the ones that have been removed or changed from the previous version o
 \end{enumerate}
 \normalsize
 
-\subsection{Grammar changes}
+\subsubsection{Grammar changes}
 \paragraph{Rule 3:} the removed productions were replaced by the \textit{function-definition} variable.
-Function declaration without definition has beem removed in this version due to implementation issues,
+Function declaration without definition has been removed in this version due to implementation issues,
 but might be added once again in a future version.
 
 \paragraph{Rules 4, 5 and 6:} the \textit{declarator} and \textit{initializer} variables have been
-removed, but their productions (rules 5 and 6) are now parte of rule 4. This was done because
+removed, but their productions (rules 5 and 6) are now part of rule 4. This was done because
 of changes in the underlying data structures used to hold token data.
 
 \paragraph{Rules 8 and 9:} \textit{function-declarator} (rule 8) was removed and replaced by
@@ -204,7 +204,7 @@ side, since these productions represent either array indexing or function calls,
 by specific functions and no longer require the \textit{postfix-expression} variable to be resolved
 beforehand (an expression instead of an identifier here would be invalid anyway).
 
-\subsection{Input / output}
+\subsubsection{Input / output}
 Input and output operations are not specified in our language's grammar. However, these will be provided
 in the form of special polymorphic functions available to the user, akin to a small built-in
 \texttt{stdio.h} library. The available functions will have the following signatures:

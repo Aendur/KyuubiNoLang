@@ -1,0 +1,39 @@
+
+\subsection{Type checker}
+\label{section:tc}
+
+When a node in the tree is created, sometimes it is also type-checked
+(See Listing \ref{lst:newnode} for example). Type-checking is done by the functions
+
+\begin{lstlisting}
+Symbol * typecheck_lazy(Node * node);
+\end{lstlisting}
+and
+\begin{lstlisting}
+void resolve_types(Symbol * tgt, Symbol * src);
+\end{lstlisting}
+
+
+The function \texttt{typecheck\_lazy} is a recursive function that lazily evaluates a node's
+type. It is lazy because, if the node's type has already been set, then it does nothing.
+If, however the node's type is still not defined, then it recursively evaluates its children
+nodes. If the node has more than one child, \texttt{resolve\_types} is called to perform implicit
+type conversion or otherwise throw semantic errors. When the type checker returns, it links
+the node it just analyzed to an entry in the symbol table, setting its attributes accordingly.
+
+We can use a lazy type checker here because it is being called in the same pass as the parsing, 
+and because the tree is built bottom-up. In the current version of the compiler, however,
+the type checker has not yet been fully implemented as only expressions are being type checked.
+The type checking of some statement nodes, such as \texttt{if} and \texttt{while} nodes will
+require implementing additional auxiliary routines. This is the reason why the tree is not yet
+fully annotated.
+
+Although the lazy type checker was implemented in such a way that it can also be used from the
+root of the tree, top-down, it does not currently addresses handling of nodes with different
+semantic meaning, which caused some annotations to be incorrectly assigned when we tried to
+perform the type checking on a second pass. Moreover, since the nodes do not remember the
+line and column in the input text file where they were created, using two passes also caused
+the semantic error messages related to types to display an incorrect position in the source
+file. Therefore, we decided for this phase of the project that it would be better that the
+annotations in the tree should remain incomplete, though correct.
+

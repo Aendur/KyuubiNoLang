@@ -3,20 +3,20 @@ tests/error1.c
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffe587d4b0 (1)
+0x7fffcadce4b0 (1)
 =====
-0x7fffe587d4b0 (1)
+0x7fffcadce4b0 (1)
 -----
 tests/error2.c
 ------------------------------
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffd47054b0 (1)
+0x7fffbc4374b0 (1)
 =====
-0x7fffd47054b0 (1)
-0x7fffd470a820  <s_type=0,r_type=0,args=void>
-   node:0x7fffd470b460  <s_type=CONSTANT,r_type=int,args=void>
+0x7fffbc4374b0 (1)
+0x7fffbc43c820  <s_type=0,r_type=0,args=void>
+   node:0x7fffbc43d460  <s_type=CONSTANT,r_type=int,args=void>
    abcde  <s_type=VARIABLE,r_type=int,args=void>
    a234567890b234567890c234567890d234567890  <s_type=VARIABLE,r_type=int,args=void>
 -----
@@ -25,42 +25,42 @@ tests/error3.c
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffcf16e4b0 (1)
+0x7fffed7424b0 (1)
 =====
-0x7fffcf16e4b0 (1)
+0x7fffed7424b0 (1)
 b  <s_type=VARIABLE,r_type=int,args=void>
 min  <s_type=FUNCTION,r_type=int,args=void>
-   node:0x7fffcf177200  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffcf177500  <s_type=GENERIC_NODE,r_type=263,args=void>
-   node:0x7fffcf178130  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffcf178600  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffcf179410  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffcf177800  <s_type=GENERIC_NODE,r_type=int,args=void>
+   node:0x7fffed74b500  <s_type=GENERIC_NODE,r_type=263,args=void>
+   node:0x7fffed74c130  <s_type=CONSTANT,r_type=int,args=void>
+   node:0x7fffed74c600  <s_type=CONSTANT,r_type=int,args=void>
+   node:0x7fffed74d410  <s_type=CONSTANT,r_type=int,args=void>
+   node:0x7fffed74b800  <s_type=GENERIC_NODE,r_type=int,args=void>
    int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      node:0x7fffcf174da0  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffcf174420  <s_type=0,r_type=0,args=void>
+      node:0x7fffed748da0  <s_type=CONSTANT,r_type=int,args=void>
+      0x7fffed748420  <s_type=0,r_type=0,args=void>
          x  <s_type=VARIABLE,r_type=int,args=void>
          y  <s_type=VARIABLE,r_type=int,args=void>
       x  <s_type=VARIABLE,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=int,args=void>
+   node:0x7fffed74af60  <s_type=CONSTANT,r_type=int,args=void>
+   node:0x7fffed74b560  <s_type=CONSTANT,r_type=int,args=void>
+   node:0x7fffed74d180  <s_type=CONSTANT,r_type=int,args=void>
    c  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffcf176f60  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffcf177560  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffcf179180  <s_type=CONSTANT,r_type=int,args=void>
+   node:0x7fffed74c8f0  <s_type=GENERIC_NODE,r_type=int,args=void>
+   node:0x7fffed74c870  <s_type=GENERIC_NODE,r_type=int,args=void>
+   node:0x7fffed74d680  <s_type=GENERIC_NODE,r_type=int,args=void>
    x  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffcf1788f0  <s_type=GENERIC_NODE,r_type=int,args=void>
+   node:0x7fffed74c970  <s_type=GENERIC_NODE,r_type=int,args=void>
+   node:0x7fffed74d780  <s_type=GENERIC_NODE,r_type=int,args=void>
    int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
-      node:0x7fffcf175c60  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffed749c00  <s_type=GENERIC_NODE,r_type=263,args=void>
+      node:0x7fffed749c60  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffed74a010  <s_type=GENERIC_NODE,r_type=int,args=void>
       x  <s_type=VARIABLE,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffcf176010  <s_type=GENERIC_NODE,r_type=int,args=void>
       z  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffcf175c00  <s_type=GENERIC_NODE,r_type=263,args=void>
    y  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffcf178870  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffcf179680  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffcf178970  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffcf179780  <s_type=GENERIC_NODE,r_type=int,args=void>
+   node:0x7fffed74b200  <s_type=GENERIC_NODE,r_type=int,args=void>
 -----
 tests/valid1.c
 ------------------------------
@@ -99,29 +99,29 @@ declaration-list
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffecff54b0 (1)
+0x7fffd15e84b0 (1)
 =====
-0x7fffecff54b0 (1)
+0x7fffd15e84b0 (1)
 func3  <s_type=FUNCTION,r_type=int,args=void>
    int  <s_type=FUNCTION,r_type=int,args=int>
-      0x7fffecffbe40  <s_type=0,r_type=0,args=void>
-         node:0x7fffecffc090  <s_type=CONSTANT,r_type=int,args=void>
+      0x7fffd15eee40  <s_type=0,r_type=0,args=void>
+         node:0x7fffd15ef090  <s_type=CONSTANT,r_type=int,args=void>
          z  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffecffbb80  <s_type=GENERIC_NODE,r_type=int,args=void>
-      0x7fffecffc720  <s_type=0,r_type=0,args=void>
-         node:0x7fffecffca10  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7fffd15eeb80  <s_type=GENERIC_NODE,r_type=int,args=void>
+      0x7fffd15ef720  <s_type=0,r_type=0,args=void>
+         node:0x7fffd15efa10  <s_type=GENERIC_NODE,r_type=int,args=void>
       x  <s_type=VARIABLE,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=int,args=void>
 gvar1  <s_type=VARIABLE,r_type=int,args=void>
 gvar2  <s_type=VARIABLE,r_type=int,args=void>
 main  <s_type=FUNCTION,r_type=int,args=void>
    void  <s_type=FUNCTION,r_type=int,args=void>
-      0x7fffecffdbb0  <s_type=0,r_type=0,args=void>
-         node:0x7fffecffde00  <s_type=CONSTANT,r_type=int,args=void>
-         a  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffecffd520  <s_type=CONSTANT,r_type=int,args=void>
       a  <s_type=VARIABLE,r_type=int,args=void>
-node:0x7fffecffab10  <s_type=CONSTANT,r_type=int,args=void>
+      0x7fffd15f0bb0  <s_type=0,r_type=0,args=void>
+         a  <s_type=VARIABLE,r_type=int,args=void>
+         node:0x7fffd15f0e00  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffd15f0520  <s_type=CONSTANT,r_type=int,args=void>
+node:0x7fffd15edb10  <s_type=CONSTANT,r_type=int,args=void>
 -----
 tests/valid2.c
 ------------------------------
@@ -162,33 +162,33 @@ function-body
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffc12754b0 (1)
+0x7fffbfb554b0 (1)
 =====
-0x7fffc12754b0 (1)
+0x7fffbfb554b0 (1)
 main  <s_type=FUNCTION,r_type=int,args=void>
    void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffc127b840  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc127d460  <s_type=GENERIC_NODE,r_type=int,args=void>
-      0x7fffc127c480  <s_type=0,r_type=0,args=void>
-         node:0x7fffc127ce60  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffc127ca70  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffc127c7b0  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffc127d740  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffc127ee50  <s_type=CONSTANT,r_type=float,args=void>
-      node:0x7fffc127f3f0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc127be90  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7fffbfb5b840  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffbfb5d460  <s_type=GENERIC_NODE,r_type=int,args=void>
+      0x7fffbfb5c480  <s_type=0,r_type=0,args=void>
+         node:0x7fffbfb5ca70  <s_type=GENERIC_NODE,r_type=int,args=void>
+         node:0x7fffbfb5c7b0  <s_type=GENERIC_NODE,r_type=int,args=void>
+         node:0x7fffbfb5ce60  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7fffbfb5d740  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7fffbfb5ee50  <s_type=CONSTANT,r_type=float,args=void>
+      node:0x7fffbfb5f3f0  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffbfb5be90  <s_type=GENERIC_NODE,r_type=int,args=void>
       a  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffc127e680  <s_type=CONSTANT,r_type=float,args=void>
       b  <s_type=VARIABLE,r_type=int,args=void>
       c  <s_type=VARIABLE,r_type=int,args=void>
+      node:0x7fffbfb5e680  <s_type=CONSTANT,r_type=float,args=void>
       d  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffc127d1c0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc127e0c0  <s_type=CONSTANT,r_type=float,args=void>
-      node:0x7fffc127ace0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc127b250  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc127db30  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffbfb5d1c0  <s_type=CONSTANT,r_type=int,args=void>
       h  <s_type=VARIABLE,r_type=int,args=void>
+      node:0x7fffbfb5e0c0  <s_type=CONSTANT,r_type=float,args=void>
       x  <s_type=VARIABLE,r_type=float,args=void>
+      node:0x7fffbfb5ace0  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffbfb5b250  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7fffbfb5db30  <s_type=CONSTANT,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=float,args=void>
       z  <s_type=VARIABLE,r_type=float,args=void>
 -----
@@ -212,21 +212,21 @@ function-body
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffd6a134b0 (1)
+0x7fffc137b4b0 (1)
 =====
-0x7fffd6a134b0 (1)
+0x7fffc137b4b0 (1)
 main  <s_type=FUNCTION,r_type=int,args=void>
    void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffd6a18ce0  <s_type=CONSTANT,r_type=char,args=void>
-      node:0x7fffd6a19250  <s_type=CONSTANT,r_type=char,args=void>
-      node:0x7fffd6a19e30  <s_type=CONSTANT,r_type=char,args=void>
+      node:0x7fffc1381840  <s_type=CONSTANT,r_type=char,args=void>
       a  <s_type=VARIABLE,r_type=char,args=void>
       b  <s_type=VARIABLE,r_type=char,args=void>
-      node:0x7fffd6a19840  <s_type=CONSTANT,r_type=char,args=void>
       c  <s_type=VARIABLE,r_type=char,args=void>
       d  <s_type=VARIABLE,r_type=char,args=void>
       s1  <s_type=ARRAY,r_type=char,args=void>
       s2  <s_type=ARRAY,r_type=char,args=void>
+      node:0x7fffc1380ce0  <s_type=CONSTANT,r_type=char,args=void>
+      node:0x7fffc1381250  <s_type=CONSTANT,r_type=char,args=void>
+      node:0x7fffc1381e30  <s_type=CONSTANT,r_type=char,args=void>
 -----
 tests/valid4.c
 ------------------------------
@@ -305,9 +305,9 @@ declaration-list
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffe28f34b0 (1)
+0x7ffff68b14b0 (1)
 =====
-0x7fffe28f34b0 (1)
+0x7ffff68b14b0 (1)
 write  <s_type=FUNCTION,r_type=void,args=void>
    char[]  <s_type=FUNCTION,r_type=void,args=char[]>
       x  <s_type=ARRAY,r_type=char,args=void>
@@ -318,40 +318,40 @@ write  <s_type=FUNCTION,r_type=void,args=void>
       c4  <s_type=ARRAY,r_type=char,args=void>
 min  <s_type=FUNCTION,r_type=int,args=void>
    int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      0x7fffe28fabd0  <s_type=0,r_type=0,args=void>
-      0x7fffe28faec0  <s_type=0,r_type=0,args=void>
-      node:0x7fffe28fa910  <s_type=GENERIC_NODE,r_type=int,args=void>
+      0x7ffff68b8bd0  <s_type=0,r_type=0,args=void>
+      0x7ffff68b8ec0  <s_type=0,r_type=0,args=void>
       x  <s_type=VARIABLE,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=int,args=void>
+      node:0x7ffff68b8910  <s_type=GENERIC_NODE,r_type=int,args=void>
    int[],int  <s_type=FUNCTION,r_type=int,args=int[],int>
       n  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffe28fbdb0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffe28fc510  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffe28fcf10  <s_type=0,r_type=0,args=void>
-         node:0x7fffe28fd280  <s_type=GENERIC_NODE,r_type=int,args=void>
-         0x7fffe28fd560  <s_type=0,r_type=0,args=void>
-            node:0x7fffe28fdac0  <s_type=GENERIC_NODE,r_type=int,args=void>
-            node:0x7fffe28fde00  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffe28fcc50  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff68ba510  <s_type=CONSTANT,r_type=int,args=void>
+      0x7ffff68baf10  <s_type=0,r_type=0,args=void>
+         node:0x7ffff68bb280  <s_type=GENERIC_NODE,r_type=int,args=void>
+         0x7ffff68bb560  <s_type=0,r_type=0,args=void>
+            node:0x7ffff68bbac0  <s_type=GENERIC_NODE,r_type=int,args=void>
+            node:0x7ffff68bbe00  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff68bac50  <s_type=GENERIC_NODE,r_type=int,args=void>
       r  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffe28fc830  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff68ba830  <s_type=GENERIC_NODE,r_type=int,args=void>
       v  <s_type=ARRAY,r_type=int,args=void>
+      node:0x7ffff68b9db0  <s_type=CONSTANT,r_type=int,args=void>
       i  <s_type=VARIABLE,r_type=int,args=void>
 main  <s_type=FUNCTION,r_type=int,args=void>
    void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffe29010c0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffe2901400  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffe28fe9c0  <s_type=0,r_type=0,args=void>
-         node:0x7fffe28feeb0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffe28ff150  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffe28febf0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffe28ffc40  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffe29002a0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffe28ff450  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffe28ff6f0  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff68bf0c0  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7ffff68bf400  <s_type=CONSTANT,r_type=int,args=void>
+      0x7ffff68bc9c0  <s_type=0,r_type=0,args=void>
+         node:0x7ffff68be2a0  <s_type=CONSTANT,r_type=int,args=void>
+         node:0x7ffff68bceb0  <s_type=CONSTANT,r_type=int,args=void>
+         node:0x7ffff68bd150  <s_type=GENERIC_NODE,r_type=int,args=void>
+         node:0x7ffff68bcbf0  <s_type=CONSTANT,r_type=int,args=void>
+         node:0x7ffff68bdc40  <s_type=CONSTANT,r_type=int,args=void>
+         node:0x7ffff68bd450  <s_type=CONSTANT,r_type=int,args=void>
+         node:0x7ffff68be6c0  <s_type=CONSTANT,r_type=int,args=void>
+         node:0x7ffff68bd6f0  <s_type=GENERIC_NODE,r_type=int,args=void>
          X  <s_type=ARRAY,r_type=int,args=void>
          Y  <s_type=ARRAY,r_type=int,args=void>
-         node:0x7fffe29006c0  <s_type=CONSTANT,r_type=int,args=void>
 -----
 tests/valid5.c
 ------------------------------
@@ -448,23 +448,23 @@ declaration-list
 SYMBOL TABLE
 ------------------------------
 top:
-0x7fffe694b4b0 (1)
+0x7ffff3f204b0 (1)
 =====
-0x7fffe694b4b0 (1)
+0x7ffff3f204b0 (1)
 func1  <s_type=FUNCTION,r_type=int,args=void>
    int  <s_type=FUNCTION,r_type=int,args=int>
       x  <s_type=VARIABLE,r_type=int,args=void>
 func2  <s_type=FUNCTION,r_type=int,args=void>
    int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      node:0x7fffe6952500  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff3f27500  <s_type=GENERIC_NODE,r_type=int,args=void>
       x  <s_type=VARIABLE,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=int,args=void>
       z  <s_type=VARIABLE,r_type=int,args=void>
 func3  <s_type=FUNCTION,r_type=int,args=void>
    int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
-      node:0x7fffe6953ab0  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffe6954110  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffe6953e50  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff3f28ab0  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff3f29110  <s_type=GENERIC_NODE,r_type=int,args=void>
+      node:0x7ffff3f28e50  <s_type=GENERIC_NODE,r_type=int,args=void>
       w  <s_type=VARIABLE,r_type=int,args=void>
       x  <s_type=VARIABLE,r_type=int,args=void>
       y  <s_type=VARIABLE,r_type=int,args=void>
@@ -476,1079 +476,43 @@ gvar4  <s_type=VARIABLE,r_type=int,args=void>
 main  <s_type=FUNCTION,r_type=int,args=void>
    void  <s_type=FUNCTION,r_type=int,args=void>
       outervar3  <s_type=VARIABLE,r_type=int,args=void>
+      node:0x7ffff3f2a8a0  <s_type=CONSTANT,r_type=int,args=void>
       outervar4  <s_type=VARIABLE,r_type=int,args=void>
-      outervar5  <s_type=VARIABLE,r_type=int,args=void>
-      outervar6  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffe6956780  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffe695b400  <s_type=0,r_type=0,args=void>
-         dowhilevar1  <s_type=VARIABLE,r_type=int,args=void>
-         dowhilevar2  <s_type=VARIABLE,r_type=int,args=void>
-         dowhilevar3  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffe6956a20  <s_type=0,r_type=0,args=void>
-         ifelsevar1if  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar2if  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar3if  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffe695a540  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffe6955b40  <s_type=0,r_type=0,args=void>
-         ifvar3  <s_type=VARIABLE,r_type=int,args=void>
-         ifvar1  <s_type=VARIABLE,r_type=int,args=void>
-         ifvar2  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffe695a7e0  <s_type=0,r_type=0,args=void>
-         whilevar1  <s_type=VARIABLE,r_type=int,args=void>
-         whilevar2  <s_type=VARIABLE,r_type=int,args=void>
-         whilevar3  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffe69558a0  <s_type=CONSTANT,r_type=int,args=void>
-      outervar1  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffe6958160  <s_type=0,r_type=0,args=void>
-         innervar1  <s_type=VARIABLE,r_type=int,args=void>
-         0x7fffe6958620  <s_type=0,r_type=0,args=void>
-            innervar2  <s_type=VARIABLE,r_type=int,args=void>
-            0x7fffe6958ae0  <s_type=0,r_type=0,args=void>
-               innervar3  <s_type=VARIABLE,r_type=int,args=void>
-            innervar4  <s_type=VARIABLE,r_type=int,args=void>
-         innervar5  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffe695bf70  <s_type=CONSTANT,r_type=int,args=void>
-      outervar2  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffe6957540  <s_type=0,r_type=0,args=void>
-         ifelsevar1else  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar2else  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar3else  <s_type=VARIABLE,r_type=int,args=void>
-gvar5  <s_type=VARIABLE,r_type=int,args=void>
-gvar6  <s_type=VARIABLE,r_type=int,args=void>
------
-tests/error1.c
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffca9c24b0 (1)
-=====
-0x7fffca9c24b0 (1)
------
-tests/error2.c
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffe1cd84b0 (1)
-=====
-0x7fffe1cd84b0 (1)
-0x7fffe1cdd820  <s_type=0,r_type=0,args=void>
-   node:0x7fffe1cde460  <s_type=CONSTANT,r_type=int,args=void>
-   abcde  <s_type=VARIABLE,r_type=int,args=void>
-   a234567890b234567890c234567890d234567890  <s_type=VARIABLE,r_type=int,args=void>
------
-tests/error3.c
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffccdba4b0 (1)
-=====
-0x7fffccdba4b0 (1)
-b  <s_type=VARIABLE,r_type=int,args=void>
-min  <s_type=FUNCTION,r_type=int,args=void>
-   node:0x7fffccdc2f60  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffccdc3560  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffccdc5180  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffccdc48f0  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffccdc4870  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffccdc5680  <s_type=GENERIC_NODE,r_type=int,args=void>
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      node:0x7fffccdc0da0  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffccdc0420  <s_type=0,r_type=0,args=void>
-         x  <s_type=VARIABLE,r_type=int,args=void>
-         y  <s_type=VARIABLE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffccdc4970  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffccdc5780  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffccdc3200  <s_type=GENERIC_NODE,r_type=int,args=void>
-   c  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffccdc3500  <s_type=GENERIC_NODE,r_type=263,args=void>
-   node:0x7fffccdc4130  <s_type=CONSTANT,r_type=int,args=void>
-   x  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffccdc4600  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffccdc5410  <s_type=CONSTANT,r_type=int,args=void>
-   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
-      node:0x7fffccdc2010  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffccdc1c00  <s_type=GENERIC_NODE,r_type=263,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffccdc1c60  <s_type=CONSTANT,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=int,args=void>
-   y  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffccdc3800  <s_type=GENERIC_NODE,r_type=int,args=void>
------
-tests/valid1.c
-------------------------------
-SYNTAX TREE
-------------------------------
-declaration-list 
-   declaration-list 
-      declaration-list 
-         declaration <s_type=VARIABLE,r_type=int,args=void>
-         declaration <s_type=VARIABLE,r_type=int,args=void>
-      function-body 
-         statement-list 
-            declaration <s_type=VARIABLE,r_type=int,args=void>
-            if-else-statement 
-               ! <s_type=GENERIC_NODE,r_type=int,args=void>
-                  x <s_type=VARIABLE,r_type=int,args=void>
-               statement-list 
-                  declaration <s_type=VARIABLE,r_type=int,args=void>
-                  return-statement 
-                     z <s_type=VARIABLE,r_type=int,args=void>
-               return-statement 
-                  + <s_type=GENERIC_NODE,r_type=int,args=void>
-                     x <s_type=VARIABLE,r_type=int,args=void>
-                     y <s_type=VARIABLE,r_type=int,args=void>
-   function-body 
-      statement-list 
-         statement-list 
-            declaration <s_type=VARIABLE,r_type=int,args=void>
-            function-call <s_type=FUNCTION,r_type=int,args=void>
-               a <s_type=VARIABLE,r_type=int,args=void>
-         statement-list 
-            declaration <s_type=VARIABLE,r_type=int,args=void>
-            function-call <s_type=FUNCTION,r_type=int,args=void>
-               a <s_type=VARIABLE,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffd36454b0 (1)
-=====
-0x7fffd36454b0 (1)
-func3  <s_type=FUNCTION,r_type=int,args=void>
-   int  <s_type=FUNCTION,r_type=int,args=int>
-      0x7fffd364be40  <s_type=0,r_type=0,args=void>
-         node:0x7fffd364c090  <s_type=CONSTANT,r_type=int,args=void>
-         z  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffd364bb80  <s_type=GENERIC_NODE,r_type=int,args=void>
-      0x7fffd364c720  <s_type=0,r_type=0,args=void>
-         node:0x7fffd364ca10  <s_type=GENERIC_NODE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-gvar1  <s_type=VARIABLE,r_type=int,args=void>
-gvar2  <s_type=VARIABLE,r_type=int,args=void>
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffd364d520  <s_type=CONSTANT,r_type=int,args=void>
-      a  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffd364dbb0  <s_type=0,r_type=0,args=void>
-         node:0x7fffd364de00  <s_type=CONSTANT,r_type=int,args=void>
-         a  <s_type=VARIABLE,r_type=int,args=void>
-node:0x7fffd364ab10  <s_type=CONSTANT,r_type=int,args=void>
------
-tests/valid2.c
-------------------------------
-SYNTAX TREE
-------------------------------
-function-body 
-   statement-list 
-      statement-list 
-         statement-list 
-            statement-list 
-               statement-list 
-                  statement-list 
-                     statement-list 
-                        statement-list 
-                           statement-list 
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     do-statement 
-                        = <s_type=GENERIC_NODE,r_type=int,args=void>
-                           b <s_type=VARIABLE,r_type=int,args=void>
-                           * <s_type=GENERIC_NODE,r_type=int,args=void>
-                              b <s_type=VARIABLE,r_type=int,args=void>
-                              -- <s_type=GENERIC_NODE,r_type=int,args=void>
-                                 c <s_type=VARIABLE,r_type=int,args=void>
-                        ! <s_type=GENERIC_NODE,r_type=int,args=void>
-                           == <s_type=GENERIC_NODE,r_type=int,args=void>
-                              c <s_type=VARIABLE,r_type=int,args=void>
-                              0 <s_type=CONSTANT,r_type=int,args=void>
-                  declaration <s_type=VARIABLE,r_type=int,args=void>
-               declaration <s_type=VARIABLE,r_type=float,args=void>
-            declaration <s_type=VARIABLE,r_type=float,args=void>
-         declaration <s_type=VARIABLE,r_type=float,args=void>
-      return-statement 
-         0 <s_type=CONSTANT,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffdc3a14b0 (1)
-=====
-0x7fffdc3a14b0 (1)
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffdc3aa680  <s_type=CONSTANT,r_type=float,args=void>
-      node:0x7fffdc3a7840  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffdc3a9460  <s_type=GENERIC_NODE,r_type=int,args=void>
-      0x7fffdc3a8480  <s_type=0,r_type=0,args=void>
-         node:0x7fffdc3a8a70  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffdc3a87b0  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffdc3a8e60  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffdc3a9740  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffdc3aa0c0  <s_type=CONSTANT,r_type=float,args=void>
-      a  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffdc3a7e90  <s_type=GENERIC_NODE,r_type=int,args=void>
-      b  <s_type=VARIABLE,r_type=int,args=void>
-      c  <s_type=VARIABLE,r_type=int,args=void>
-      d  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffdc3aae50  <s_type=CONSTANT,r_type=float,args=void>
-      node:0x7fffdc3ab3f0  <s_type=CONSTANT,r_type=int,args=void>
-      h  <s_type=VARIABLE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=float,args=void>
-      node:0x7fffdc3a91c0  <s_type=CONSTANT,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=float,args=void>
-      node:0x7fffdc3a6ce0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffdc3a7250  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffdc3a9b30  <s_type=CONSTANT,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=float,args=void>
------
-tests/valid3.c
-------------------------------
-SYNTAX TREE
-------------------------------
-function-body 
-   statement-list 
-      statement-list 
-         statement-list 
-            statement-list 
-               statement-list 
-                  declaration <s_type=VARIABLE,r_type=char,args=void>
-                  declaration <s_type=VARIABLE,r_type=char,args=void>
-               declaration <s_type=VARIABLE,r_type=char,args=void>
-            declaration <s_type=VARIABLE,r_type=char,args=void>
-         declaration <s_type=ARRAY,r_type=char,args=void>
-      declaration <s_type=ARRAY,r_type=char,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffd7aea4b0 (1)
-=====
-0x7fffd7aea4b0 (1)
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffd7af0e30  <s_type=CONSTANT,r_type=char,args=void>
-      node:0x7fffd7af0840  <s_type=CONSTANT,r_type=char,args=void>
-      node:0x7fffd7aefce0  <s_type=CONSTANT,r_type=char,args=void>
-      a  <s_type=VARIABLE,r_type=char,args=void>
-      b  <s_type=VARIABLE,r_type=char,args=void>
-      c  <s_type=VARIABLE,r_type=char,args=void>
-      d  <s_type=VARIABLE,r_type=char,args=void>
-      s1  <s_type=ARRAY,r_type=char,args=void>
-      s2  <s_type=ARRAY,r_type=char,args=void>
-      node:0x7fffd7af0250  <s_type=CONSTANT,r_type=char,args=void>
------
-tests/valid4.c
-------------------------------
-SYNTAX TREE
-------------------------------
-declaration-list 
-   declaration-list 
-      declaration-list 
-         declaration-list 
-            function-body 
-               return-statement 
-            function-body 
-               return-statement 
-         function-body 
-            if-else-statement 
-               < <s_type=GENERIC_NODE,r_type=int,args=void>
-                  x <s_type=VARIABLE,r_type=int,args=void>
-                  y <s_type=VARIABLE,r_type=int,args=void>
-               return-statement 
-                  x <s_type=VARIABLE,r_type=int,args=void>
-               return-statement 
-                  y <s_type=VARIABLE,r_type=int,args=void>
-      function-body 
-         statement-list 
-            statement-list 
-               statement-list 
-                  statement-list 
-                     declaration <s_type=VARIABLE,r_type=int,args=void>
-                     declaration <s_type=VARIABLE,r_type=int,args=void>
-                  = <s_type=GENERIC_NODE,r_type=int,args=void>
-                     r <s_type=VARIABLE,r_type=int,args=void>
-                     array-index <s_type=ARRAY,r_type=int,args=void>
-                        0 <s_type=CONSTANT,r_type=int,args=void>
-               while-statement 
-                  > <s_type=GENERIC_NODE,r_type=int,args=void>
-                     n <s_type=VARIABLE,r_type=int,args=void>
-                     i <s_type=VARIABLE,r_type=int,args=void>
-                  if-statement 
-                     >= <s_type=GENERIC_NODE,r_type=int,args=void>
-                        r <s_type=VARIABLE,r_type=int,args=void>
-                        array-index <s_type=ARRAY,r_type=int,args=void>
-                           i <s_type=VARIABLE,r_type=int,args=void>
-                     statement-list 
-                        = <s_type=GENERIC_NODE,r_type=int,args=void>
-                           r <s_type=VARIABLE,r_type=int,args=void>
-                           array-index <s_type=ARRAY,r_type=int,args=void>
-                              i <s_type=VARIABLE,r_type=int,args=void>
-                        ++ <s_type=GENERIC_NODE,r_type=int,args=void>
-                           i <s_type=VARIABLE,r_type=int,args=void>
-            return-statement 
-               r <s_type=VARIABLE,r_type=int,args=void>
-   function-body 
-      statement-list 
-         do-statement 
-            statement-list 
-               statement-list 
-                  statement-list 
-                     declaration <s_type=ARRAY,r_type=int,args=void>
-                     declaration <s_type=ARRAY,r_type=int,args=void>
-                  function-call <s_type=FUNCTION,r_type=void,args=void>
-                     function-call <s_type=FUNCTION,r_type=int,args=void>
-                        argument-list 
-                           function-call <s_type=FUNCTION,r_type=int,args=void>
-                              argument-list 
-                                 X <s_type=ARRAY,r_type=int,args=void>
-                                 3 <s_type=CONSTANT,r_type=int,args=void>
-                           function-call <s_type=FUNCTION,r_type=int,args=void>
-                              argument-list 
-                                 Y <s_type=ARRAY,r_type=int,args=void>
-                                 1 <s_type=CONSTANT,r_type=int,args=void>
-               function-call <s_type=FUNCTION,r_type=void,args=void>
-            0 <s_type=CONSTANT,r_type=int,args=void>
-         return-statement 
-            0 <s_type=CONSTANT,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffcce194b0 (1)
-=====
-0x7fffcce194b0 (1)
-write  <s_type=FUNCTION,r_type=void,args=void>
-   char[]  <s_type=FUNCTION,r_type=void,args=char[]>
-      x  <s_type=ARRAY,r_type=char,args=void>
-   char,int,float,char[]  <s_type=FUNCTION,r_type=void,args=char,int,float,char[]>
-      c1  <s_type=VARIABLE,r_type=char,args=void>
-      c2  <s_type=VARIABLE,r_type=int,args=void>
-      c3  <s_type=VARIABLE,r_type=float,args=void>
-      c4  <s_type=ARRAY,r_type=char,args=void>
-min  <s_type=FUNCTION,r_type=int,args=void>
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      0x7fffcce20bd0  <s_type=0,r_type=0,args=void>
-      0x7fffcce20ec0  <s_type=0,r_type=0,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffcce20910  <s_type=GENERIC_NODE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-   int[],int  <s_type=FUNCTION,r_type=int,args=int[],int>
-      node:0x7fffcce22830  <s_type=GENERIC_NODE,r_type=int,args=void>
-      n  <s_type=VARIABLE,r_type=int,args=void>
-      r  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffcce21db0  <s_type=CONSTANT,r_type=int,args=void>
-      v  <s_type=ARRAY,r_type=int,args=void>
-      node:0x7fffcce22510  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffcce22f10  <s_type=0,r_type=0,args=void>
-         node:0x7fffcce23280  <s_type=GENERIC_NODE,r_type=int,args=void>
-         0x7fffcce23560  <s_type=0,r_type=0,args=void>
-            node:0x7fffcce23ac0  <s_type=GENERIC_NODE,r_type=int,args=void>
-            node:0x7fffcce23e00  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffcce22c50  <s_type=GENERIC_NODE,r_type=int,args=void>
-      i  <s_type=VARIABLE,r_type=int,args=void>
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      0x7fffcce249c0  <s_type=0,r_type=0,args=void>
-         node:0x7fffcce25450  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcce266c0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcce256f0  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffcce262a0  <s_type=CONSTANT,r_type=int,args=void>
-         X  <s_type=ARRAY,r_type=int,args=void>
-         node:0x7fffcce24eb0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcce25150  <s_type=GENERIC_NODE,r_type=int,args=void>
-         Y  <s_type=ARRAY,r_type=int,args=void>
-         node:0x7fffcce24bf0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcce25c40  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffcce270c0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffcce27400  <s_type=CONSTANT,r_type=int,args=void>
------
-tests/valid5.c
-------------------------------
-SYNTAX TREE
-------------------------------
-declaration-list 
-   declaration-list 
-      declaration-list 
-         declaration-list 
-            declaration-list 
-               declaration-list 
-                  declaration-list 
-                     declaration-list 
-                        declaration-list 
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     function-body 
-                        return-statement 
-                           x <s_type=VARIABLE,r_type=int,args=void>
-                  function-body 
-                     statement-list 
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                        return-statement 
-                           z <s_type=VARIABLE,r_type=int,args=void>
-               function-body 
-                  statement-list 
-                     declaration <s_type=VARIABLE,r_type=int,args=void>
-                     return-statement 
-                        w <s_type=VARIABLE,r_type=int,args=void>
-            function-body 
-               statement-list 
-                  statement-list 
-                     statement-list 
-                        statement-list 
-                           statement-list 
-                              statement-list 
-                                 statement-list 
-                                    statement-list 
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                       if-statement 
-                                          1 <s_type=CONSTANT,r_type=int,args=void>
-                                          statement-list 
-                                             statement-list 
-                                                declaration <s_type=VARIABLE,r_type=int,args=void>
-                                                declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                    if-else-statement 
-                                       1 <s_type=CONSTANT,r_type=int,args=void>
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                 statement-list 
-                                    statement-list 
-                                       declaration <s_type=VARIABLE,r_type=int,args=void>
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                    declaration <s_type=VARIABLE,r_type=int,args=void>
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     while-statement 
-                        0 <s_type=CONSTANT,r_type=int,args=void>
-                        statement-list 
-                           statement-list 
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                  do-statement 
-                     statement-list 
-                        statement-list 
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     0 <s_type=CONSTANT,r_type=int,args=void>
-         declaration <s_type=VARIABLE,r_type=int,args=void>
-      declaration <s_type=VARIABLE,r_type=int,args=void>
-   declaration <s_type=VARIABLE,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffc59a74b0 (1)
-=====
-0x7fffc59a74b0 (1)
-func1  <s_type=FUNCTION,r_type=int,args=void>
-   int  <s_type=FUNCTION,r_type=int,args=int>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-func2  <s_type=FUNCTION,r_type=int,args=void>
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      node:0x7fffc59ae500  <s_type=GENERIC_NODE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=int,args=void>
-func3  <s_type=FUNCTION,r_type=int,args=void>
-   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
-      node:0x7fffc59afab0  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffc59afe50  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffc59b0110  <s_type=GENERIC_NODE,r_type=int,args=void>
-      w  <s_type=VARIABLE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=int,args=void>
-gvar1  <s_type=VARIABLE,r_type=int,args=void>
-gvar2  <s_type=VARIABLE,r_type=int,args=void>
-gvar3  <s_type=VARIABLE,r_type=int,args=void>
-gvar4  <s_type=VARIABLE,r_type=int,args=void>
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      outervar3  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffc59b1b40  <s_type=0,r_type=0,args=void>
-         ifvar3  <s_type=VARIABLE,r_type=int,args=void>
-         ifvar1  <s_type=VARIABLE,r_type=int,args=void>
-         ifvar2  <s_type=VARIABLE,r_type=int,args=void>
-      outervar4  <s_type=VARIABLE,r_type=int,args=void>
-      outervar5  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffc59b18a0  <s_type=CONSTANT,r_type=int,args=void>
-      outervar6  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffc59b4160  <s_type=0,r_type=0,args=void>
-         0x7fffc59b4620  <s_type=0,r_type=0,args=void>
-            0x7fffc59b4ae0  <s_type=0,r_type=0,args=void>
+      0x7ffff3f2d160  <s_type=0,r_type=0,args=void>
+         0x7ffff3f2d620  <s_type=0,r_type=0,args=void>
+            0x7ffff3f2dae0  <s_type=0,r_type=0,args=void>
                innervar3  <s_type=VARIABLE,r_type=int,args=void>
             innervar2  <s_type=VARIABLE,r_type=int,args=void>
             innervar4  <s_type=VARIABLE,r_type=int,args=void>
          innervar1  <s_type=VARIABLE,r_type=int,args=void>
          innervar5  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffc59b7400  <s_type=0,r_type=0,args=void>
-         dowhilevar1  <s_type=VARIABLE,r_type=int,args=void>
-         dowhilevar2  <s_type=VARIABLE,r_type=int,args=void>
-         dowhilevar3  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffc59b3540  <s_type=0,r_type=0,args=void>
-         ifelsevar1else  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar2else  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar3else  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffc59b6540  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc59b2780  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffc59b67e0  <s_type=0,r_type=0,args=void>
-         whilevar1  <s_type=VARIABLE,r_type=int,args=void>
-         whilevar2  <s_type=VARIABLE,r_type=int,args=void>
-         whilevar3  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffc59b7f70  <s_type=CONSTANT,r_type=int,args=void>
-      outervar1  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffc59b2a20  <s_type=0,r_type=0,args=void>
-         ifelsevar1if  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar2if  <s_type=VARIABLE,r_type=int,args=void>
-         ifelsevar3if  <s_type=VARIABLE,r_type=int,args=void>
-      outervar2  <s_type=VARIABLE,r_type=int,args=void>
-gvar5  <s_type=VARIABLE,r_type=int,args=void>
-gvar6  <s_type=VARIABLE,r_type=int,args=void>
------
-tests/error1.c
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffec0ee4b0 (1)
-=====
-0x7fffec0ee4b0 (1)
------
-tests/error2.c
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffc7d594b0 (1)
-=====
-0x7fffc7d594b0 (1)
-0x7fffc7d5e820  <s_type=0,r_type=0,args=void>
-   abcde  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffc7d5f460  <s_type=CONSTANT,r_type=int,args=void>
-   a234567890b234567890c234567890d234567890  <s_type=VARIABLE,r_type=int,args=void>
------
-tests/error3.c
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffbf58a4b0 (1)
-=====
-0x7fffbf58a4b0 (1)
-b  <s_type=VARIABLE,r_type=int,args=void>
-min  <s_type=FUNCTION,r_type=int,args=void>
-   node:0x7fffbf594970  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffbf595780  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffbf593200  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffbf593500  <s_type=GENERIC_NODE,r_type=263,args=void>
-   node:0x7fffbf594130  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffbf594600  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffbf595410  <s_type=CONSTANT,r_type=int,args=void>
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      node:0x7fffbf590da0  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffbf590420  <s_type=0,r_type=0,args=void>
-         x  <s_type=VARIABLE,r_type=int,args=void>
-         y  <s_type=VARIABLE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffbf593800  <s_type=GENERIC_NODE,r_type=int,args=void>
-   c  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffbf592f60  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffbf593560  <s_type=CONSTANT,r_type=int,args=void>
-   node:0x7fffbf595180  <s_type=CONSTANT,r_type=int,args=void>
-   x  <s_type=VARIABLE,r_type=int,args=void>
-   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
-      node:0x7fffbf591c00  <s_type=GENERIC_NODE,r_type=263,args=void>
-      node:0x7fffbf591c60  <s_type=CONSTANT,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffbf592010  <s_type=GENERIC_NODE,r_type=int,args=void>
-   y  <s_type=VARIABLE,r_type=int,args=void>
-   node:0x7fffbf5948f0  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffbf594870  <s_type=GENERIC_NODE,r_type=int,args=void>
-   node:0x7fffbf595680  <s_type=GENERIC_NODE,r_type=int,args=void>
------
-tests/valid1.c
-------------------------------
-SYNTAX TREE
-------------------------------
-declaration-list 
-   declaration-list 
-      declaration-list 
-         declaration <s_type=VARIABLE,r_type=int,args=void>
-         declaration <s_type=VARIABLE,r_type=int,args=void>
-      function-body 
-         statement-list 
-            declaration <s_type=VARIABLE,r_type=int,args=void>
-            if-else-statement 
-               ! <s_type=GENERIC_NODE,r_type=int,args=void>
-                  x <s_type=VARIABLE,r_type=int,args=void>
-               statement-list 
-                  declaration <s_type=VARIABLE,r_type=int,args=void>
-                  return-statement 
-                     z <s_type=VARIABLE,r_type=int,args=void>
-               return-statement 
-                  + <s_type=GENERIC_NODE,r_type=int,args=void>
-                     x <s_type=VARIABLE,r_type=int,args=void>
-                     y <s_type=VARIABLE,r_type=int,args=void>
-   function-body 
-      statement-list 
-         statement-list 
-            declaration <s_type=VARIABLE,r_type=int,args=void>
-            function-call <s_type=FUNCTION,r_type=int,args=void>
-               a <s_type=VARIABLE,r_type=int,args=void>
-         statement-list 
-            declaration <s_type=VARIABLE,r_type=int,args=void>
-            function-call <s_type=FUNCTION,r_type=int,args=void>
-               a <s_type=VARIABLE,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffc5ad84b0 (1)
-=====
-0x7fffc5ad84b0 (1)
-func3  <s_type=FUNCTION,r_type=int,args=void>
-   int  <s_type=FUNCTION,r_type=int,args=int>
-      0x7fffc5adee40  <s_type=0,r_type=0,args=void>
-         node:0x7fffc5adf090  <s_type=CONSTANT,r_type=int,args=void>
-         z  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffc5adeb80  <s_type=GENERIC_NODE,r_type=int,args=void>
-      0x7fffc5adf720  <s_type=0,r_type=0,args=void>
-         node:0x7fffc5adfa10  <s_type=GENERIC_NODE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-gvar1  <s_type=VARIABLE,r_type=int,args=void>
-gvar2  <s_type=VARIABLE,r_type=int,args=void>
-node:0x7fffc5addb10  <s_type=CONSTANT,r_type=int,args=void>
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      a  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffc5ae0bb0  <s_type=0,r_type=0,args=void>
-         a  <s_type=VARIABLE,r_type=int,args=void>
-         node:0x7fffc5ae0e00  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffc5ae0520  <s_type=CONSTANT,r_type=int,args=void>
------
-tests/valid2.c
-------------------------------
-SYNTAX TREE
-------------------------------
-function-body 
-   statement-list 
-      statement-list 
-         statement-list 
-            statement-list 
-               statement-list 
-                  statement-list 
-                     statement-list 
-                        statement-list 
-                           statement-list 
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     do-statement 
-                        = <s_type=GENERIC_NODE,r_type=int,args=void>
-                           b <s_type=VARIABLE,r_type=int,args=void>
-                           * <s_type=GENERIC_NODE,r_type=int,args=void>
-                              b <s_type=VARIABLE,r_type=int,args=void>
-                              -- <s_type=GENERIC_NODE,r_type=int,args=void>
-                                 c <s_type=VARIABLE,r_type=int,args=void>
-                        ! <s_type=GENERIC_NODE,r_type=int,args=void>
-                           == <s_type=GENERIC_NODE,r_type=int,args=void>
-                              c <s_type=VARIABLE,r_type=int,args=void>
-                              0 <s_type=CONSTANT,r_type=int,args=void>
-                  declaration <s_type=VARIABLE,r_type=int,args=void>
-               declaration <s_type=VARIABLE,r_type=float,args=void>
-            declaration <s_type=VARIABLE,r_type=float,args=void>
-         declaration <s_type=VARIABLE,r_type=float,args=void>
-      return-statement 
-         0 <s_type=CONSTANT,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffec9f64b0 (1)
-=====
-0x7fffec9f64b0 (1)
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffec9ff680  <s_type=CONSTANT,r_type=float,args=void>
-      a  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffec9fe1c0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffec9ff0c0  <s_type=CONSTANT,r_type=float,args=void>
-      node:0x7fffec9fbce0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffec9fc250  <s_type=CONSTANT,r_type=int,args=void>
-      b  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffec9feb30  <s_type=CONSTANT,r_type=int,args=void>
-      c  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffeca003f0  <s_type=CONSTANT,r_type=int,args=void>
-      d  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffec9fc840  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffec9fe460  <s_type=GENERIC_NODE,r_type=int,args=void>
-      0x7fffec9fd480  <s_type=0,r_type=0,args=void>
-         node:0x7fffec9fda70  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffec9fd7b0  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffec9fde60  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffec9fe740  <s_type=GENERIC_NODE,r_type=int,args=void>
-      h  <s_type=VARIABLE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=float,args=void>
-      node:0x7fffec9ffe50  <s_type=CONSTANT,r_type=float,args=void>
-      node:0x7fffec9fce90  <s_type=GENERIC_NODE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=float,args=void>
-      z  <s_type=VARIABLE,r_type=float,args=void>
------
-tests/valid3.c
-------------------------------
-SYNTAX TREE
-------------------------------
-function-body 
-   statement-list 
-      statement-list 
-         statement-list 
-            statement-list 
-               statement-list 
-                  declaration <s_type=VARIABLE,r_type=char,args=void>
-                  declaration <s_type=VARIABLE,r_type=char,args=void>
-               declaration <s_type=VARIABLE,r_type=char,args=void>
-            declaration <s_type=VARIABLE,r_type=char,args=void>
-         declaration <s_type=ARRAY,r_type=char,args=void>
-      declaration <s_type=ARRAY,r_type=char,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffec5774b0 (1)
-=====
-0x7fffec5774b0 (1)
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      node:0x7fffec57cce0  <s_type=CONSTANT,r_type=char,args=void>
-      node:0x7fffec57d250  <s_type=CONSTANT,r_type=char,args=void>
-      a  <s_type=VARIABLE,r_type=char,args=void>
-      node:0x7fffec57de30  <s_type=CONSTANT,r_type=char,args=void>
-      b  <s_type=VARIABLE,r_type=char,args=void>
-      c  <s_type=VARIABLE,r_type=char,args=void>
-      d  <s_type=VARIABLE,r_type=char,args=void>
-      s1  <s_type=ARRAY,r_type=char,args=void>
-      node:0x7fffec57d840  <s_type=CONSTANT,r_type=char,args=void>
-      s2  <s_type=ARRAY,r_type=char,args=void>
------
-tests/valid4.c
-------------------------------
-SYNTAX TREE
-------------------------------
-declaration-list 
-   declaration-list 
-      declaration-list 
-         declaration-list 
-            function-body 
-               return-statement 
-            function-body 
-               return-statement 
-         function-body 
-            if-else-statement 
-               < <s_type=GENERIC_NODE,r_type=int,args=void>
-                  x <s_type=VARIABLE,r_type=int,args=void>
-                  y <s_type=VARIABLE,r_type=int,args=void>
-               return-statement 
-                  x <s_type=VARIABLE,r_type=int,args=void>
-               return-statement 
-                  y <s_type=VARIABLE,r_type=int,args=void>
-      function-body 
-         statement-list 
-            statement-list 
-               statement-list 
-                  statement-list 
-                     declaration <s_type=VARIABLE,r_type=int,args=void>
-                     declaration <s_type=VARIABLE,r_type=int,args=void>
-                  = <s_type=GENERIC_NODE,r_type=int,args=void>
-                     r <s_type=VARIABLE,r_type=int,args=void>
-                     array-index <s_type=ARRAY,r_type=int,args=void>
-                        0 <s_type=CONSTANT,r_type=int,args=void>
-               while-statement 
-                  > <s_type=GENERIC_NODE,r_type=int,args=void>
-                     n <s_type=VARIABLE,r_type=int,args=void>
-                     i <s_type=VARIABLE,r_type=int,args=void>
-                  if-statement 
-                     >= <s_type=GENERIC_NODE,r_type=int,args=void>
-                        r <s_type=VARIABLE,r_type=int,args=void>
-                        array-index <s_type=ARRAY,r_type=int,args=void>
-                           i <s_type=VARIABLE,r_type=int,args=void>
-                     statement-list 
-                        = <s_type=GENERIC_NODE,r_type=int,args=void>
-                           r <s_type=VARIABLE,r_type=int,args=void>
-                           array-index <s_type=ARRAY,r_type=int,args=void>
-                              i <s_type=VARIABLE,r_type=int,args=void>
-                        ++ <s_type=GENERIC_NODE,r_type=int,args=void>
-                           i <s_type=VARIABLE,r_type=int,args=void>
-            return-statement 
-               r <s_type=VARIABLE,r_type=int,args=void>
-   function-body 
-      statement-list 
-         do-statement 
-            statement-list 
-               statement-list 
-                  statement-list 
-                     declaration <s_type=ARRAY,r_type=int,args=void>
-                     declaration <s_type=ARRAY,r_type=int,args=void>
-                  function-call <s_type=FUNCTION,r_type=void,args=void>
-                     function-call <s_type=FUNCTION,r_type=int,args=void>
-                        argument-list 
-                           function-call <s_type=FUNCTION,r_type=int,args=void>
-                              argument-list 
-                                 X <s_type=ARRAY,r_type=int,args=void>
-                                 3 <s_type=CONSTANT,r_type=int,args=void>
-                           function-call <s_type=FUNCTION,r_type=int,args=void>
-                              argument-list 
-                                 Y <s_type=ARRAY,r_type=int,args=void>
-                                 1 <s_type=CONSTANT,r_type=int,args=void>
-               function-call <s_type=FUNCTION,r_type=void,args=void>
-            0 <s_type=CONSTANT,r_type=int,args=void>
-         return-statement 
-            0 <s_type=CONSTANT,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffcf9924b0 (1)
-=====
-0x7fffcf9924b0 (1)
-write  <s_type=FUNCTION,r_type=void,args=void>
-   char[]  <s_type=FUNCTION,r_type=void,args=char[]>
-      x  <s_type=ARRAY,r_type=char,args=void>
-   char,int,float,char[]  <s_type=FUNCTION,r_type=void,args=char,int,float,char[]>
-      c1  <s_type=VARIABLE,r_type=char,args=void>
-      c2  <s_type=VARIABLE,r_type=int,args=void>
-      c3  <s_type=VARIABLE,r_type=float,args=void>
-      c4  <s_type=ARRAY,r_type=char,args=void>
-min  <s_type=FUNCTION,r_type=int,args=void>
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      0x7fffcf999bd0  <s_type=0,r_type=0,args=void>
-      0x7fffcf999ec0  <s_type=0,r_type=0,args=void>
-      node:0x7fffcf999910  <s_type=GENERIC_NODE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-   int[],int  <s_type=FUNCTION,r_type=int,args=int[],int>
-      n  <s_type=VARIABLE,r_type=int,args=void>
-      r  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffcf99adb0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffcf99b510  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffcf99bf10  <s_type=0,r_type=0,args=void>
-         node:0x7fffcf99c280  <s_type=GENERIC_NODE,r_type=int,args=void>
-         0x7fffcf99c560  <s_type=0,r_type=0,args=void>
-            node:0x7fffcf99cac0  <s_type=GENERIC_NODE,r_type=int,args=void>
-            node:0x7fffcf99ce00  <s_type=GENERIC_NODE,r_type=int,args=void>
-      v  <s_type=ARRAY,r_type=int,args=void>
-      node:0x7fffcf99bc50  <s_type=GENERIC_NODE,r_type=int,args=void>
-      i  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffcf99b830  <s_type=GENERIC_NODE,r_type=int,args=void>
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      0x7fffcf99d9c0  <s_type=0,r_type=0,args=void>
-         node:0x7fffcf99f6c0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcf99e6f0  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffcf99f2a0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcf99deb0  <s_type=CONSTANT,r_type=int,args=void>
-         node:0x7fffcf99e150  <s_type=GENERIC_NODE,r_type=int,args=void>
-         node:0x7fffcf99dbf0  <s_type=CONSTANT,r_type=int,args=void>
-         X  <s_type=ARRAY,r_type=int,args=void>
-         node:0x7fffcf99ec40  <s_type=CONSTANT,r_type=int,args=void>
-         Y  <s_type=ARRAY,r_type=int,args=void>
-         node:0x7fffcf99e450  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffcf9a00c0  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffcf9a0400  <s_type=CONSTANT,r_type=int,args=void>
------
-tests/valid5.c
-------------------------------
-SYNTAX TREE
-------------------------------
-declaration-list 
-   declaration-list 
-      declaration-list 
-         declaration-list 
-            declaration-list 
-               declaration-list 
-                  declaration-list 
-                     declaration-list 
-                        declaration-list 
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     function-body 
-                        return-statement 
-                           x <s_type=VARIABLE,r_type=int,args=void>
-                  function-body 
-                     statement-list 
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                        return-statement 
-                           z <s_type=VARIABLE,r_type=int,args=void>
-               function-body 
-                  statement-list 
-                     declaration <s_type=VARIABLE,r_type=int,args=void>
-                     return-statement 
-                        w <s_type=VARIABLE,r_type=int,args=void>
-            function-body 
-               statement-list 
-                  statement-list 
-                     statement-list 
-                        statement-list 
-                           statement-list 
-                              statement-list 
-                                 statement-list 
-                                    statement-list 
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                       if-statement 
-                                          1 <s_type=CONSTANT,r_type=int,args=void>
-                                          statement-list 
-                                             statement-list 
-                                                declaration <s_type=VARIABLE,r_type=int,args=void>
-                                                declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                    if-else-statement 
-                                       1 <s_type=CONSTANT,r_type=int,args=void>
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                 statement-list 
-                                    statement-list 
-                                       declaration <s_type=VARIABLE,r_type=int,args=void>
-                                       statement-list 
-                                          statement-list 
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                             declaration <s_type=VARIABLE,r_type=int,args=void>
-                                          declaration <s_type=VARIABLE,r_type=int,args=void>
-                                    declaration <s_type=VARIABLE,r_type=int,args=void>
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     while-statement 
-                        0 <s_type=CONSTANT,r_type=int,args=void>
-                        statement-list 
-                           statement-list 
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                              declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                  do-statement 
-                     statement-list 
-                        statement-list 
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                           declaration <s_type=VARIABLE,r_type=int,args=void>
-                        declaration <s_type=VARIABLE,r_type=int,args=void>
-                     0 <s_type=CONSTANT,r_type=int,args=void>
-         declaration <s_type=VARIABLE,r_type=int,args=void>
-      declaration <s_type=VARIABLE,r_type=int,args=void>
-   declaration <s_type=VARIABLE,r_type=int,args=void>
-------------------------------
-SYMBOL TABLE
-------------------------------
-top:
-0x7fffeeec04b0 (1)
-=====
-0x7fffeeec04b0 (1)
-func1  <s_type=FUNCTION,r_type=int,args=void>
-   int  <s_type=FUNCTION,r_type=int,args=int>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-func2  <s_type=FUNCTION,r_type=int,args=void>
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
-      node:0x7fffeeec7500  <s_type=GENERIC_NODE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=int,args=void>
-func3  <s_type=FUNCTION,r_type=int,args=void>
-   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
-      node:0x7fffeeec8ab0  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffeeec9110  <s_type=GENERIC_NODE,r_type=int,args=void>
-      node:0x7fffeeec8e50  <s_type=GENERIC_NODE,r_type=int,args=void>
-      w  <s_type=VARIABLE,r_type=int,args=void>
-      x  <s_type=VARIABLE,r_type=int,args=void>
-      y  <s_type=VARIABLE,r_type=int,args=void>
-      z  <s_type=VARIABLE,r_type=int,args=void>
-gvar1  <s_type=VARIABLE,r_type=int,args=void>
-gvar2  <s_type=VARIABLE,r_type=int,args=void>
-gvar3  <s_type=VARIABLE,r_type=int,args=void>
-gvar4  <s_type=VARIABLE,r_type=int,args=void>
-main  <s_type=FUNCTION,r_type=int,args=void>
-   void  <s_type=FUNCTION,r_type=int,args=void>
-      outervar3  <s_type=VARIABLE,r_type=int,args=void>
-      outervar4  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffeeeca8a0  <s_type=CONSTANT,r_type=int,args=void>
       outervar5  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffeeecd160  <s_type=0,r_type=0,args=void>
-         0x7fffeeecd620  <s_type=0,r_type=0,args=void>
-            0x7fffeeecdae0  <s_type=0,r_type=0,args=void>
-               innervar3  <s_type=VARIABLE,r_type=int,args=void>
-            innervar2  <s_type=VARIABLE,r_type=int,args=void>
-            innervar4  <s_type=VARIABLE,r_type=int,args=void>
-         innervar1  <s_type=VARIABLE,r_type=int,args=void>
-         innervar5  <s_type=VARIABLE,r_type=int,args=void>
-      outervar6  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffeeecc540  <s_type=0,r_type=0,args=void>
+      0x7ffff3f2c540  <s_type=0,r_type=0,args=void>
          ifelsevar1else  <s_type=VARIABLE,r_type=int,args=void>
          ifelsevar2else  <s_type=VARIABLE,r_type=int,args=void>
          ifelsevar3else  <s_type=VARIABLE,r_type=int,args=void>
-      node:0x7fffeeed0f70  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffeeecf540  <s_type=CONSTANT,r_type=int,args=void>
-      node:0x7fffeeecb780  <s_type=CONSTANT,r_type=int,args=void>
-      0x7fffeeecf7e0  <s_type=0,r_type=0,args=void>
+      outervar6  <s_type=VARIABLE,r_type=int,args=void>
+      node:0x7ffff3f30f70  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7ffff3f2f540  <s_type=CONSTANT,r_type=int,args=void>
+      node:0x7ffff3f2b780  <s_type=CONSTANT,r_type=int,args=void>
+      0x7ffff3f2f7e0  <s_type=0,r_type=0,args=void>
          whilevar1  <s_type=VARIABLE,r_type=int,args=void>
          whilevar2  <s_type=VARIABLE,r_type=int,args=void>
          whilevar3  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffeeecba20  <s_type=0,r_type=0,args=void>
+      0x7ffff3f2ba20  <s_type=0,r_type=0,args=void>
          ifelsevar1if  <s_type=VARIABLE,r_type=int,args=void>
          ifelsevar2if  <s_type=VARIABLE,r_type=int,args=void>
          ifelsevar3if  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffeeed0400  <s_type=0,r_type=0,args=void>
+      0x7ffff3f30400  <s_type=0,r_type=0,args=void>
          dowhilevar1  <s_type=VARIABLE,r_type=int,args=void>
          dowhilevar2  <s_type=VARIABLE,r_type=int,args=void>
          dowhilevar3  <s_type=VARIABLE,r_type=int,args=void>
       outervar1  <s_type=VARIABLE,r_type=int,args=void>
-      outervar2  <s_type=VARIABLE,r_type=int,args=void>
-      0x7fffeeecab40  <s_type=0,r_type=0,args=void>
+      0x7ffff3f2ab40  <s_type=0,r_type=0,args=void>
          ifvar3  <s_type=VARIABLE,r_type=int,args=void>
          ifvar1  <s_type=VARIABLE,r_type=int,args=void>
          ifvar2  <s_type=VARIABLE,r_type=int,args=void>
+      outervar2  <s_type=VARIABLE,r_type=int,args=void>
 gvar5  <s_type=VARIABLE,r_type=int,args=void>
 gvar6  <s_type=VARIABLE,r_type=int,args=void>
 -----

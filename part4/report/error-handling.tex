@@ -70,6 +70,39 @@ function_definition
 
 
 \subsubsection{Semantic errors}
+Semantic errors are thrown from the semantic analyzer when there are constructs
+in the input text that violate the language's semantics as described in the Section
+\ref{section:semantics}. These errors do not abort the compilation process before
+the parser has finished, as most of the semantic analysis is performed
+simultaneously with the parsing. Semantic errors are handled by the functions
+defined in the file ``\texttt{actions.c}''.
+
+\paragraph{Re-declaration of variable:} This error is issued if a variable is
+declared or initialized more than once with the same name in a given scope.
+It is \textbf{not} an error to declare of initialize a variable with the same
+name of one that exists in a parent scope, but the new variable will shadow the
+old one, that is, the variable in the parent scope will be inaccessible. % issue warning in the future
+
+\paragraph{Redefinition of function:} This error is issued if a function is
+defined more than once with the same name \textbf{and} the same argument types.
+This language aims to implement polymorphic functions, therefore, defining functions
+with the same name and different argument types is allowed.
+
+\paragraph{Variable use without declaration:} This error is issued if a variable is
+used before being declared or initialized either in the current scope or any of its
+parent scopes up to the global scope. Variable declaration or initialization must
+always precede its use.
+
+\paragraph{Function call without definition:} This error is issued if a function
+is called but no function with that name has been defined. Functions must always
+be defined before they are used.
+
+\paragraph{Function call with invalid argument types:} This error is issued if a
+previously defined function is called with arguments types that are not present
+in any of the previous definitions of that function.
+
+\paragraph{Incompatible types:} This error is issued if there is an expression
+with operands of incompatible types, as described on Section \ref{section:types}.
 
 \subsubsection{Remarks about error handling}
 These strategies allows us to display a reasonable amount of errors before the program is unable
@@ -77,6 +110,6 @@ to proceed and terminates. In fact the parser should be able to finish (albeit n
 the syntax tree even when errors are found in several situations.
 The error messages are displayed as they are found, and since the
 scanner returns a token that is never used by the parser, lexical errors also generate syntax
-errors. To avoid encumbering the output when errors are found, only error messages are
-displayed on invalid input.
+errors. To avoid encumbering the output when errors are found, only error messages and the symbol
+table are displayed on invalid input.
 

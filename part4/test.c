@@ -1,4 +1,9 @@
-#include <stdio.h>
+int write() {}
+int write(int i) {}
+
+
+
+/*#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -20,3 +25,22 @@ int square(int x) {
 int main() {
 	printf("%d %d\n", 10, square(10));
 }
+*/
+
+/*
+
+
+
+\begin{lstlisting}
+0x7fffd03994b0 (1)
+min  <s_type=FUNCTION,r_type=int,args=void>
+   int,int  <s_type=FUNCTION,r_type=int,args=int,int>
+      x  <s_type=VARIABLE,r_type=int,args=void>
+      y  <s_type=VARIABLE,r_type=int,args=void>
+   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int>
+      x  <s_type=VARIABLE,r_type=int,args=void>
+      y  <s_type=VARIABLE,r_type=int,args=void>
+      z  <s_type=VARIABLE,r_type=int,args=void>
+\end{lstlisting}
+
+*/

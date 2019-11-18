@@ -23,7 +23,11 @@
 \title{Building a compiler\\\Large for an yet unnamed language\\\small Polymorphism in a C-like programming language}
 \author{Diogo César Ferreira\\11/0027931}
 \affil{University of Brasília}
+
 \maketitle
+
+%\tableofcontents
+%\clearpage
 
 % section 1 - introduction
 \input{introduction.tex} 
@@ -37,16 +41,17 @@
 \input{compiler.tex}
 \input{symbol-table.tex}
 \input{syntax-tree.tex}
+\input{type-checker.tex}
 \input{error-handling.tex}
 \input{tests.tex}
 
-\subsection{Additional remarks}
-Overall, this phase of the project presented itself more challenging than the previous ones,
-given the more complex nature of the parser, as opposed to the scanner. In particular, a
-remarkably nasty memory leak accompanied by several segfaults showed up as the
-syntax tree was being built while parsing input with errors. The solution for that was to
-reserve ownership of the allocated tree nodes to a vector that stores every node as they
-are allocated (\texttt{Nodelist * node\_list} in \texttt{main.c}).
+% \subsection{Additional remarks}
+% Overall, this phase of the project presented itself more challenging than the previous ones,
+% given the more complex nature of the parser, as opposed to the scanner. In particular, a
+% remarkably nasty memory leak accompanied by several segfaults showed up as the
+% syntax tree was being built while parsing input with errors. The solution for that was to
+% reserve ownership of the allocated tree nodes to a vector that stores every node as they
+% are allocated (\texttt{Nodelist * node\_list} in \texttt{main.c}).
 
 \printbibliography
 
