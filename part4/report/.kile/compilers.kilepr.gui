@@ -2,7 +2,7 @@
 kile_livePreviewEnabled=true
 kile_livePreviewStatusUserSpecified=false
 kile_livePreviewTool=LivePreview-PDFLaTeX
-lastDocument=syntax.tex
+lastDocument=main.tex
 
 [document-settings,item:compiler.tex]
 Bookmarks=
@@ -131,8 +131,8 @@ Mode=LaTeX
 Mode Set By User=false
 
 [item:compiler.tex]
-open=false
-order=-1
+open=true
+order=3
 
 [item:compilers.kilepr]
 open=false
@@ -143,8 +143,8 @@ open=false
 order=2
 
 [item:introduction.tex]
-open=false
-order=0
+open=true
+order=2
 
 [item:lexical.tex]
 open=false
@@ -159,8 +159,8 @@ open=false
 order=-1
 
 [item:refs.bib]
-open=false
-order=-1
+open=true
+order=4
 
 [item:semantics.tex]
 open=false
@@ -191,11 +191,11 @@ open=false
 order=-1
 
 [view-settings,view=0,item:compiler.tex]
-CursorColumn=30
-CursorLine=53
+CursorColumn=85
+CursorLine=2
 JumpList=
 TextFolding=[]
-ViMarks=
+ViMarks=.,1,94,[,2,0,],-1,-1
 
 [view-settings,view=0,item:error-handling.tex]
 CursorColumn=7
@@ -205,8 +205,8 @@ TextFolding=[]
 ViMarks=.,93,17,[,93,16,],93,17
 
 [view-settings,view=0,item:introduction.tex]
-CursorColumn=0
-CursorLine=0
+CursorColumn=71
+CursorLine=9
 JumpList=
 TextFolding=[]
 ViMarks=
@@ -219,11 +219,11 @@ TextFolding=[]
 ViMarks=.,26,12,[,26,12,],26,12
 
 [view-settings,view=0,item:main.tex]
-CursorColumn=21
-CursorLine=35
+CursorColumn=0
+CursorLine=23
 JumpList=
 TextFolding=[]
-ViMarks=.,29,1,[,29,1,],29,1
+ViMarks=.,23,0,[,23,0,],23,0
 
 [view-settings,view=0,item:part1.tex]
 CursorColumn=0
@@ -233,11 +233,11 @@ TextFolding=[]
 ViMarks=
 
 [view-settings,view=0,item:refs.bib]
-CursorColumn=0
-CursorLine=0
+CursorColumn=17
+CursorLine=34
 JumpList=
 TextFolding=[]
-ViMarks=
+ViMarks=.,34,16,[,34,15,],34,16
 
 [view-settings,view=0,item:semantics.tex]
 CursorColumn=11
