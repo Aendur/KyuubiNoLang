@@ -1,0 +1,67 @@
+\section{The compiler}
+In this section we will describe the compiler's implementation for our yet unnamed programming
+language, which has the responsibility to read the input text and ultimately convert it into an
+executable file. The first step is to define the patterns which are to be recognized by the scanner.
+Then, the Fast Lexical Analyzer (FLEX) \cite{FLEX} software is used to generate the lexical
+analyzer's main functionality. Moreover we provide the language's grammar to the GNU Bison parser
+generator \cite{BISON} which generates the syntax analyzer. Additional routines for input, output,
+error handling and data structures to build the syntax tree and symbol table were also implemented
+and will be explained in detail later.
+
+
+\subsection{Program usage}
+The program takes one argument which should be a path to the input file.
+
+\begin{lstlisting}
+$ ./a.out <input_file>
+\end{lstlisting}
+
+The program will then output the symbol table along with the
+annotated syntax tree generated from the input file, if it is part of the language.
+Should there be errors, the program will instead list them along with their
+positions in the text (line and column numbers, where tabs count as 4 columns).
+
+\subsection{Compilation instructions}
+
+\begin{enumerate}
+\item (Optional) Generate the lexical analyzer .c source code through FLEX
+\begin{lstlisting}
+$ flex language.l
+\end{lstlisting}
+
+\item (Optional) Generate the syntax analyzer .c source code through GNU Bison
+\begin{lstlisting}
+$ bison -Wall language.y
+\end{lstlisting}
+
+\item Compile the program
+\begin{lstlisting}
+$ gcc -std=c18 -m64 -O3 src/main.c src/node.c src/node-list.c src/table.c src/table-stack.c src/arg-list.c src/parser.c src/scanner.c
+\end{lstlisting}
+
+\item Alternatively, a makefile has also been provided which will run all commands
+\begin{lstlisting}
+$ make
+OR
+$ make flex   # for step 1
+$ make bison  # for step 2
+$ make rel    # for step 3
+\end{lstlisting}
+\end{enumerate}
+
+\paragraph{Technical specifications}
+\paragraph{Operating system:} Debian GNU/Linux bullseye/sid (testing release)
+\paragraph{Compiler version:} gcc (Debian 9.2.1-17) 9.2.1 20191102
+\paragraph{FLEX version:} flex 2.6.4
+\paragraph{GNU Bison version:} bison (GNU Bison) 3.4.2
+
+\subsection{Attached files}
+\begin{lstlisting}
+a.out       - Precompiled x64 binary
+language.l  - FLEX definitions file
+language.y  - BISON definitions file
+makefile    - 
+src/        - Source code folder
+tests/      - Test input files
+\end{lstlisting}
+

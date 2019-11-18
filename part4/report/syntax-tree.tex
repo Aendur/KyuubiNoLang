@@ -1,0 +1,39 @@
+
+\subsection{Syntax tree}
+To build the syntax tree, we use the data structures defined in \texttt{node.h} and \texttt{node.c}.
+By setting Bison's default data type a pointer to our tree node type, we are now able to start
+building our syntax tree as the parser proceeds.
+\begin{lstlisting}
+%union {
+	struct node * node;
+}
+\end{lstlisting}
+
+The scanner transforms some terminal tokens into leaf nodes for the tree. The structures
+are allocated and then passed to the parser via the \texttt{yylval} variable:
+
+\begin{lstlisting}[caption={Example of a lexer rule where a leaf node is created.
+This procedure is preformed for
+all data types, identifiers and constants.},captionpos=b]
+"int"	{
+			update_position();
+			int t = INT;
+			yylval.node = node_init(node_list, t, yytext, NULL);
+			return t;
+		}
+\end{lstlisting}
+
+Then, the parser is instructed to connect these nodes forming the syntax tree.
+Nodes are connected for most (except when the \texttt{error} token is present)
+grammar productions. In some cases, such as when an identifier is found, a symbol is also added
+to the symbol table.
+
+\begin{lstlisting}[caption={Example of a parser rule where nodes are connected.
+This procedure is preformed for all productions, except error handlers. Here, a symbol
+is also added to the symbol table through the function \texttt{add\_symbol\_var}},captionpos=b]
+declarator : type IDENTIFIER 
+	{
+		$$ = node_init(node_list, 'D', "declarator-variable", $1, $2, NULL);
+		add_symbol_var($$);
+	}
+\end{lstlisting}

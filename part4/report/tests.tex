@@ -1,0 +1,42 @@
+
+\subsection{Tests}
+Eight sample test files are provided in the folder ./tests.
+
+\paragraph{test{\_}valid1.c} is valid, tests for most recognized keywords and punctuation;
+\paragraph{test{\_}valid2.c} is valid, tests for numerical values and loops;
+\paragraph{test{\_}valid3.c} is valid, tests for character and string literals;
+\paragraph{test{\_}valid4.c} is valid, tests for a slightly more complex program containing several language features;
+\paragraph{test{\_}valid5.c} is valid, tests mostly for multiple function declarations;
+
+\paragraph{test{\_}error1.c} is invalid, and contain the following errors:
+\begin{itemize}
+\item Line 1, column 25: syntax error, unexpected '*', expecting IDENTIFIER
+\item Line 2, column 22: lexical error, unrecognized token ('?')
+\item Line 2, column 22: syntax error, unexpected UNRECOGNIZED\_TOKEN
+\item Line 2, column 26: lexical error, unrecognized token (':')
+\item Line 2, column 28: lexical error, invalid character constant. (char constant too long)
+\end{itemize}
+
+\paragraph{test{\_}error2.c} is invalid, and contain the following errors:
+\begin{itemize}
+\item Line 1, column 1: lexical error, unrecognized token ('\#')
+\item Line 1, column 1: syntax error, unexpected UNRECOGNIZED\_TOKEN, expecting VOID or INT or FLOAT or CHAR
+\item Line 1, column 16: lexical error, unrecognized token ('.')
+\item Line 4, column 9: lexical error, identifier exceeds 32 characters.
+\item Line 4, column 52: lexical error, identifier exceeds 32 characters.
+\item Line 6, column 14: lexical error, invalid character constant.
+\item Line 6, column 14: syntax error, unexpected INVALID\_CHAR\_CONST
+\end{itemize}
+
+\paragraph{test{\_}error3.c} is invalid, and contain the following errors:
+\begin{itemize}
+\item Line 2, column 12: syntax error, unexpected IDENTIFIER
+\item Line 3, column 15: syntax error, unexpected ')', expecting IDENTIFIER
+\item Line 4, column 19: syntax error, unexpected ';', expecting '[' or ',' or ')'
+\item Line 7, column 1: syntax error, unexpected VOID, expecting ';' or '\{'
+\item Line 12, column 12: syntax error, unexpected ')', expecting IDENTIFIER or STRING\_LITERAL or CONSTANT or '('
+\item Line 41, column 27: syntax error, unexpected ';'
+\end{itemize}
+
+Lines and columns are 1-indexed and the columns should point to where the error begins.
+Note, however, that tabs (\textbackslash t) count as if they had a length of four characters.

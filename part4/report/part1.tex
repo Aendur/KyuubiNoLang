@@ -1,0 +1,328 @@
+
+\section{Introduction}
+Programming languages are languages that can be converted into sets of instructions to be
+executed by a computer. This conversion process is called translation (or compilation) and
+is done by software known as compilers. As programming languages evolved, we observe an
+increasing variety of abstractions to accommodate for new programming paradigms and
+techniques, which also bring them closer to the domain of the problems they are set
+out to solve and away from the specificities of architecture set implementations \cite{Aho2007}.
+
+One such abstraction is polymorphism. In typed languages, symbols (named identifiers
+for entities such as variables or functions) are constrained by their data type.
+If polymorphism is available, we are able to interact with different data types
+through a single interface, for instance, by allowing multiple types to be assigned
+to a given symbol. Polymorphism improves code readability and helps keeping the namespace
+clean by allowing functions to be identified by their expected behavior rather than
+contrived by the types of their arguments. Polymorphism is also one of the key features
+in object-oriented programming \cite{Aho2007, Strachey2000}.
+
+Aside from the possibility to perform arithmetical operations over a few different
+data types (integers, floating point and pointers), the C programming language does
+not support polymorphism. In this work we seek to provide polymorphism in the form
+of function overloading - where polymorphic functions may have multiple definitions
+according to their argument types - to a simplified subset of the C programming language.
+The grammar of the language is presented in the following subsection.
+
+
+\subsection{Language features}
+The following table summarizes what word patterns are part of the language we are designing.
+These patterns should be recognized by the scanner, and therefore are provided as an input file
+for the FLEX \cite{FLEX} scanner generator (see attached file ``language.l''):
+
+%\paragraph{}
+\begin{tabular}{lccccccccc}
+\textbf{Data types}                      & void & char & int & float &         &      &      &   &   \\
+\textbf{Keywords}                        & if   & else & do  & while & return  &      &      &   &   \\
+\textbf{Arithmetical operators}          & $+$  & $-$  & $*$ & $/$   & $\%$    & $++$ & $--$ &   &   \\
+\textbf{Comparison operators}            & <    & >    & <=  & >=    & ==      & !=   &      &   &   \\
+\textbf{Logical operators}               & \&\& & ||   & !   &       &         &      &      &   &   \\
+\textbf{Assignment operator}             & =    &      &     &       &         &      &      &   &   \\
+\textbf{Character/string delimiters}     & '    & "    &     &       &         &      &      &   &   \\
+\textbf{Array indexers}                  & [    & ]    &     &       &         &      &      &   &   \\
+\textbf{Scope delims./init lists}        & \{   & \}   &     &       &         &      &      &   &   \\
+\textbf{End of statement mark}           & ;    &      &     &       &         &      &      &   &   \\
+\textbf{Function args/calls}             & (    & )    &     &       &         &      &      &   &   \\
+\textbf{List element separator}          & ,    &      &     &       &         &      &      &   &   \\
+\textbf{Comment delimiters}              & /*   & */   & //  &       &         &      &      &   &   \\
+\end{tabular}
+
+\vspace*{1cm}
+
+\begin{tabular}{ll}
+\textbf{Character constants}            & text delimited by single quotation marks (') \\
+\textbf{String literals}                & text delimited by double quotation marks (") \\
+\textbf{Integer decimal constants}      & e.g. 1, 2, 100, -5, +7                       \\
+\textbf{Integer hexadecimal constants}  & e.g. 0x01, -0xA, +0x123                      \\
+\textbf{Floating-point constants}       & g.g. 0.0, -1.234, +3.14                      \\
+\textbf{Comments and white space}       & are ignored.                                 \\
+\end{tabular}
+
+\subsection{Formal description}
+
+Our languate's grammar contains elements taken from the one presented by \textcite{Harbison2002},
+which is a compilation from the many versions of the C grammar specified by the ISO C Standard
+along the years. Our grammar follows the general structure of the C language's grammar.
+We aim to provide a simplified version of the C language with support for polymophic function
+definitions, that is, which allows the programmer to define multiple function with the same name
+but different argument types. The following grammar is also provided as an input file for the
+GNU Bison \cite{BISON} parser generator (see attached file ``language.y''). Strikenthrough
+rules are the ones that have been removed or changed from the previous version of our grammar.
+
+\small
+\begin{enumerate}
+\item \begin{tabbing} start \= $\rightarrow$ \= declaration-list \\
+\end{tabbing}
+
+\item \begin{tabbing} declaration-list \= $\rightarrow$ \= declaration \\
+	\> \hspace*{0.05cm} | \> declaration-list declaration \\
+\end{tabbing}
+
+\item \begin{tabbing} declaration \= $\rightarrow$ \= \sout{function-declarator \textbf{;}} \\
+	\> \hspace*{0.05cm} | \> \sout{function-declarator compound-statement} \\
+	\> \hspace*{0.05cm} | \> function-definiton \\
+	\> \hspace*{0.05cm} | \> init-declarator \textbf{;} \\
+\end{tabbing}
+
+\item \begin{tabbing} init-declarator \= $\rightarrow$ \= \sout{declarator} \\
+	\> \hspace*{0.05cm} | \> \sout{declarator \textbf{=} initializer} \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER}                                                                                                 \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{=} assignment-expression                                                              \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}                                                 \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{\}}               \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{,} \textbf{\}}  \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{STRING-LITERAL}                                  \\
+\end{tabbing}
+
+
+\item \begin{tabbing} \sout{declarator} \= $\rightarrow$ \= \sout{type \textbf{IDENTIFIER}} \\
+	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{[} \textbf{]}} \\
+	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}}\\
+\end{tabbing}
+
+\item \begin{tabbing} \sout{initializer} \= $\rightarrow$ \= \sout{assignment-expression} \\
+	\> \hspace*{0.05cm} | \> \sout{\textbf{\{} initializer-list \textbf{\}}} \\
+	\> \hspace*{0.05cm} | \> \sout{\textbf{\{} initializer-list \textbf{,} \textbf{\}}} \\
+\end{tabbing}
+
+\item \begin{tabbing} initializer-list \= $\rightarrow$ \= \sout{initializer} \\
+	\> \hspace*{0.05cm} | \> \sout{initializer-list \textbf{,} initializer} \\
+	\> \hspace*{0.05cm} | \> assignment-expression \\
+	\> \hspace*{0.05cm} | \> initializer-list \textbf{,} assignment-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} \sout{function-declarator} \= $\rightarrow$ \= \sout{type \textbf{IDENTIFIER} \textbf{(} parameter-list \textbf{)}} \\
+	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{(} \textbf{)} } \\
+	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}} \\
+\end{tabbing}
+
+\item \begin{tabbing} function-definition \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{}                \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{}                \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{}                \textbf{\}}   \\
+\end{tabbing}
+
+\item \begin{tabbing} \sout{parameter-list} \= $\rightarrow$ \= \sout{declarator} \\
+	\> \hspace*{0.05cm} | \> \sout{parameter-list \textbf{,} declarator} \\
+\end{tabbing}
+
+\item \begin{tabbing} argument-list \= $\rightarrow$ \= argument \\
+	\> \hspace*{0.05cm} | \> argument-list \textbf{,} argument
+\end{tabbing}
+
+\item \begin{tabbing} argument \= $\rightarrow$ \= type \textbf{IDENTIFIER} \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \\
+\end{tabbing}
+
+\item \begin{tabbing} compound-statement \= $\rightarrow$ \= \textbf{\{} \textbf{\}} \\
+	\> \hspace*{0.05cm} | \> \textbf{\{} statement-list \textbf{\}} \\
+\end{tabbing}
+
+\item \begin{tabbing} statement-list \= $\rightarrow$ \= statement \\
+	\> \hspace*{0.05cm} | \> statement-list statement
+\end{tabbing}
+
+\item \begin{tabbing} statement \= $\rightarrow$ \= \textbf{;} \\
+	\> \hspace*{0.05cm} | \> init-declarator \textbf{;} \\
+	\> \hspace*{0.05cm} | \> assignment-expression \textbf{;} \\
+	\> \hspace*{0.05cm} | \> conditional-statement \\
+	\> \hspace*{0.05cm} | \> iteration-statement \\
+	\> \hspace*{0.05cm} | \> compound-statement \\
+	\> \hspace*{0.05cm} | \> return-statement \textbf{;} \\
+\end{tabbing}
+
+\item \begin{tabbing} conditional-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \\
+	\> \hspace*{0.05cm} | \> \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \textbf{ELSE} compound-statement \\
+\end{tabbing}
+
+\item \begin{tabbing} iteration-statement \= $\rightarrow$ \= \textbf{WHILE} \textbf{(} assignment-expression \textbf{)} compound-statement \\
+	\> \hspace*{0.05cm} | \> \textbf{DO} compound-statement \textbf{WHILE} \textbf{(} assignment-expression \textbf{)} \textbf{;} \\
+\end{tabbing}
+
+\item \begin{tabbing} return-statement \= $\rightarrow$ \= \textbf{RETURN} \\
+	\> \hspace*{0.05cm} | \> \textbf{RETURN} assignment-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} assignment-expression \= $\rightarrow$ \= logical-or-expression \\
+	\> \hspace*{0.05cm} | \> postfix-expression \textbf{=} logical-or-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} logical-or-expression \= $\rightarrow$ \= logical-and-expression \\
+	\> \hspace*{0.05cm} | \> logical-or-expression \textbf{||} logical-and-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} logical-and-expression \= $\rightarrow$ \= equality-expression \\
+	\> \hspace*{0.05cm} | \> logical-and-expression \textbf{\&\&} equality-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} equality-expression \= $\rightarrow$ \= relational-expression \\
+	\> \hspace*{0.05cm} | \> equality-expression \textbf{==} relational-expression \\
+	\> \hspace*{0.05cm} | \> equality-expression \textbf{!=} relational-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} relational-expression \= $\rightarrow$ \= additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{<}   additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{>}   additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{<=} additive-expression \\
+	\> \hspace*{0.05cm} | \> relational-expression \textbf{>=} additive-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} additive-expression \= $\rightarrow$ \= multiplicative-expression \\
+	\> \hspace*{0.05cm} | \> additive-expression \textbf{+} multiplicative-expression \\
+	\> \hspace*{0.05cm} | \> additive-expression \textbf{--} multiplicative-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} multiplicative-expression \= $\rightarrow$ \= \sout{postfix-expression} unary-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{*}   \sout{postfix-expression} unary-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{/}   \sout{postfix-expression} unary-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{\%}  \sout{postfix-expression} unary-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} unary-expression \= $\rightarrow$ \= postfix-expression \\
+	\> \hspace*{0.05cm} | \>  \textbf{!}   unary-expression \\
+	\> \hspace*{0.05cm} | \>  \textbf{--}   unary-expression \\
+	\> \hspace*{0.05cm} | \>  \textbf{-- --}  unary-expression \\
+	\> \hspace*{0.05cm} | \>  \textbf{++}  unary-expression \\
+\end{tabbing}
+
+\item \begin{tabbing} postfix-expression \= $\rightarrow$ \= primary-expression \\
+	\> \hspace*{0.05cm} | \> \sout{postfix-expression} \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]} \\
+	\> \hspace*{0.05cm} | \> \sout{postfix-expression} \textbf{IDENTIFIER} \textbf{(} \textbf{)} \\
+	\> \hspace*{0.05cm} | \> \sout{postfix-expression} \textbf{IDENTIFIER} \textbf{(} argument-call-list \textbf{)} \\
+	\> \hspace*{0.05cm} | \> \sout{postfix-expression \textbf{++}} \\
+	\> \hspace*{0.05cm} | \> \sout{postfix-expression \textbf{-- --}} \\
+\end{tabbing}
+
+\item \begin{tabbing} primary-expression \= $\rightarrow$ \= \textbf{IDENTIFIER} \\
+	\> \hspace*{0.05cm} | \> \textbf{CONSTANT-INT} \\
+	\> \hspace*{0.05cm} | \> \textbf{CONSTANT-HEX} \\
+	\> \hspace*{0.05cm} | \> \textbf{CONSTANT-FLOAT} \\
+	\> \hspace*{0.05cm} | \> \textbf{CONSTANT-CHAR} \\
+	\> \hspace*{0.05cm} | \> \textbf{STRING-LITERAL} \\
+	\> \hspace*{0.05cm} | \> \textbf{(} assignment-expression \textbf{)} \\
+\end{tabbing}
+
+\item \begin{tabbing} argument-call-list \= $\rightarrow$ \= assignment-expression \\
+	\> \hspace*{0.05cm} | \> argument-call-list \textbf{,} assignment-expression
+\end{tabbing}
+
+\item \begin{tabbing} type \= $\rightarrow$ \= \textbf{VOID} \\
+	\> \hspace*{0.05cm} | \> \textbf{INT} \\
+	\> \hspace*{0.05cm} | \> \textbf{FLOAT} \\
+	\> \hspace*{0.05cm} | \> \textbf{CHAR}
+\end{tabbing}
+
+\end{enumerate}
+\normalsize
+
+\subsection{Grammar changes}
+\paragraph{Rule 3:} the removed productions were replaced by the \textit{function-definition} variable.
+Function declaration without definition has beem removed in this version due to implementation issues,
+but might be added once again in a future version.
+
+\paragraph{Rules 4, 5 and 6:} the \textit{declarator} and \textit{initializer} variables have been
+removed, but their productions (rules 5 and 6) are now parte of rule 4. This was done because
+of changes in the underlying data structures used to hold token data.
+
+\paragraph{Rules 8 and 9:} \textit{function-declarator} (rule 8) was removed and replaced by
+\textit{function-definition} (rule 9). The previous version used the variable
+\textit{compound-statement} for the function body, but this resulted in difficulties
+to implement scope resolution.
+
+\paragraph{Rules 10, 11 and 12:} the variable \textit{parameter-list} (rule 10) has been
+refactored into \textit{argument-list} (rule 11) and \textit{argument} (rule 12). This part of
+the grammar is now handled by a specific data structure used to hold a function's argument list.
+
+\paragraph{Rules 25 and 26:} unary operators were introduced, mainly to allow the negation
+of a value.
+
+\paragraph{Rule 27:} postfix increment and decrement operators were moved to rule 26 as unary prefix
+operators. The other productions in this rule were changed to allow only identifiers on their left-hand
+side, since these productions represent either array indexing or function calls, and are now handled
+by specific functions and no longer require the \textit{postfix-expression} variable to be resolved
+beforehand (an expression instead of an identifier here would be invalid anyway).
+
+\subsection{Input / output}
+Input and output operations are not specified in our language's grammar. However, these will be provided
+in the form of special polymorphic functions available to the user, akin to a small built-in
+\texttt{stdio.h} library. The available functions will have the following signatures:
+
+\begin{lstlisting}[language=C]
+void write(int i);    //
+void write(char c);   // output values to the standard output
+void write(char[] s); //
+void write(float f);  //
+
+void read(int i);    //
+void read(char c);   // receives values from the standard input
+void read(char[] s); //
+void read(float f);  //
+\end{lstlisting}
+
+\subsection{Semantics}
+We present some use cases in which polymorphic functions would be useful. Functions with the same behavior, but different argument types:
+
+\begin{lstlisting}[language=C]
+int   i = -1;
+float f = -1.0;
+abs(i); // return the absolute value of i
+abs(f); // return the absolute value of f
+        // In C, abs does not accept a floating-point argument
+        // we must use fabs instead
+\end{lstlisting}
+
+In this simple example, the abs function could compute the absolute of any numeric value passed as argument. The type constrains in C, however, do not allow the abs function to be called with a floating-point argument.
+
+Functions with different behavior, but the same "intuitive meaning" for the programmer
+
+\begin{lstlisting}[language=C]
+int  i[3] = { 9, 2, 5 };
+char w[][9] = { "word", "vocable", "locution" };
+
+sort(i); // The user implements a sorting function for integer vectors
+sort(w); // The user implements a lexicographic or alphabetic
+         // sorting function for string vectors
+\end{lstlisting}
+
+The implementation of a sorting function for integers and strings would be considerably distinct. However, intuitively a programmer might expect some notion of ordering to be present in arrays of strings. This can also be applied to functions with different number of arguments:
+
+\begin{lstlisting}[language=C]
+// Should return the lowest of either x or y
+int min(int x, int y) {
+	if (x <= y) { return x; }
+	else { return y; }
+}
+
+// Should also return the lowest of either x, y or z
+int min(int x, int y, int z) {
+	if (x <= y) {
+		if (x <= z) { return x; }
+		else { return z; }
+	} else {
+		if (y <= z) { return y; }
+		else { return z; }
+	}
+}
+\end{lstlisting}
+
