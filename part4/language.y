@@ -134,7 +134,7 @@ function_definition
 	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); }                '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign_body($$); finish(); finish(); assign_context($$); }
 	| type IDENTIFIER '(' ')'               '{' { begin_fun($1, $2, NULL); }                '}' { $$ = nl_push(node_list, node_init(FUNCTION, "function-body" , NULL, ENDARG)); assign_body($$); finish(); finish(); assign_context($$); }
 	| type IDENTIFIER '(' error ')'                                                             { $$ = NULL; }
-	| type IDENTIFIER error ';'                                                                 { $$ = NULL; }
+	//| type IDENTIFIER error ';'                                                                 { $$ = NULL; }
 	;
 
 argument_list
