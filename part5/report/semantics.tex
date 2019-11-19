@@ -1,0 +1,76 @@
+\subsection{Semantics}
+\label{section:semantics}
+
+\subsubsection{Scope}
+
+Except in the case of initializer lists, scopes are enclosed by curly
+braces ('\{' and '\}'). Every program should have at least one scope,
+which is the global scope, where the programmer is only allowed to
+declare and initialize (but not assign) global variables and to
+define functions. Functions can be defined only in the global scope.
+
+The body of a function is treated as a compound statement itself 
+and compound statements can be nested. Within compound statements,
+there can be variable declaration, initialization and assignment,
+arithmetic and logical expressions, flow control statements
+(conditional and loops) and jump statements (return).
+Since variable assignment can only be done within compound statements
+and these are not allowed in the global scope, then a program must
+have at least one function for variables to be able to be assigned.
+Variables and functions must always be declared, initialized or defined 
+before they can be used.
+
+Declaration of variables with the same name in a given scope is
+not allowed. However, a variable declaration is allowed to shadow
+another variable in a parent scope. When a variable must be used,
+a declaration of that variable will be first searched in the
+in the current scope. If not found, it will be searched in the
+current scope's parent scope and so forth up to the global scope.
+
+Unlike in the C programming language, definition of functions with
+the same name is allowed, provided that the functions have different
+argument types. Definition of functions with the same name and same
+argument types is not allowed, even if the return type differs.
+The argument variable names pertain to the outermost scope enclosed
+by the function's body.
+
+
+
+\subsubsection{Implicit type conversion}
+\label{section:types}
+
+Our language is comprised of five basic types:
+\texttt{void} (no type), 
+\texttt{char} (characters),
+\texttt{int} (integers),
+\texttt{float} (floating point numbers),
+and pointers in the form of arrays of one of the basic types:
+\texttt{char[]} (strings),
+\texttt{int[]} (arrays of integers),
+\texttt{float[]} (arrays of floating point numbers).
+ The rules for conversions are as follows:
+
+\begin{itemize}
+ \item \textbf{Same type} when values are of the same type, no conversion is needed;
+ \item \textbf{\texttt{void}} cannot be implicitly converted to another type;
+ \item \textbf{\texttt{char}} can be implicitly converted to \textbf{\texttt{int}} or \textbf{\texttt{float}};
+ \item \textbf{\texttt{int}} can only be implicitly converted to \textbf{\texttt{float}};
+ \item \textbf{\texttt{float}} cannot be implicitly converted to another type;
+ \item \textbf{Arrays} cannot be implicitly converted to another type.
+\end{itemize}
+
+Essentially, a value can be implicitly converted to another type with larger storage size.
+For function calls, the same rules should apply after the function's return value has been
+resolved. However, types are not implicitly converted on the arguments of a function call.
+
+\subsubsection{Explicit type conversion}
+
+Since there are no casts in the language, there can be no explicit type conversion.
+
+\subsubsection{Expressions}
+
+Most of the language's operators are left-associative with the exception of unary operators
+and the assignment operator, which are right-associative. Expressions are type checked
+for incompatibilities and if possible, statically evaluated. However static evaluation of
+expressions has not been implemented in this version.
+

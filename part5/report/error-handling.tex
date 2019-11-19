@@ -1,0 +1,115 @@
+\subsection{Error handling}
+As the program reads the input file, the parser requests tokens from the scanner, who splits the
+input text into tokens and relays them back to the parser. If an error is found, a message is
+sent to \texttt{stderr} indicating the position (line and column) in the text where it was found,
+and whether it was detected by the scanner, the parser or the semantic analyzer.
+
+
+\subsubsection{Lexical errors}
+If the scanner finds an error, it outputs a message and returns a special error token to the parser.
+Following suggestions, identifiers with more than 32 characters are no longer considered an error
+and only output a warning if they are found, which does not block compilation.
+The scanner recognizes the following errors (Table \ref{tab:scanner-errors}).
+
+\begin{table}[h]
+\centering
+\captionsetup{width=0.7\textwidth}
+\caption{Lexical errors and their associated tokens. The tokens are returned
+to the parser and the program continues analyzing the rest of the text.}
+\label{tab:scanner-errors}
+\begin{tabular} {c c}
+\hline
+Error type & Token type \\
+\hline
+Unrecognized token & \texttt{UNRECOGNIZED\_TOKEN} \\
+Malformed character constant & \texttt{INVALID\_CHAR\_CONST} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Syntax errors}
+Syntax errors are thrown from the parser when it is unable to complete a shift or reduce
+operation. To allow the parser to continue reading the input, the built in \texttt{error}
+token is included in some of the grammar's rules. Particularly, we have included
+such rules in order to capture: 
+
+\begin{itemize}
+\item  Malformed blocks of code (the parser continues after the next semicolon or enclosing
+curly brace)
+\begin{lstlisting}
+declaration
+	: ...
+	| error ';'
+	| error compound_statement
+	;
+
+\end{lstlisting}
+
+\item  Malformed statements (the parser continues after the next semicolon)
+\begin{lstlisting}
+statement
+	: ...
+	| error ';'
+\end{lstlisting}
+
+\item  Malformed expressions (the parser continues after the next semicolon or enclosing
+parenthesis)
+\begin{lstlisting}
+primary_expression
+	: ...
+	| error
+\end{lstlisting}
+
+\item  Malformed argument lists (the parser continues after the next enclosing parenthesis)
+\begin{lstlisting}
+function_definition
+	: ...
+	| type IDENTIFIER '(' error ')'
+\end{lstlisting}
+\end{itemize}
+
+
+\subsubsection{Semantic errors}
+Semantic errors are thrown from the semantic analyzer when there are constructs
+in the input text that violate the language's semantics as described in the Section
+\ref{section:semantics}. These errors do not abort the compilation process before
+the parser has finished, as most of the semantic analysis is performed
+simultaneously with the parsing. Semantic errors are handled by the functions
+defined in the file ``\texttt{actions.c}''.
+
+\paragraph{Re-declaration of variable:} This error is issued if a variable is
+declared or initialized more than once with the same name in a given scope.
+It is \textbf{not} an error to declare of initialize a variable with the same
+name of one that exists in a parent scope, but the new variable will shadow the
+old one, that is, the variable in the parent scope will be inaccessible. % issue warning in the future
+
+\paragraph{Redefinition of function:} This error is issued if a function is
+defined more than once with the same name \textbf{and} the same argument types.
+This language aims to implement polymorphic functions, therefore, defining functions
+with the same name and different argument types is allowed.
+
+\paragraph{Variable use without declaration:} This error is issued if a variable is
+used before being declared or initialized either in the current scope or any of its
+parent scopes up to the global scope. Variable declaration or initialization must
+always precede its use.
+
+\paragraph{Function call without definition:} This error is issued if a function
+is called but no function with that name has been defined. Functions must always
+be defined before they are used.
+
+\paragraph{Function call with invalid argument types:} This error is issued if a
+previously defined function is called with arguments types that are not present
+in any of the previous definitions of that function.
+
+\paragraph{Incompatible types:} This error is issued if there is an expression
+with operands of incompatible types, as described on Section \ref{section:types}.
+
+\subsubsection{Remarks about error handling}
+These strategies allows us to display a reasonable amount of errors before the program is unable
+to proceed and terminates. In fact the parser should be able to finish (albeit not correctly)
+the syntax tree even when errors are found in several situations.
+The error messages are displayed as they are found, and since the
+scanner returns a token that is never used by the parser, lexical errors also generate syntax
+errors. To avoid encumbering the output when errors are found, only error messages and the symbol
+table are displayed on invalid input.
+

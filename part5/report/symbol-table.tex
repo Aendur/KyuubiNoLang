@@ -1,0 +1,97 @@
+
+\subsection{The symbol table}
+We use a single hash table with linked lists as buckets, defined in \texttt{table.h} and
+\texttt{table.c}, to implement the symbol table. If performance becomes an issue due to high
+load factor, the table can be rehashed to decrease its load factor. Each entry in the symbol
+table is comprised of a key and its attributes. The following attributes are currently being
+stored:
+
+\begin{itemize}
+ \item \textbf{Symbol type}: indicates if the symbol is a variable, a function or some other abstract
+ structure such as a scope enclosed by a compound statement;
+ \item \textbf{Return type}: stores a function's return type or a variable's data type;
+ \item \textbf{Value}: an union that stores a symbol's current value, if applicable;
+ \item \textbf{Argument list}: a structure that stores a function's argument list, if there is one;
+ \item \textbf{Pointer to node}: a pointer to a node in the syntax tree that represents a statement's body
+ \item \textbf{Scope}: a pointer to this symbol's enclosing scope, which itself is an entry in
+ some other symbol table.
+\end{itemize}
+
+As per current implementation, the data structure used for a symbol table is the same
+data structure used for a symbol itself. Therefore, each entry in the symbol table is also a
+symbol table. The reason for this is to make the implementation of some auxiliary data structures
+simpler: there would be a pointer to a new symbol table in the attributes of a symbol anyway, since
+some entries such as functions and compound statements have their own child scope.
+
+\subsubsection{Polymorphic functions}
+
+Whereas variables are included into the table based solely on their names, the insertion of
+a function in the table uses a two-step hashing scheme: first, the function is hashed by its
+name and inserted into the table. This symbol is now a new symbol table itself.
+A key that represents the function's argument types is then constructed from its argument list,
+hashed and inserted into this new symbol table. Again, this symbol is another symbol table,
+which now holds the scope of the function's body, where the argument variable names are added
+to. For example, the following code:
+
+\begin{lstlisting}
+int min(int x, int y) {}
+int min(int x, int y, int z) {}
+\end{lstlisting}
+
+Would generate the following entries in the symbol table:
+
+\begin{lstlisting}
+min  <s_type=FUNCTION,r_type=int,args=void>                   # function name
+   int,int  <s_type=FUNCTION,r_type=int,args=int,int>         # arg types for min(int,int)
+      x  <s_type=VARIABLE,r_type=int,args=void>               # arg 1 of min(int,int)
+      y  <s_type=VARIABLE,r_type=int,args=void>               # arg 2 of min(int,int)
+   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int> # arg types for min(int,int,int)
+      x  <s_type=VARIABLE,r_type=int,args=void>               # arg 1 of min(int,int,int)
+      y  <s_type=VARIABLE,r_type=int,args=void>               # arg 2 of min(int,int,int)
+      z  <s_type=VARIABLE,r_type=int,args=void>               # arg 3 of min(int,int,int)
+\end{lstlisting}
+
+
+Thus, a function call would look up for a function in the current scope's symbol table,
+then builds the argument types key from the types resolved by the type checker and looks
+up for such an entry in the function's symbol table. In the present version, the type checker
+is unable to determine the types of function calls. However, insertions and redefinition
+errors are being correctly handled.
+
+\subsubsection{Scope resolution}
+
+The symbol table is also responsible for scope resolution issues. Whenever a variable declaration
+is found, the analyzer looks up for its name in the current scope. If it is found, a symbol
+re-declaration error is thrown, otherwise, the variable is added to the current scope's table.
+Whenever a variable is used, the analyzer looks up for its name in the current scope. If it is
+not found, the analyzer searches the parent scope and then its parent all the way up to the global
+scope or until a declaration is found. If none is found, an undeclared variable error is thrown.
+
+\subsubsection{Scope management}
+
+Scopes are stored withing a stack structures which elements are symbol tables. The stack
+is initialized with a single element that corresponds to the program's global scope.
+Whenever the parser finds a rule that would begin a new scope, then a new symbol, with an
+appropriately given key is inserted into the current context (top of the stack) and then
+pushed onto the stack, becoming the new element on the top, thus the new current
+context. When the parser finds the terminal token that ends a scope the parser pops
+the context from the stack, leaving its parent on the top.
+These actions are handled by the parser and are defined in the GNU Bison input file in
+rules such as this:
+
+\begin{lstlisting}
+ compound_statement
+	: ...
+	| '{'    { begin(NULL); }    statement_list '}'    { $$ = $3  ; finish(); }
+\end{lstlisting}
+
+Here, \texttt{begin(NULL)} is a mid-rule action whose only purpose is to create a new context
+and push it to the stack and \texttt{finish()} pops the stack when the context is closed.
+
+
+
+
+
+
+
+

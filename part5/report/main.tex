@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{CJKutf8}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{Tabbing}
+\usepackage{biblatex}
+\usepackage[affil-it]{authblk}
+\usepackage{lmodern}
+\usepackage{titlesec}
+\usepackage[skip=2pt,font=footnotesize]{caption}
+\usepackage{ulem}
+%\usepackage{titlesec}
+
+
+\titlespacing{\paragraph}{\parindent}{0.5em}{0.5em}
+\addbibresource{refs.bib}
+\renewcommand{\baselinestretch}{1.05}
+\lstset{basicstyle=\ttfamily\fontseries{lc}\selectfont,breaklines=true,tabsize=4}
+
+\begin{document}
+
+%\title{\normalsize\begin{CJK}{UTF8}{min}九\hspace{0.6cm}尾\hspace{0.6cm}狐\hspace{0.6cm}の\hspace{0.6cm}語%\end{CJK}\\\huge K Language\\\normalsize Polymorphism in a C-like\\ programming language}
+%\author{Diogo César Ferreira\\11/0027931}
+%\affil{University of Brasília}
+
+\title{\small\begin{CJK}{UTF8}{min}九\hspace{0.55cm}尾\hspace{0.55cm}狐\hspace{0.55cm}の\hspace{0.55cm}語\end{CJK}\\\huge K Language\\\normalsize Polymorphism in a C-like \\ programming language}
+\author{Diogo César Ferreira\\11/0027931}
+\affil{University of Brasília}
+
+\maketitle
+
+%\tableofcontents
+%\clearpage
+
+% section 1 - introduction
+\input{introduction.tex} 
+\input{lexical.tex} 
+\input{syntax.tex} 
+\input{semantics.tex} 
+\input{use-cases.tex} 
+\clearpage
+
+% section 2 - the compiler
+\input{compiler.tex}
+\input{symbol-table.tex}
+\input{syntax-tree.tex}
+\input{type-checker.tex}
+\input{error-handling.tex}
+\input{tests.tex}
+
+% \subsection{Additional remarks}
+% Overall, this phase of the project presented itself more challenging than the previous ones,
+% given the more complex nature of the parser, as opposed to the scanner. In particular, a
+% remarkably nasty memory leak accompanied by several segfaults showed up as the
+% syntax tree was being built while parsing input with errors. The solution for that was to
+% reserve ownership of the allocated tree nodes to a vector that stores every node as they
+% are allocated (\texttt{Nodelist * node\_list} in \texttt{main.c}).
+
+\printbibliography
+
+\end{document}

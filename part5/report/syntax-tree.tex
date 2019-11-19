@@ -1,0 +1,64 @@
+
+\subsection{Syntax tree}
+The syntax tree is build using the data structures defined in \texttt{node.h} and \texttt{node.c}.
+Most of the non-terminals in the grammar are set as pointer to our tree node type, to allow for the
+tree to be built as the parser proceeds. Identifiers, types and argument lists are interpreted
+respectively as strings, integers and lists. They are currently being handled in such a way
+that they need not be included in the tree.
+
+\begin{lstlisting}
+%union {
+	struct node * node;
+	int ival;
+	const char * sval;
+	struct arg_list * al;
+}
+\end{lstlisting}
+
+In the current version, the scanner no longer creates tree nodes. The scanner now
+appropriately sets \texttt{yylval} and only the parser handles the management of
+the nodes. The parser is instructed to either promote or to build new nodes for
+most grammar productions, building the syntax tree (Listings \ref{lst:promnode} and \ref{lst:newnode}).
+
+\begin{lstlisting}[caption={Example of parser rules where nodes are promoted.
+This procedure is preformed for productions in which there is no need to create a
+new node, since no new information would be gained indoing so.},label={lst:promnode},captionpos=b]
+declaration
+	: function_definition                    { $$ = $1; }
+	| init_declarator ';'                    { $$ = $1; }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Example of a parser rule where a new nodes is
+created. Here, we will need to type check and evaluate both operands of
+the expression, before we know what attributes will be assigned to the head
+of the rule.},label={lst:newnode},captionpos=b]
+additive_expression
+	: ...
+	| additive_expression '-' multiplicative_expression
+	{
+		$$ = nl_push(node_list, node_init(OP_SUB, "-", $1, $3, ENDARG)); // create a new node
+		assign_context($$);
+		typecheck_lazy($$);
+	}
+\end{lstlisting}
+
+
+\subsubsection{Syntax tree annotations}
+
+As nodes are created, they may be assigned to an entry in the symbol table. Some of these entries
+are actual symbols derived from identifiers, while others are surrogate symbols that represent
+each node's current state. Currently, these symbols are only being used to store the annotations
+in the tree, but in the future they will used as actually temporary symbols for the production
+of the 3-address code. Most of the annotations are currently being done by the type checker,
+as will be shown in Section \ref{section:tc}.
+
+
+
+
+
+
+
+
+
+
+
