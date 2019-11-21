@@ -34,7 +34,14 @@ void assign_body(Node * node);
 char * str_ptr(const char * prefix, void* address, const char * suffix);
 
 Symbol * evaluate(Node * node);
+
+void redefinition_error(const char * name);
+void redefinition_error_fun(const char * name, const char * pars);
+
+void type_error(Node * node, char * type1, char * type2);
+void node_error(const char * msg, Node * node);
 Symbol * typecheck_lazy(Node * node);
+
 
 #endif
 

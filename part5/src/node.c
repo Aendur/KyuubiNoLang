@@ -8,6 +8,9 @@
 
 extern int yyleng;
 extern char * yytext;
+extern int nline;
+extern int ncol0;
+extern int ncol1;
 
 Node * node_init(int type, const char * name, ...) {
 	Node * n0 = malloc(sizeof(Node));
@@ -16,6 +19,9 @@ Node * node_init(int type, const char * name, ...) {
 	n0->name = malloc(strlen(name) + 1);
 	n0->context = NULL;
 	n0->symbol  = NULL;
+	n0->line = nline;
+	n0->col0 = ncol0;
+	n0->col1 = ncol1;
 	strcpy(n0->name, name);
 
 	// init va

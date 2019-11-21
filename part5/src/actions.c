@@ -5,18 +5,32 @@ extern int yynerrs;
 
 #define ERROR_MSG_BUFF 256
 
+void type_error(Node * node, char * type1, char * type2) {
+	//++yynerrs;
+	//yyerror(msg);
+	char msg[ERROR_MSG_BUFF];
+	snprintf(msg, ERROR_MSG_BUFF, "semantic error: incompatible types, '%s' and '%s'", type1, type2);
+	node_error(msg, node);
+}
+
+void node_error(const char * msg, Node * node) {
+	++yynerrs;
+	yyerror(msg);
+	fprintf(stderr, "Line %d, column %d, node, %s\n", node->line, node->col0, msg);
+}
+
 void redefinition_error(const char * name) {
 	char msg[ERROR_MSG_BUFF];
 	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s'", name);
+	++yynerrs;
 	yyerror(msg);
-	yynerrs++;
 }
 
 void redefinition_error_fun(const char * name, const char * pars) {
 	char msg[ERROR_MSG_BUFF];
 	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s' with parameters '%s'", name, pars);
+	++yynerrs;
 	yyerror(msg);
-	yynerrs++;
 }
 
 Table * begin(const char * name) {
@@ -198,20 +212,18 @@ char * str_ptr(const char * prefix, void* address, const char * suffix) {
 }
 
 
-void type_error(char * type1, char * type2) {
-	++yynerrs;
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: incompatible types, '%s' and '%s'", type1, type2);
-	yyerror(msg);
-}
 
 
-void resolve_types(Symbol * tgt, Symbol * src) {
+// void resolve_types(Symbol * tgt, Symbol * src) {
+void resolve_types(Node * tgtnode, Node * srcnode) {
+	Symbol * tgt = tgtnode->symbol;
+	Symbol * src = srcnode->symbol;
 	if (tgt == NULL) { fprintf(stderr, "typecheck null target sybmol\n"); return; }
 	if (src == NULL) { /*nothing to do, */ return; }
 
 	// int tgtsym = tgt->attr->symbol_type;
 	// int srcsym = src->attr->symbol_type;
+
 	int tgtret = tgt->attr->return_type;
 	int srcret = src->attr->return_type;
 
@@ -221,48 +233,48 @@ void resolve_types(Symbol * tgt, Symbol * src) {
 	switch (tgtret) {
 		case FLOAT: switch(srcret) {
 			case UNDEFINED: return;
-			case STRING:    type_error("float", "char[]"); return;
+			case STRING:    type_error(tgtnode, "float", "char[]"); return;
 			case FLOAT:     return;
 			case CHAR:      return;
 			case INT :      return;
-			case VOID:      type_error("float", "void"); return;
-			default:        type_error("float", "unknown type"); return;
+			case VOID:      type_error(tgtnode, "float", "void"); return;
+			default:        type_error(tgtnode, "float", "unknown type"); return;
 		} break;
 		case CHAR : switch(srcret) {
 			case UNDEFINED: return;
-			case STRING:    type_error("char", "char[]"); return;
+			case STRING:    type_error(tgtnode, "char", "char[]"); return;
 			case FLOAT:     tgt->attr->return_type = srcret; return;
 			case CHAR:      tgt->attr->return_type = srcret; return;
 			case INT :      tgt->attr->return_type = srcret; return;
-			case VOID:      type_error("char", "void"); return;
-			default:        type_error("char", "unknown type"); return;
+			case VOID:      type_error(tgtnode, "char", "void"); return;
+			default:        type_error(tgtnode, "char", "unknown type"); return;
 		} break;
 		case INT  : switch(srcret) {
 			case UNDEFINED: return;
-			case STRING:    type_error("int", "char[]"); return;
+			case STRING:    type_error(tgtnode, "int", "char[]"); return;
 			case FLOAT:     tgt->attr->return_type = srcret; return;
 			case CHAR:      return;
 			case INT :      return;
-			case VOID:      type_error("int", "void"); return;
-			default:        type_error("int", "unknown type"); return;
+			case VOID:      type_error(tgtnode, "int", "void"); return;
+			default:        type_error(tgtnode, "int", "unknown type"); return;
 		} break;
 		case VOID : switch(srcret) {
 			case UNDEFINED: return;
-			case STRING:    type_error("void", "char[]"); return;
-			case FLOAT:     type_error("void", "float"); return;
-			case CHAR:      type_error("void", "char"); return;
-			case INT :      type_error("void", "int"); return;
+			case STRING:    type_error(tgtnode, "void", "char[]"); return;
+			case FLOAT:     type_error(tgtnode, "void", "float"); return;
+			case CHAR:      type_error(tgtnode, "void", "char"); return;
+			case INT :      type_error(tgtnode, "void", "int"); return;
 			case VOID:      return;
-			default:        type_error("void", "unknown type"); return;
+			default:        type_error(tgtnode, "void", "unknown type"); return;
 		} break;
 		case STRING: switch(srcret) {
 			case UNDEFINED: return;
 			case STRING:    return;
-			case FLOAT:     type_error("char[]", "float"); return;
-			case CHAR:      type_error("char[]", "char"); return;
-			case INT :      type_error("char[]", "int"); return;
-			case VOID:      type_error("char[]", "void"); return;
-			default:        type_error("char[]", "unknown type"); return;
+			case FLOAT:     type_error(tgtnode, "char[]", "float"); return;
+			case CHAR:      type_error(tgtnode, "char[]", "char"); return;
+			case INT :      type_error(tgtnode, "char[]", "int"); return;
+			case VOID:      type_error(tgtnode, "char[]", "void"); return;
+			default:        type_error(tgtnode, "char[]", "unknown type"); return;
 		} break;
 		default: {
 			++yynerrs;
@@ -287,11 +299,13 @@ Symbol * typecheck_lazy(Node * node) {
 		/* do nothing */ 		
 	} else if (node->nleaves == 1) {
 		leaf_symbol = typecheck_lazy(node->leaf[0]);
-		resolve_types(node->symbol, leaf_symbol);
+		// resolve_types(node->symbol, leaf_symbol);
+		resolve_types(node, node->leaf[0]);
 	} else { //if (node->nleaves > 1) {
 		for (int i = 0; i < node->nleaves; ++i) {
 			leaf_symbol = typecheck_lazy(node->leaf[i]);
-			resolve_types(node->symbol, leaf_symbol);
+			// resolve_types(node->symbol, leaf_symbol);
+			resolve_types(node, node->leaf[i]);
 		}
 	}
 	
