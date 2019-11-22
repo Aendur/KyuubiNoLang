@@ -18,30 +18,28 @@ extern Nodelist * node_list;
 extern Tablestack * context_stack;
 
 
-Symbol * add_symbol(int symbol_type, int data_type, const char * key);
-Symbol * add_symbol_var(int type, const char * key);
-Symbol * add_symbol_arr(int type, const char * key);
-void add_symbol_args(struct arg_list * args);
+// error
+void yyerror (char const * msg);
+void error_redefinition(const char * name);
+void error_redefinition_fun(const char * name, const char * pars);
+void error_undeclared(const char * name);
 
+// scope
 Table * begin(const char * name);
 Table * begin_fun(int type, const char * name, struct arg_list * args);
 Table * finish(void);
-Symbol * retrieve(Node * node, const char * key);
-
 void assign_context(Node * node);
 void assign_body(Node * node);
 
+// symbol table
+void add_symbol_args(struct arg_list * args);
+Symbol * add_symbol_var(int type, const char * key);
+Symbol * add_symbol_arr(int type, const char * key, int size);
+Symbol * add_symbol(int symbol_type, int data_type, const char * key);
+Symbol * retrieve(Node * node, const char * key);
+
+// misc
 char * str_ptr(const char * prefix, void* address, const char * suffix);
-
-Symbol * evaluate(Node * node);
-
-void redefinition_error(const char * name);
-void redefinition_error_fun(const char * name, const char * pars);
-
-void type_error(Node * node, char * type1, char * type2);
-void node_error(const char * msg, Node * node);
-Symbol * typecheck_lazy(Node * node);
-
 
 #endif
 

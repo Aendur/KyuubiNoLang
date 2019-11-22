@@ -40,7 +40,7 @@ struct arg_list * al_link(struct arg_list * head, struct arg_list ** tail) {
 
 void al_free(struct arg_list ** alist) {
 	if(alist == NULL) { fprintf (stderr, "null ** arg list\n"); return; }
-	if(*alist == NULL) { fprintf (stderr, "null * arg list\n"); return; }
+	if(*alist == NULL) { /*fprintf (stderr, "null * arg list\n");*/ return; }
 
 	struct arg_list * al = *alist;
 	struct arg * arg = al->first;
@@ -52,6 +52,8 @@ void al_free(struct arg_list ** alist) {
 		free(arg);
 		arg = next;
 	}
+	// al->first = NULL;
+	// al->last = NULL;
 	free(al);
 	*alist = NULL;
 }

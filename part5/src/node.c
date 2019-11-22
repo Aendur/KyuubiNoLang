@@ -100,8 +100,11 @@ void print_tree(Node * root, int level) {
 	if (root == NULL) {
 		printf("(null)\n");
 	} else {
-		printf("%-s ", root->name);
+		if (root->name != NULL) { printf("%-s ", root->name); }
+		else { printf("(null name)"); }
+
 		if(root->symbol != NULL) { attr_print(root->symbol->attr); }
+		else { printf("(null symbol)"); }
 		printf("\n");
 
 		for(int l = 0; l < root->nleaves; ++l) {

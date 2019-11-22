@@ -1,13 +1,13 @@
 default: flex bison dbg
 
 flex:
-	flex language.l
+	flex src/language.l
 
 bison:
-	bison -Wall language.y
+	bison -Wall src/language.y
 
 dbg:
-	gcc -std=c18 -m64 -g -Wall -Wextra -DDEBUG \
+	gcc -okyu -std=c18 -m64 -g -Wall -Wextra -DDEBUG \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \
@@ -18,8 +18,10 @@ dbg:
 	src/scanner.c     \
 	src/actions.c     \
 
+#	src/typechecker.c \
+
 rel:
-	gcc -std=c18 -m64 -O3 \
+	gcc -okyu -std=c18 -m64 -O3 \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \
@@ -29,6 +31,7 @@ rel:
 	src/parser.c      \
 	src/scanner.c     \
 	src/actions.c     \
+	src/typechecker.c \
 
 
 test-node:

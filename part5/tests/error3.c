@@ -26,4 +26,3 @@ int min(int x, int y) {
 	c = min(10, 20);
 }
 
-

@@ -1,7 +1,10 @@
 #include "table.h"
+#include "arg-list.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+// static unsigned int table_uuid = 0;
 
 // Initialize a new table with <size> buckets
 Table * table_init (size_t size, const char * key) {
@@ -24,6 +27,7 @@ Table * table_init (size_t size, const char * key) {
 	if (key == NULL) {
 		tab->key = malloc(40);
 		snprintf((char*) tab->key, 40, "%p", (void*) tab);
+		//snprintf((char*) tab->key, 40, "$%d", table_uuid++);
 	} else {
 		tab->key = malloc(strlen(key)+1);
 		strcpy((char*) tab->key, key);
@@ -55,9 +59,10 @@ void table_free (Table** tab) {
 		}
 	}
 
-	free((char*) table->key); table->key = NULL;
-	free(table->attr);        table->attr = NULL;
-	free(table->buckets);     table->buckets = NULL;
+	al_free(&(table->attr->arg_list));
+	free((char*) table->key);    table->key = NULL;
+	free(table->attr);           table->attr = NULL;
+	free(table->buckets);        table->buckets = NULL;
 	free(table);
 	*tab = NULL;
 }

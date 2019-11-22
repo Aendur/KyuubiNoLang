@@ -14,8 +14,6 @@ H [a-fA-F0-9]
 
 %{
 #include "parser.h"
-#include "node.h"
-#include "node-list.h"
 extern int yynerrs;
 extern int nline;
 extern int ncol0;
@@ -25,6 +23,8 @@ static void update_position(void);
 static int  identifier(void);
 static int  character_const(void);
 static void copy_yy_string(void);
+static void error_token(const char * name);
+static const int ERROR_MSG_BUFFER = 256;
 %}
 
 %%
@@ -108,11 +108,7 @@ static void copy_yy_string(void);
 				/* other symbols not part of the language */
 .				{
 					update_position();
-					char * msg = malloc(64);
-					snprintf(msg, 64, "lexical error, unrecognized token: '%s'", yytext);
-					yyerror(msg);
-					yynerrs++;
-					free(msg);
+					error_token(yytext);
 					return UNRECOGNIZED_TOKEN;
 				}
 
@@ -138,6 +134,7 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
+		// ++yynerrs; // commented, just a warning
 		yyerror("warning (lexical), identifier exceeds 32 characters.");
 	}
 
@@ -155,8 +152,8 @@ void copy_yy_string(void) {
 // handles character constants
 static int character_const(void) {
 	if (yytext[1] != '\\' && yyleng >= 4) {
+		++yynerrs;
 		yyerror("lexical error, invalid character constant.");
-		yynerrs++;
 		yylval.sval = NULL;
 		return INVALID_CHAR_CONST;
 	} else {
@@ -164,4 +161,11 @@ static int character_const(void) {
 		copy_yy_string();
 		return t;
 	}
+}
+
+static void error_token(const char * name) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "lexical error, unrecognized token: '%s'", name);
+	++yynerrs;
+	yyerror(msg);
 }

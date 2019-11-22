@@ -1,3 +1,9 @@
 a.out
 *.zip
 *.synctex(busy)
+
+result.log
+kyu
+
+tree1.dat
+tree2.dat

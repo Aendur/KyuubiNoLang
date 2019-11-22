@@ -73,8 +73,8 @@ extern int yydebug;
     OP_DIV = 279,
     OP_MOD = 280,
     OP_ADD = 281,
-    OP_NEG = 282,
-    OP_SUB = 283,
+    OP_SUB = 282,
+    OP_NEG = 283,
     OP_LT = 284,
     OP_GT = 285,
     OP_LE = 286,
@@ -103,7 +103,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 64 "language.y"
+#line 71 "src/language.y"
 
 	struct node     *node;
 	int              ival;
@@ -123,7 +123,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 72 "language.y"
+#line 78 "src/language.y"
 
 	void yyerror (char const *);
 
