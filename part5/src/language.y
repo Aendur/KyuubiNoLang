@@ -1,18 +1,13 @@
 %defines "src/parser.h"
 %output  "src/parser.c"
 %define api.header.include "\"parser.h\""
- //%require "3.4.0"
+%require "3.4.0"
 
 %define parse.error verbose
 %define lr.type canonical-lr
 
 %token <ival> VOID INT FLOAT CHAR STRING UNDEFINED
-%token <sval> IDENTIFIER
-%token <sval> STRING_LITERAL
-%token <sval> CONSTANT_FLOAT
-%token <sval> CONSTANT_INT
-%token <sval> CONSTANT_HEX
-%token <sval> CONSTANT_CHAR
+%token <sval> IDENTIFIER STRING_LITERAL CONSTANT_FLOAT CONSTANT_INT CONSTANT_HEX CONSTANT_CHAR
 
 %token IF ELSE WHILE DO RETURN
 %token OP_INC "++"
@@ -34,7 +29,6 @@
 %token OP_AND "&&"
 %token OP_ASSIGN "="
 
-
 %token UNRECOGNIZED_TOKEN
 %token INVALID_IDENTIFIER
 %token INVALID_CHAR_CONST
@@ -49,7 +43,6 @@
 %token DECLARATION
 %token GENERIC_NODE
 
-
 %type <node> declaration_list declaration init_declarator
 %type <node> initializer_list compound_statement statement_list
 %type <node> statement conditional_statement iteration_statement return_statement assignment_expression
@@ -59,7 +52,6 @@
 %type <node> function_definition
 %type <al> argument_list argument
 %type <ival> type
-
 
 %destructor { free((void*) $$); } <sval>
 %destructor { fprintf(stderr, "CALL AL DTOR\n"); al_free(&$$); } <al>
@@ -77,15 +69,24 @@
 
 %code provides {
 	void yyerror (char const *);
+	struct table * add_symbol(int symbol_type, int data_type, const char * key);
 }
- //	void error_redefinition(const char * name);
- //	void error_redefinition_fun(const char * name, const char * pars);
- //	void error_undeclared(const char * name);
- //}
+
 
 %{
 #include "actions.h"
+#include "node-list.h"
+#include "arg-list.h"
+#include "misc.h"
+
+#include <stdlib.h>
+#include <stdio.h>
+
 int yylex (void);
+
+extern Node * root;
+extern Nodelist * node_list;
+
 %}
 
 %%
@@ -179,6 +180,8 @@ assignment_expression
 	: logical_or_expression                         { $$ = $1; }
 	| postfix_expression '=' logical_or_expression  { $$ = nl_push(node_list, node_init(OP_ASSIGN, "=", $1, $3, ENDARG)); assign_context($$); /*typecheck_lazy($$);*/ }
 	;
+	// | IDENTIFIER '[' assignment_expression ']' '=' logical_or_expression  { $$ = nl_push(node_list, node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG)); assign_context($$); retrieve($$, $1); free((void*) $1);}
+	// | IDENTIFIER                               '=' logical_or_expression  { $$ = nl_push(node_list, node_init(IDENTIFIER    , $1, ENDARG)); assign_context($$); free((void*) $1); retrieve($$, $$->name); } // use var
 
 logical_or_expression
 	: logical_and_expression                              { $$ = $1; }
@@ -233,52 +236,12 @@ postfix_expression
 	;
 
 primary_expression
-	: IDENTIFIER 		{ // use var
-							$$ = nl_push(node_list, node_init(IDENTIFIER    , $1, ENDARG));
-							assign_context($$);
-							free((void*) $1);
-							retrieve($$, $$->name);
-						}
-	| STRING_LITERAL	{ // rvalue
-							$$ = nl_push(node_list, node_init(STRING_LITERAL, $1, ENDARG));
-							assign_context($$);
-							free((void*) $1);
-							char * key = str_ptr("node", $$, NULL);
-							$$->symbol = add_symbol(CONSTANT, STRING, key);
-							free(key);
-						}
-	| CONSTANT_FLOAT	{ // rvalue
-							$$ = nl_push(node_list, node_init(CONSTANT_FLOAT, $1, ENDARG));
-							assign_context($$);
-							free((void*) $1);
-							char * key = str_ptr("node", $$, NULL);
-							$$->symbol = add_symbol(CONSTANT, FLOAT , key);
-							free(key);
-						}
-	| CONSTANT_INT  	{ // rvalue
-							$$ = nl_push(node_list, node_init(CONSTANT_INT  , $1, ENDARG));
-							assign_context($$);
-							free((void*) $1);
-							char * key = str_ptr("node", $$, NULL);
-							$$->symbol = add_symbol(CONSTANT, INT   , key);
-							free(key);
-						}
-	| CONSTANT_HEX  	{ // rvalue
-							$$ = nl_push(node_list, node_init(CONSTANT_HEX  , $1, ENDARG));
-							assign_context($$);
-							free((void*) $1);
-							char * key = str_ptr("node", $$, NULL);
-							$$->symbol = add_symbol(CONSTANT, INT   , key);
-							free(key);
-						}
-	| CONSTANT_CHAR 	{ // rvalue
-							$$ = nl_push(node_list, node_init(CONSTANT_CHAR , $1, ENDARG));
-							assign_context($$);
-							free((void*) $1);
-							char * key = str_ptr("node", $$, NULL);
-							$$->symbol = add_symbol(CONSTANT, CHAR  , key);
-							free(key);
-						}
+	: IDENTIFIER 						{ $$ = nl_push(node_list, node_init(IDENTIFIER    , $1, ENDARG)); assign_context($$); free((void*) $1); retrieve($$, $$->name); } // use var
+	| STRING_LITERAL					{ $$ = nl_push(node_list, node_init(STRING_LITERAL, $1, ENDARG)); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, STRING, key); free(key); } // rvalue
+	| CONSTANT_FLOAT					{ $$ = nl_push(node_list, node_init(CONSTANT_FLOAT, $1, ENDARG)); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, FLOAT , key); free(key); } // rvalue
+	| CONSTANT_INT  					{ $$ = nl_push(node_list, node_init(CONSTANT_INT  , $1, ENDARG)); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, INT   , key); free(key); } // rvalue
+	| CONSTANT_HEX  					{ $$ = nl_push(node_list, node_init(CONSTANT_HEX  , $1, ENDARG)); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, INT   , key); free(key); } // rvalue
+	| CONSTANT_CHAR 					{ $$ = nl_push(node_list, node_init(CONSTANT_CHAR , $1, ENDARG)); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, CHAR  , key); free(key); } // rvalue
 	| '(' assignment_expression ')' 	{ $$ = $2; }
 	;
 

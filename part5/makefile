@@ -17,8 +17,8 @@ dbg:
 	src/parser.c      \
 	src/scanner.c     \
 	src/actions.c     \
-
-#	src/typechecker.c \
+	src/typechecker.c \
+	src/misc.c \
 
 rel:
 	gcc -okyu -std=c18 -m64 -O3 \
@@ -32,6 +32,7 @@ rel:
 	src/scanner.c     \
 	src/actions.c     \
 	src/typechecker.c \
+	src/misc.c \
 
 
 test-node:

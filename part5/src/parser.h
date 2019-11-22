@@ -103,7 +103,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 71 "src/language.y"
+#line 63 "src/language.y"
 
 	struct node     *node;
 	int              ival;
@@ -123,10 +123,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 78 "src/language.y"
+#line 70 "src/language.y"
 
 	void yyerror (char const *);
+	struct table * add_symbol(int symbol_type, int data_type, const char * key);
 
-#line 131 "src/parser.h"
+#line 132 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */

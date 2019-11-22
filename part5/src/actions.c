@@ -1,6 +1,18 @@
 #include "actions.h"
 #include "parser.h"
 
+#include "node-list.h"
+#include "table-stack.h"
+#include "arg-list.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+extern int nline;
+extern int ncol0;
+extern int ncol1;
+extern Tablestack * context_stack;
+
 extern int yynerrs;
 static const int ERROR_MSG_BUFF = 256;
 
@@ -200,23 +212,5 @@ Symbol * retrieve(Node * node, const char * key) {
 		node->symbol = s;
 		return s;
 	}
-}
-
-char * str_ptr(const char * prefix, void* address, const char * suffix) {
-	unsigned long size = 24;
-	if(prefix != NULL) { size += strlen(prefix); }
-	if(suffix != NULL) { size += strlen(suffix); }
-	char * str = calloc(size, sizeof(char));
-
-	if (prefix == NULL && suffix == NULL) {
-		snprintf(str, size, "%p", address);
-	} else if (prefix != NULL && suffix == NULL) {
-		snprintf(str, size, "%s:%p", prefix, address);
-	} else if (prefix == NULL && suffix != NULL) {
-		snprintf(str, size, "%p:%s", address, suffix);
-	} else {
-		snprintf(str, size, "%s:%p:%s", prefix, address, suffix);
-	}
-	return str;
 }
 

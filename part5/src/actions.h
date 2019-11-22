@@ -2,21 +2,7 @@
 #define ACTIONS_H
 
 #include "node.h"
-#include "node-list.h"
 #include "table.h"
-#include "table-stack.h"
-#include "arg-list.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-extern int nline;
-extern int ncol0;
-extern int ncol1;
-extern Node * root;
-extern Nodelist * node_list;
-extern Tablestack * context_stack;
-
 
 // error
 void yyerror (char const * msg);
@@ -37,9 +23,6 @@ Symbol * add_symbol_var(int type, const char * key);
 Symbol * add_symbol_arr(int type, const char * key, int size);
 Symbol * add_symbol(int symbol_type, int data_type, const char * key);
 Symbol * retrieve(Node * node, const char * key);
-
-// misc
-char * str_ptr(const char * prefix, void* address, const char * suffix);
 
 #endif
 

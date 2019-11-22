@@ -1,5 +1,9 @@
 #include "typechecker.h"
 #include "parser.h"
+#include "misc.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 extern int yynerrs;
 static const int ERROR_MSG_BUFFER=256;
@@ -7,8 +11,8 @@ static const int ERROR_MSG_BUFFER=256;
 void error_type(Node * node, char * type1, char * type2) {
 	//++yynerrs;
 	//yyerror(msg);
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: incompatible types, '%s' and '%s'", type1, type2);
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: incompatible types, '%s' and '%s'", type1, type2);
 	error_node(msg, node);
 }
 
@@ -18,8 +22,8 @@ void error_node(const char * msg, Node * node) {
 	fprintf(stderr, "Line %d, column %d, node, %s\n", node->line, node->col0, msg);
 }
 
-// void resolve_types(Symbol * tgt, Symbol * src) {
-void resolve_types(Node * tgtnode, Node * srcnode) {
+// void tc_resolve(Symbol * tgt, Symbol * src) {
+void tc_resolve(Node * tgtnode, Node * srcnode) {
 	Symbol * tgt = tgtnode->symbol;
 	Symbol * src = srcnode->symbol;
 	if (tgt == NULL) { fprintf(stderr, "typecheck null target sybmol\n"); return; }
@@ -82,14 +86,14 @@ void resolve_types(Node * tgtnode, Node * srcnode) {
 		} break;
 		default: {
 			++yynerrs;
-			char msg[ERROR_MSG_BUFF];
-			snprintf(msg, ERROR_MSG_BUFF, "semantic error: unable to determine type");
+			char msg[ERROR_MSG_BUFFER];
+			snprintf(msg, ERROR_MSG_BUFFER, "semantic error: unable to determine type");
 			yyerror(msg);
 		} break;
 	}
 }
 
-Symbol * typecheck_lazy(Node * node) {
+Symbol * tc_typecheck_lazy(Node * node) {
 	if (node == NULL) { return NULL; }
 
 	if (node->symbol == NULL) {
@@ -102,14 +106,14 @@ Symbol * typecheck_lazy(Node * node) {
 	if (node->nleaves == 0) {
 		/* do nothing */ 		
 	} else if (node->nleaves == 1) {
-		leaf_symbol = typecheck_lazy(node->leaf[0]);
-		// resolve_types(node->symbol, leaf_symbol);
-		resolve_types(node, node->leaf[0]);
+		leaf_symbol = tc_typecheck_lazy(node->leaf[0]);
+		// tc_resolve(node->symbol, leaf_symbol);
+		tc_resolve(node, node->leaf[0]);
 	} else { //if (node->nleaves > 1) {
 		for (int i = 0; i < node->nleaves; ++i) {
-			leaf_symbol = typecheck_lazy(node->leaf[i]);
-			// resolve_types(node->symbol, leaf_symbol);
-			resolve_types(node, node->leaf[i]);
+			leaf_symbol = tc_typecheck_lazy(node->leaf[i]);
+			// tc_resolve(node->symbol, leaf_symbol);
+			tc_resolve(node, node->leaf[i]);
 		}
 	}
 	

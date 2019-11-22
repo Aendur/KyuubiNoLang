@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include "parser.h"
 #include "scanner.h"
+#include "typechecker.h"
 #include "node.h"
 #include "node-list.h"
 #include "table.h"
 #include "table-stack.h"
-#include "actions.h"
+// #include "actions.h"
 
 //#include <getopt.h>
 
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
 	yyparse();
 	//printf("%d\n", yynerrs);
 	
-	//typecheck_lazy(root);
+	tc_typecheck_lazy(root);
 
 	if (yynerrs == 0) {
 		printf("------------------------------\n");
