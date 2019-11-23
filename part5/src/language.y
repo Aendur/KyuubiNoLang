@@ -41,6 +41,7 @@
 %token FUNCTION
 %token FUNCTION_CALL
 %token DECLARATION
+%token INITIALIZATION
 %token GENERIC_NODE
 
 %type <node> declaration_list declaration init_declarator
@@ -108,11 +109,11 @@ declaration
 
 init_declarator
 	: type IDENTIFIER                                            { $$ = nl_push(node_list, node_init(DECLARATION, "declaration", ENDARG)); assign_context($$); $$->symbol=add_symbol_var($1,$2); free((void*) $2); }
-	| type IDENTIFIER '=' assignment_expression                  { $$ = nl_push(node_list, node_init(DECLARATION, "declaration", ENDARG)); assign_context($$); $$->symbol=add_symbol_var($1,$2); free((void*) $2); }
 	| type IDENTIFIER '[' assignment_expression ']'              { $$ = nl_push(node_list, node_init(DECLARATION, "declaration", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
-	| type IDENTIFIER '[' ']' '=' '{' initializer_list '}'       { $$ = nl_push(node_list, node_init(DECLARATION, "declaration", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
-	| type IDENTIFIER '[' ']' '=' '{' initializer_list ',' '}'   { $$ = nl_push(node_list, node_init(DECLARATION, "declaration", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
-	| type IDENTIFIER '[' ']' '=' STRING_LITERAL                 { $$ = nl_push(node_list, node_init(DECLARATION, "declaration", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); free((void*) $6); }
+	| type IDENTIFIER '=' assignment_expression                  { $$ = nl_push(node_list, node_init(INITIALIZATION, "initialization", ENDARG)); assign_context($$); $$->symbol=add_symbol_var($1,$2); free((void*) $2); }
+	| type IDENTIFIER '[' ']' '=' '{' initializer_list '}'       { $$ = nl_push(node_list, node_init(INITIALIZATION, "initialization", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
+	| type IDENTIFIER '[' ']' '=' '{' initializer_list ',' '}'   { $$ = nl_push(node_list, node_init(INITIALIZATION, "initialization", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
+	| type IDENTIFIER '[' ']' '=' STRING_LITERAL                 { $$ = nl_push(node_list, node_init(INITIALIZATION, "initialization", ENDARG)); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); free((void*) $6); }
 	;
 
 initializer_list

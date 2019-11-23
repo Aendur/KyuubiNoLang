@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 	yyparse();
 	//printf("%d\n", yynerrs);
 	
-	tc_typecheck_lazy(root);
+	// tc_typecheck_lazy(root);
 
 	if (yynerrs == 0) {
 		printf("------------------------------\n");
