@@ -93,29 +93,37 @@ void tc_resolve(Node * tgtnode, Node * srcnode) {
 	}
 }
 
-Symbol * tc_typecheck_lazy(Node * node) {
-	if (node == NULL) { return NULL; }
 
-	if (node->symbol == NULL) {
-		char * key = str_ptr("node", node, NULL);
-		node->symbol = add_symbol(GENERIC_NODE, UNDEFINED, key);
-		free(key);
-	}
+// Symbol * tc_typecheck_lazy(Node * node) {
+// 	if (node == NULL) { return NULL; }
+// 	if (node->symbol == NULL) {
+// 		char * key = str_ptr("node", node, NULL);
+// 		node->symbol = add_symbol(GENERIC_NODE, UNDEFINED, key);
+// 		free(key);
+// 	}
+// 	Symbol * leaf_symbol;
+// 	if (node->nleaves == 0) {
+// 		/* do nothing */ 		
+// 	} else if (node->nleaves == 1) {
+// 		leaf_symbol = tc_typecheck_lazy(node->leaf[0]);
+// 		// tc_resolve(node->symbol, leaf_symbol);
+// 		tc_resolve(node, node->leaf[0]);
+// 	} else { //if (node->nleaves > 1) {
+// 		for (int i = 0; i < node->nleaves; ++i) {
+// 			leaf_symbol = tc_typecheck_lazy(node->leaf[i]);
+// 			// tc_resolve(node->symbol, leaf_symbol);
+// 			tc_resolve(node, node->leaf[i]);
+// 		}
+// 	}
+// 	return node->symbol;
+// }
 
-	Symbol * leaf_symbol;
-	if (node->nleaves == 0) {
-		/* do nothing */ 		
-	} else if (node->nleaves == 1) {
-		leaf_symbol = tc_typecheck_lazy(node->leaf[0]);
-		// tc_resolve(node->symbol, leaf_symbol);
-		tc_resolve(node, node->leaf[0]);
-	} else { //if (node->nleaves > 1) {
-		for (int i = 0; i < node->nleaves; ++i) {
-			leaf_symbol = tc_typecheck_lazy(node->leaf[i]);
-			// tc_resolve(node->symbol, leaf_symbol);
-			tc_resolve(node, node->leaf[i]);
-		}
-	}
+
+// void tc_typecheck(Node * node) {
+// 	if (node == NULL) { return NULL; }
+// }
+
+
+void tc_evaluate(Node * node) {
 	
-	return node->symbol;
 }

@@ -54,7 +54,7 @@
 %type <al> argument_list argument
 %type <ival> type
 
-%destructor { free((void*) $$); } <sval>
+%destructor { free_label($$); } <sval>
 %destructor { fprintf(stderr, "CALL AL DTOR\n"); al_free(&$$); } <al>
 %destructor { root = $$; } declaration_list
 %destructor { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&$$); } <node>
@@ -85,7 +85,7 @@
 #include <stdio.h>
 
 int yylex (void);
-
+void free_label(const char * str);
 extern Node * root;
 //extern Nodelist * node_list;
 
@@ -109,12 +109,12 @@ declaration
 	;
 
 init_declarator
-	: type IDENTIFIER                                            { $$ = node_init(DECLARATION, "declaration", ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free((void*) $2); }
-	| type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(DECLARATION, "declaration", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
-	| type IDENTIFIER '=' assignment_expression                  { $$ = node_init(INITIALIZATION, "initialization", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free((void*) $2); }
-	| type IDENTIFIER '[' ']' '=' '{' initializer_list '}'       { $$ = node_init(INITIALIZATION, "initialization", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
-	| type IDENTIFIER '[' ']' '=' '{' initializer_list ',' '}'   { $$ = node_init(INITIALIZATION, "initialization", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); }
-	| type IDENTIFIER '[' ']' '=' STRING_LITERAL                 { $$ = node_init(INITIALIZATION, "initialization", ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free((void*) $2); free((void*) $6); }
+	: type IDENTIFIER                                            { $$ = node_init(DECLARATION   , "declaration"   ,     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
+	| type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(DECLARATION   , "declaration"   , $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
+	| type IDENTIFIER '=' assignment_expression                  { $$ = node_init(INITIALIZATION, "initialization", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
+	| type IDENTIFIER '[' ']' '=' '{' initializer_list '}'       { $$ = node_init(INITIALIZATION, "initialization", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
+	| type IDENTIFIER '[' ']' '=' '{' initializer_list ',' '}'   { $$ = node_init(INITIALIZATION, "initialization", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
+	| type IDENTIFIER '[' ']' '=' STRING_LITERAL                 { $$ = node_init(INITIALIZATION, "initialization",     ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); free_label($6); }
 	;
 
 initializer_list
@@ -123,13 +123,13 @@ initializer_list
 	;
 
 function_definition
-	: type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free((void*) $2); }
-	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free((void*) $2); }
-	| type IDENTIFIER '(' ')'               '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $7  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free((void*) $2); }
-	| type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free((void*) $2); }
-	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free((void*) $2); }
-	| type IDENTIFIER '(' ')'               '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free((void*) $2); }
-	| type IDENTIFIER '(' error ')'                                                             { $$ = NULL; free((void*) $2); }
+	: type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' ')'               '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $7  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' ')'               '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' error ')'                                                             { $$ = NULL; free_label($2); }
 	;
 
 argument_list
@@ -138,8 +138,8 @@ argument_list
 	;
 
 argument
-	: type IDENTIFIER          { $$ = al_init($1, VARIABLE, $2); free((void*) $2); }
-	| type IDENTIFIER '[' ']'  { $$ = al_init($1, ARRAY   , $2); free((void*) $2); }
+	: type IDENTIFIER          { $$ = al_init($1, VARIABLE, $2); free_label($2); }
+	| type IDENTIFIER '[' ']'  { $$ = al_init($1, ARRAY   , $2); free_label($2); }
 	;
 
 compound_statement
@@ -182,8 +182,8 @@ assignment_expression
 	: logical_or_expression                         { $$ = $1; }
 	| postfix_expression '=' logical_or_expression  { $$ = node_init(OP_ASSIGN, "=", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
 	;
-	// | IDENTIFIER '[' assignment_expression ']' '=' logical_or_expression  { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1); free((void*) $1);}
-	// | IDENTIFIER                               '=' logical_or_expression  { $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); free((void*) $1); retrieve($$, $$->name); } // use var
+	// | IDENTIFIER '[' assignment_expression ']' '=' logical_or_expression  { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1); free_label($1);}
+	// | IDENTIFIER                               '=' logical_or_expression  { $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); free_label($1); retrieve($$, $$->name); } // use var
 
 logical_or_expression
 	: logical_and_expression                              { $$ = $1; }
@@ -232,18 +232,18 @@ unary_expression
 
 postfix_expression
 	: primary_expression                          { $$ = $1; }
-	| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1); free((void*) $1);}
-	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve($$, $1); free((void*) $1);}
-	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve($$, $1); free((void*) $1);}
+	| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1); free_label($1);}
+	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve($$, $1); free_label($1);}
+	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve($$, $1); free_label($1);}
 	;
 
 primary_expression
-	: IDENTIFIER 						{ $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); free((void*) $1); retrieve($$, $$->name); } // use var
-	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, STRING, key); free(key); } // rvalue
-	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, FLOAT , key); free(key); } // rvalue
-	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, INT   , key); free(key); } // rvalue
-	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, INT   , key); free(key); } // rvalue
-	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); free((void*) $1); char * key = str_ptr("node", $$, NULL); $$->symbol = add_symbol(CONSTANT, CHAR  , key); free(key); } // rvalue
+	: IDENTIFIER 						{ $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); retrieve($$, $$->name); free_label($1); } // use var
+	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, STRING, NULL); set_symbol_sval($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, FLOAT , NULL); set_symbol_fval($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_ival($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_hval($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, CHAR  , NULL); set_symbol_cval($$->symbol, $1); free_label($1); } // rvalue
 	| '(' assignment_expression ')' 	{ $$ = $2; }
 	;
 
@@ -261,3 +261,6 @@ type
 
 %%
 
+void free_label(const char * str) {
+	free((void*) str);
+}

@@ -189,9 +189,13 @@ Symbol * add_symbol_arr(int type, const char * key, int size) {
 
 Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
 	//switch (data_type) { case VOID: case INT: case CHAR: case FLOAT: case STRING: break; default: fprintf(stderr, "undefined type\n"); return NULL; }
-	if(key  == NULL) { fprintf(stderr, "add symbol with null key\n"); return NULL; }
+	//if(key  == NULL) { fprintf(stderr, "add symbol with null key\n"); return NULL; }
 
-	Symbol * symbol = table_find(context_stack->top, key);
+	Symbol * symbol = NULL;
+	if (key != NULL) {
+		symbol = table_find(context_stack->top, key);
+	}
+
 	if (symbol == NULL) {
 		symbol = table_insert(context_stack->top, key);
 		symbol->attr->symbol_type = symbol_type;
@@ -202,6 +206,32 @@ Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
 		return NULL;
 	}
 }
+
+
+void set_symbol_sval(Symbol * symbol, const char * value) {
+	symbol->attr->value.sval = malloc(strlen(value)+1);
+	strcpy((char*)symbol->attr->value.sval, value);
+	symbol->attr->defined = true;
+}
+void set_symbol_cval(Symbol * symbol, const char * value) {
+	#warning handle special chars
+	// printf("charvalue=%s %d\n", value, strlen(value));
+	symbol->attr->value.cval = value[1];
+	symbol->attr->defined = true;
+}
+void set_symbol_ival(Symbol * symbol, const char * value) {
+	symbol->attr->value.ival = strtol(value, NULL, 10);
+	symbol->attr->defined = true;
+}
+void set_symbol_hval(Symbol * symbol, const char * value) {
+	symbol->attr->value.ival = strtol(value, NULL, 16);
+	symbol->attr->defined = true;
+}
+void set_symbol_fval(Symbol * symbol, const char * value) {
+	symbol->attr->value.fval = strtof(value, NULL);
+	symbol->attr->defined = true;
+}
+
 
 Symbol * retrieve(Node * node, const char * key) {
 	Symbol * s = table_find_back(node->context, key);

@@ -1,6 +1,7 @@
 #ifndef TABLE_H
 #define TABLE_H
 
+#include <stdbool.h>
 
 typedef struct table Symbol;
 typedef struct table Table;
@@ -15,6 +16,8 @@ struct table {
 	struct table  * root;
 	struct table  * below;
 	struct bucket * buckets;
+
+	int uuid;
 };
 
 struct bucket {
@@ -26,6 +29,7 @@ struct bucket {
 struct attr {
 	int symbol_type;
 	int return_type;
+	bool defined;
 	union {
 		int   ival;
 		char  cval;

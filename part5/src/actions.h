@@ -23,6 +23,11 @@ Symbol * add_symbol_var(int type, const char * key);
 Symbol * add_symbol_arr(int type, const char * key, int size);
 Symbol * add_symbol(int symbol_type, int data_type, const char * key);
 Symbol * retrieve(Node * node, const char * key);
+void set_symbol_sval(Symbol * symbol, const char * value);
+void set_symbol_cval(Symbol * symbol, const char * value);
+void set_symbol_ival(Symbol * symbol, const char * value);
+void set_symbol_hval(Symbol * symbol, const char * value);
+void set_symbol_fval(Symbol * symbol, const char * value);
 
 #endif
 

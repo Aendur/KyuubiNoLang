@@ -14,8 +14,8 @@ extern int ncol1;
 
 Node * node_init(int type, const char * name, ...) {
 	Node * n0 = malloc(sizeof(Node));
-	static int init_nodes = 0;
-	printf("init node %p %d\n", (void*) n0, init_nodes++);
+	// static int init_nodes = 0;
+	// printf("init node %p %d\n", (void*) n0, init_nodes++);
 	n0->root = NULL;
 	n0->type = type;
 	n0->name = malloc(strlen(name) + 1);
@@ -79,8 +79,8 @@ void node_free(Node ** n) {
 void node_free_recursive(Node ** n) {
 	if ( n == NULL) { fprintf(stderr, "trying to free null pointer arg\n"); return; }
 	if (*n == NULL) { fprintf(stderr, "trying to free null pointer obj\n"); return; }
-	static int freed_nodes = 0;
-	printf("free node %p %d\n", (void*) *n, freed_nodes++);
+	// static int freed_nodes = 0;
+	// printf("free node %p %d\n", (void*) *n, freed_nodes++);
 	Node * n0 = *n;
 	for(int i = 0; i < n0->nleaves; ++i) { node_free_recursive(&(n0->leaf[i])); }
 	free(n0->leaf); n0->leaf = NULL;

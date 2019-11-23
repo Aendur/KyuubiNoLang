@@ -100,7 +100,7 @@
 #include <stdio.h>
 
 int yylex (void);
-
+void free_label(const char * str);
 extern Node * root;
 //extern Nodelist * node_list;
 
@@ -2613,37 +2613,37 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
     {
     case 9: /* IDENTIFIER  */
 #line 57 "src/language.y"
-      { free((void*) ((*yyvaluep).sval)); }
+      { free_label(((*yyvaluep).sval)); }
 #line 2618 "src/parser.c"
         break;
 
     case 10: /* STRING_LITERAL  */
 #line 57 "src/language.y"
-      { free((void*) ((*yyvaluep).sval)); }
+      { free_label(((*yyvaluep).sval)); }
 #line 2624 "src/parser.c"
         break;
 
     case 11: /* CONSTANT_FLOAT  */
 #line 57 "src/language.y"
-      { free((void*) ((*yyvaluep).sval)); }
+      { free_label(((*yyvaluep).sval)); }
 #line 2630 "src/parser.c"
         break;
 
     case 12: /* CONSTANT_INT  */
 #line 57 "src/language.y"
-      { free((void*) ((*yyvaluep).sval)); }
+      { free_label(((*yyvaluep).sval)); }
 #line 2636 "src/parser.c"
         break;
 
     case 13: /* CONSTANT_HEX  */
 #line 57 "src/language.y"
-      { free((void*) ((*yyvaluep).sval)); }
+      { free_label(((*yyvaluep).sval)); }
 #line 2642 "src/parser.c"
         break;
 
     case 14: /* CONSTANT_CHAR  */
 #line 57 "src/language.y"
-      { free((void*) ((*yyvaluep).sval)); }
+      { free_label(((*yyvaluep).sval)); }
 #line 2648 "src/parser.c"
         break;
 
@@ -3089,37 +3089,37 @@ yyreduce:
 
   case 8:
 #line 112 "src/language.y"
-    { (yyval.node) = node_init(DECLARATION, "declaration", ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_var((yyvsp[-1].ival),(yyvsp[0].sval)); free((void*) (yyvsp[0].sval)); }
+    { (yyval.node) = node_init(DECLARATION   , "declaration"   ,     ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_var((yyvsp[-1].ival),(yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3094 "src/parser.c"
     break;
 
   case 9:
 #line 113 "src/language.y"
-    { (yyval.node) = node_init(DECLARATION, "declaration", (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-4].ival),(yyvsp[-3].sval), 0); free((void*) (yyvsp[-3].sval)); }
+    { (yyval.node) = node_init(DECLARATION   , "declaration"   , (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-4].ival),(yyvsp[-3].sval), 0); free_label((yyvsp[-3].sval)); }
 #line 3100 "src/parser.c"
     break;
 
   case 10:
 #line 114 "src/language.y"
-    { (yyval.node) = node_init(INITIALIZATION, "initialization", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_var((yyvsp[-3].ival),(yyvsp[-2].sval)); free((void*) (yyvsp[-2].sval)); }
+    { (yyval.node) = node_init(INITIALIZATION, "initialization", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_var((yyvsp[-3].ival),(yyvsp[-2].sval)); free_label((yyvsp[-2].sval)); }
 #line 3106 "src/parser.c"
     break;
 
   case 11:
 #line 115 "src/language.y"
-    { (yyval.node) = node_init(INITIALIZATION, "initialization", (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-7].ival),(yyvsp[-6].sval), 0); free((void*) (yyvsp[-6].sval)); }
+    { (yyval.node) = node_init(INITIALIZATION, "initialization", (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-7].ival),(yyvsp[-6].sval), 0); free_label((yyvsp[-6].sval)); }
 #line 3112 "src/parser.c"
     break;
 
   case 12:
 #line 116 "src/language.y"
-    { (yyval.node) = node_init(INITIALIZATION, "initialization", (yyvsp[-2].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-8].ival),(yyvsp[-7].sval), 0); free((void*) (yyvsp[-7].sval)); }
+    { (yyval.node) = node_init(INITIALIZATION, "initialization", (yyvsp[-2].node), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-8].ival),(yyvsp[-7].sval), 0); free_label((yyvsp[-7].sval)); }
 #line 3118 "src/parser.c"
     break;
 
   case 13:
 #line 117 "src/language.y"
-    { (yyval.node) = node_init(INITIALIZATION, "initialization", ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-5].ival),(yyvsp[-4].sval), 0); free((void*) (yyvsp[-4].sval)); free((void*) (yyvsp[0].sval)); }
+    { (yyval.node) = node_init(INITIALIZATION, "initialization",     ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_arr((yyvsp[-5].ival),(yyvsp[-4].sval), 0); free_label((yyvsp[-4].sval)); free_label((yyvsp[0].sval)); }
 #line 3124 "src/parser.c"
     break;
 
@@ -3143,7 +3143,7 @@ yyreduce:
 
   case 17:
 #line 126 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free((void*) (yyvsp[-7].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-7].sval)); }
 #line 3148 "src/parser.c"
     break;
 
@@ -3155,7 +3155,7 @@ yyreduce:
 
   case 19:
 #line 127 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free((void*) (yyvsp[-7].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-7].sval)); }
 #line 3160 "src/parser.c"
     break;
 
@@ -3167,7 +3167,7 @@ yyreduce:
 
   case 21:
 #line 128 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free((void*) (yyvsp[-6].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
 #line 3172 "src/parser.c"
     break;
 
@@ -3179,7 +3179,7 @@ yyreduce:
 
   case 23:
 #line 129 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free((void*) (yyvsp[-6].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
 #line 3184 "src/parser.c"
     break;
 
@@ -3191,7 +3191,7 @@ yyreduce:
 
   case 25:
 #line 130 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free((void*) (yyvsp[-6].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
 #line 3196 "src/parser.c"
     break;
 
@@ -3203,13 +3203,13 @@ yyreduce:
 
   case 27:
 #line 131 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free((void*) (yyvsp[-5].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-5].sval)); }
 #line 3208 "src/parser.c"
     break;
 
   case 28:
 #line 132 "src/language.y"
-    { (yyval.node) = NULL; free((void*) (yyvsp[-3].sval)); }
+    { (yyval.node) = NULL; free_label((yyvsp[-3].sval)); }
 #line 3214 "src/parser.c"
     break;
 
@@ -3227,13 +3227,13 @@ yyreduce:
 
   case 31:
 #line 141 "src/language.y"
-    { (yyval.al) = al_init((yyvsp[-1].ival), VARIABLE, (yyvsp[0].sval)); free((void*) (yyvsp[0].sval)); }
+    { (yyval.al) = al_init((yyvsp[-1].ival), VARIABLE, (yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3232 "src/parser.c"
     break;
 
   case 32:
 #line 142 "src/language.y"
-    { (yyval.al) = al_init((yyvsp[-3].ival), ARRAY   , (yyvsp[-2].sval)); free((void*) (yyvsp[-2].sval)); }
+    { (yyval.al) = al_init((yyvsp[-3].ival), ARRAY   , (yyvsp[-2].sval)); free_label((yyvsp[-2].sval)); }
 #line 3238 "src/parser.c"
     break;
 
@@ -3515,55 +3515,55 @@ yyreduce:
 
   case 79:
 #line 235 "src/language.y"
-    { (yyval.node) = node_init(ARRAY_INDEX  , "array-index"  , (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyvsp[-3].sval)); free((void*) (yyvsp[-3].sval));}
+    { (yyval.node) = node_init(ARRAY_INDEX  , "array-index"  , (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyvsp[-3].sval)); free_label((yyvsp[-3].sval));}
 #line 3520 "src/parser.c"
     break;
 
   case 80:
 #line 236 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyvsp[-2].sval)); free((void*) (yyvsp[-2].sval));}
+    { (yyval.node) = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyvsp[-2].sval)); free_label((yyvsp[-2].sval));}
 #line 3526 "src/parser.c"
     break;
 
   case 81:
 #line 237 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION_CALL, "function-call", (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyvsp[-3].sval)); free((void*) (yyvsp[-3].sval));}
+    { (yyval.node) = node_init(FUNCTION_CALL, "function-call", (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyvsp[-3].sval)); free_label((yyvsp[-3].sval));}
 #line 3532 "src/parser.c"
     break;
 
   case 82:
 #line 241 "src/language.y"
-    { (yyval.node) = node_init(IDENTIFIER    , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); free((void*) (yyvsp[0].sval)); retrieve((yyval.node), (yyval.node)->name); }
+    { (yyval.node) = node_init(IDENTIFIER    , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyval.node)->name); free_label((yyvsp[0].sval)); }
 #line 3538 "src/parser.c"
     break;
 
   case 83:
 #line 242 "src/language.y"
-    { (yyval.node) = node_init(STRING_LITERAL, (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); free((void*) (yyvsp[0].sval)); char * key = str_ptr("node", (yyval.node), NULL); (yyval.node)->symbol = add_symbol(CONSTANT, STRING, key); free(key); }
+    { (yyval.node) = node_init(STRING_LITERAL, (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol(CONSTANT, STRING, NULL); set_symbol_sval((yyval.node)->symbol, (yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3544 "src/parser.c"
     break;
 
   case 84:
 #line 243 "src/language.y"
-    { (yyval.node) = node_init(CONSTANT_FLOAT, (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); free((void*) (yyvsp[0].sval)); char * key = str_ptr("node", (yyval.node), NULL); (yyval.node)->symbol = add_symbol(CONSTANT, FLOAT , key); free(key); }
+    { (yyval.node) = node_init(CONSTANT_FLOAT, (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol(CONSTANT, FLOAT , NULL); set_symbol_fval((yyval.node)->symbol, (yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3550 "src/parser.c"
     break;
 
   case 85:
 #line 244 "src/language.y"
-    { (yyval.node) = node_init(CONSTANT_INT  , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); free((void*) (yyvsp[0].sval)); char * key = str_ptr("node", (yyval.node), NULL); (yyval.node)->symbol = add_symbol(CONSTANT, INT   , key); free(key); }
+    { (yyval.node) = node_init(CONSTANT_INT  , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_ival((yyval.node)->symbol, (yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3556 "src/parser.c"
     break;
 
   case 86:
 #line 245 "src/language.y"
-    { (yyval.node) = node_init(CONSTANT_HEX  , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); free((void*) (yyvsp[0].sval)); char * key = str_ptr("node", (yyval.node), NULL); (yyval.node)->symbol = add_symbol(CONSTANT, INT   , key); free(key); }
+    { (yyval.node) = node_init(CONSTANT_HEX  , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_hval((yyval.node)->symbol, (yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3562 "src/parser.c"
     break;
 
   case 87:
 #line 246 "src/language.y"
-    { (yyval.node) = node_init(CONSTANT_CHAR , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); free((void*) (yyvsp[0].sval)); char * key = str_ptr("node", (yyval.node), NULL); (yyval.node)->symbol = add_symbol(CONSTANT, CHAR  , key); free(key); }
+    { (yyval.node) = node_init(CONSTANT_CHAR , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol(CONSTANT, CHAR  , NULL); set_symbol_cval((yyval.node)->symbol, (yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
 #line 3568 "src/parser.c"
     break;
 
@@ -3845,3 +3845,6 @@ yyreturn:
 #line 262 "src/language.y"
 
 
+void free_label(const char * str) {
+	free((void*) str);
+}
