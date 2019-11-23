@@ -45,7 +45,7 @@ test-node-list:
 
 test-hash:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_HASH \
-	src/table.c
+	src/table.c src/arg-list.c
 
 test-tstack:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_TSTACK \

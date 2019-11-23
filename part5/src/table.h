@@ -43,7 +43,8 @@ unsigned long table_hash (const char * key);
 struct table * table_find (Table* tab, const char* key);
 struct table * table_find_back (Table* tab, const char* key);
 struct table * table_insert (Table* tab, const char* key); //, struct attr* val);
-struct table * table_remove (Table* tab, const char* key);
+struct table * table_retire (Table* tab, const char* key);
+void           table_remove (Table* tab, const char* key);
 struct table * table_rehash (Table** tab);
 
 // struct pair * pair_init(const char * key);

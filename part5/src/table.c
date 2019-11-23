@@ -141,36 +141,61 @@ struct table * table_insert (struct table * tab, const char* key) {
 	}
 }
 
-// Removes a key from the table. 
-struct table * table_remove (struct table * tab,  const char* key) {
+// Remove a key from the table. The returned pointer must still be freed
+struct table * table_retire (struct table * tab,  const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to remove from null object\n"); return NULL; }
 	if (key == NULL) { fprintf(stderr, "Trying to remove null key\n"); return NULL; }
 
-	struct table * obj = table_find(tab, key);
-	if (obj == NULL) { fprintf(stderr, "Unable to remove key(not found)"); return NULL; }
-
-	unsigned long hash = table_hash(obj->key);
+	unsigned long hash = table_hash(key);
 	unsigned long index = hash % tab->n_buckets;
 
-	#warning unfinished
-	// if (tab->buckets[index].size == 0) {
-		
-	// } else {
-	// 	struct table * pair = tab->buckets[index].first;
-	// 	while(pair != NULL && strcmp(pair->key, new_pair->key) != 0) { pair = pair->next; }
+	if (tab->buckets[index].size == 0) {
+		fprintf(stderr, "Unable to remove key (empty bucket)\n");
+		return NULL;
+	} else { //if (tab->buckets[index].size == 1) {
+		struct table * pair = tab->buckets[index].first;
+		while(pair != NULL && strcmp(pair->key, key) != 0) { pair = pair->next; }
 
-	// 	if (pair == NULL) { // key not found
-	// 		tab->buckets[index].last->next = new_pair;
-	// 		tab->buckets[index].last = new_pair;
-	// 		tab->buckets[index].size++;
-	// 		tab->n_keys++;
-	// 		return new_pair;
-	// 	} else { // key already present
-	// 		table_free(&new_pair);
-	// 		return NULL;
-	// 	}
-	// }
+		if (pair == NULL) { // key not found
+			fprintf(stderr, "Unable to remove key (not found)\n");
+			return NULL;
+		} else { // key found
+			if (tab->buckets[index].size == 1) {
+				tab->buckets[index].first = NULL;
+				tab->buckets[index].last = NULL;
+				tab->buckets[index].size--;
+				tab->n_keys--;
+				return pair;
+			} else {
+				if (pair == tab->buckets[index].first) {
+					tab->buckets[index].first = pair->next;
+					pair->next->prev = NULL;
+					pair->next = NULL;
+				} else if (pair == tab->buckets[index].last ) {
+					tab->buckets[index].last = pair->prev;
+					pair->prev->next = NULL;
+					pair->prev = NULL;
+				} else {
+					pair->prev->next = pair->next;
+					pair->next->prev = pair->prev;
+					pair->prev = NULL;
+					pair->next = NULL;
+				}
+				tab->buckets[index].size--;
+				tab->n_keys--;
+				return pair;
+			}
+		}
+	}
 }
+
+// Remove a key from the table and free it
+void table_remove (struct table * tab,  const char* key) {
+	struct table * rem = table_retire(tab, key);
+	table_free(&rem);
+}
+
+
 
 
 // Rehashes a table to decrease load factor
@@ -318,6 +343,19 @@ unsigned long round_to_2(unsigned long x) {
 }
 
 #ifdef UNIT_TEST_HASH
+
+void print_others(Table * tab) {
+	const char k0[] = "key29";
+	const char k1[] = "key38";
+	const char k2[] = "key47";
+	const char k3[] = "key56";
+	Table * t;
+	t = table_find(tab, k0); if(t==NULL) {printf("(null) ");} else {printf("(%p<-%p->%p) ",(void*)t->prev,(void*)t,(void*)t->next);}
+	t = table_find(tab, k1); if(t==NULL) {printf("(null) ");} else {printf("(%p<-%p->%p) ",(void*)t->prev,(void*)t,(void*)t->next);}
+	t = table_find(tab, k2); if(t==NULL) {printf("(null) ");} else {printf("(%p<-%p->%p) ",(void*)t->prev,(void*)t,(void*)t->next);}
+	t = table_find(tab, k3); if(t==NULL) {printf("(null) ");} else {printf("(%p<-%p->%p)\n",(void*)t->prev,(void*)t,(void*)t->next);}
+}
+
 int main(void) {
 	printf("\ntest round to 2\n");
 	{ unsigned long i = 254; printf("%10lu %10lu\n", i, round_to_2(i)); }
@@ -404,13 +442,78 @@ int main(void) {
 	table_print_debug(tab);
 	table_print_debug(tab2);
 
-
 	printf("\ntest free\n");
 	table_free(&tab2);
 	table_printm(tab2);
 	// cleanup:
 	table_free(&tab);
 	table_printm(tab);
+
+
+	printf("\ntest remove\n");
+	tab = table_init(16, "key1");
+	// char keychain[10];
+	// for (int i = 0; i < 64; ++i) {
+	// 	snprintf(keychain, 10, "key%d", i);
+	// 	printf("%s %lu\n", keychain, table_hash(keychain) % 16);
+	// 	table_insert(tab, keychain);
+	// }
+	const char k0[] = "key29"; table_insert(tab, k0);
+	const char k1[] = "key38"; table_insert(tab, k1);
+	const char k2[] = "key47"; table_insert(tab, k2);
+	const char k3[] = "key56"; table_insert(tab, k3);
+	struct table * rem;
+
+	rem = table_retire(tab, "key00"); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k0); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k0); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k1); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k1); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k2); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k2); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k3); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k3); print_others(tab); table_free(&rem);
+
+	table_insert(tab, k0);
+	table_insert(tab, k1);
+	table_insert(tab, k2);
+	table_insert(tab, k3);
+	print_others(tab);
+	rem = table_retire(tab, k3); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k3); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k2); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k2); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k1); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k1); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k0); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k0); print_others(tab); table_free(&rem);
+
+
+	table_insert(tab, k0);
+	table_insert(tab, k1);
+	table_insert(tab, k2);
+	table_insert(tab, k3);
+	print_others(tab);
+	rem = table_retire(tab, k2); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k2); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k1); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k1); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k0); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k0); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k3); print_others(tab); table_free(&rem);
+	rem = table_retire(tab, k3); print_others(tab); table_free(&rem);
+
+	table_insert(tab, k0);
+	table_insert(tab, k1);
+	table_insert(tab, k2);
+	table_insert(tab, k3);
+	table_remove(tab, k1);
+	table_remove(tab, k2);
+	table_remove(tab, k3);
+	table_remove(tab, k0);
+	table_free(&tab);
+
+
 	return 0;
 }
 
