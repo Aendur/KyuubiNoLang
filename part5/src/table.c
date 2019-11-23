@@ -35,6 +35,7 @@ Table * table_init (size_t size, const char * key) {
 	// was pair
 	tab->attr = calloc(1, sizeof(struct attr));
 	tab->next = NULL;
+	tab->prev = NULL;
 
 	return tab;
 }
@@ -128,6 +129,7 @@ struct table * table_insert (struct table * tab, const char* key) {
 
 		if (pair == NULL) { // key not found
 			tab->buckets[index].last->next = new_pair;
+			new_pair->prev = tab->buckets[index].last;
 			tab->buckets[index].last = new_pair;
 			tab->buckets[index].size++;
 			tab->n_keys++;
@@ -137,6 +139,37 @@ struct table * table_insert (struct table * tab, const char* key) {
 			return NULL;
 		}
 	}
+}
+
+// Removes a key from the table. 
+struct table * table_remove (struct table * tab,  const char* key) {
+	if (tab == NULL) { fprintf(stderr, "Trying to remove from null object\n"); return NULL; }
+	if (key == NULL) { fprintf(stderr, "Trying to remove null key\n"); return NULL; }
+
+	struct table * obj = table_find(tab, key);
+	if (obj == NULL) { fprintf(stderr, "Unable to remove key(not found)"); return NULL; }
+
+	unsigned long hash = table_hash(obj->key);
+	unsigned long index = hash % tab->n_buckets;
+
+	#warning unfinished
+	// if (tab->buckets[index].size == 0) {
+		
+	// } else {
+	// 	struct table * pair = tab->buckets[index].first;
+	// 	while(pair != NULL && strcmp(pair->key, new_pair->key) != 0) { pair = pair->next; }
+
+	// 	if (pair == NULL) { // key not found
+	// 		tab->buckets[index].last->next = new_pair;
+	// 		tab->buckets[index].last = new_pair;
+	// 		tab->buckets[index].size++;
+	// 		tab->n_keys++;
+	// 		return new_pair;
+	// 	} else { // key already present
+	// 		table_free(&new_pair);
+	// 		return NULL;
+	// 	}
+	// }
 }
 
 
