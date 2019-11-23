@@ -86,9 +86,9 @@ static const int ERROR_MSG_BUFFER = 256;
 "="			{ update_position(); return '=';}
 
 					/* Numerical constants */
-[\-\+]?0[xX]{H}+	{ update_position(); int t = CONSTANT_HEX;   copy_yy_string(); return t; }
-[\-\+]?{D}+			{ update_position(); int t = CONSTANT_INT;   copy_yy_string(); return t; }
-[\-\+]?{D}+"."{D}* 	{ update_position(); int t = CONSTANT_FLOAT; copy_yy_string(); return t; }
+0[xX]{H}+	{ update_position(); int t = CONSTANT_HEX;   copy_yy_string(); return t; }
+{D}+			{ update_position(); int t = CONSTANT_INT;   copy_yy_string(); return t; }
+{D}+"."{D}* 	{ update_position(); int t = CONSTANT_FLOAT; copy_yy_string(); return t; }
 
 					/* Characters and string literals */
 '(\\.|[^\\'])+'		{ update_position(); return character_const(); }

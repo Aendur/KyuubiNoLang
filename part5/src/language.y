@@ -19,6 +19,7 @@
 %token OP_ADD "+"
 %token OP_SUB "-"
 %token OP_NEG
+%token OP_POS
 %token OP_LT "<" 
 %token OP_GT ">" 
 %token OP_LE "<="
@@ -224,8 +225,9 @@ multiplicative_expression
 
 unary_expression
 	: postfix_expression         { $$ = $1; }
-	| '!' unary_expression       { $$ = node_init(OP_NOT, "!",  $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
+	| '+' unary_expression       { $$ = $2; }
 	| '-' unary_expression       { $$ = node_init(OP_NEG, "-",  $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
+	| '!' unary_expression       { $$ = node_init(OP_NOT, "!",  $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
 	| OP_INC unary_expression    { $$ = node_init(OP_INC, "++", $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
 	| OP_DEC unary_expression    { $$ = node_init(OP_DEC, "--", $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
 	;

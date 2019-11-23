@@ -16,7 +16,6 @@ int main(int argc, char** argv) {
 	s = sscanf(str4, "$%d", &i); printf("%-5s %d %d\n", str4, i, s); i = -1;
 	s = sscanf(str5, "$%d", &i); printf("%-5s %d %d\n", str5, i, s); i = -1;
 
-
 	return 0;
 }
 

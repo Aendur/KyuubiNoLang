@@ -75,28 +75,29 @@ extern int yydebug;
     OP_ADD = 281,
     OP_SUB = 282,
     OP_NEG = 283,
-    OP_LT = 284,
-    OP_GT = 285,
-    OP_LE = 286,
-    OP_GE = 287,
-    OP_EQ = 288,
-    OP_NE = 289,
-    OP_OR = 290,
-    OP_AND = 291,
-    OP_ASSIGN = 292,
-    UNRECOGNIZED_TOKEN = 293,
-    INVALID_IDENTIFIER = 294,
-    INVALID_CHAR_CONST = 295,
-    LIST = 296,
-    VARIABLE = 297,
-    CONSTANT = 298,
-    ARRAY = 299,
-    ARRAY_INDEX = 300,
-    FUNCTION = 301,
-    FUNCTION_CALL = 302,
-    DECLARATION = 303,
-    INITIALIZATION = 304,
-    GENERIC_NODE = 305
+    OP_POS = 284,
+    OP_LT = 285,
+    OP_GT = 286,
+    OP_LE = 287,
+    OP_GE = 288,
+    OP_EQ = 289,
+    OP_NE = 290,
+    OP_OR = 291,
+    OP_AND = 292,
+    OP_ASSIGN = 293,
+    UNRECOGNIZED_TOKEN = 294,
+    INVALID_IDENTIFIER = 295,
+    INVALID_CHAR_CONST = 296,
+    LIST = 297,
+    VARIABLE = 298,
+    CONSTANT = 299,
+    ARRAY = 300,
+    ARRAY_INDEX = 301,
+    FUNCTION = 302,
+    FUNCTION_CALL = 303,
+    DECLARATION = 304,
+    INITIALIZATION = 305,
+    GENERIC_NODE = 306
   };
 #endif
 
@@ -104,14 +105,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 65 "src/language.y"
+#line 66 "src/language.y"
 
 	struct node     *node;
 	int              ival;
 	const  char     *sval;
 	struct arg_list *al;
 
-#line 115 "src/parser.h"
+#line 116 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -124,11 +125,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 72 "src/language.y"
+#line 73 "src/language.y"
 
 	void yyerror (char const *);
 	struct table * add_symbol(int symbol_type, int data_type, const char * key);
 
-#line 133 "src/parser.h"
+#line 134 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */

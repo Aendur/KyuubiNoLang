@@ -107,7 +107,10 @@ void print_tree(Node * root, int level) {
 		if (root->name != NULL) { printf("%-s ", root->name); }
 		else { printf("(null name)"); }
 
-		if(root->symbol != NULL) { attr_print(root->symbol->attr); }
+		if(root->symbol != NULL) {
+			printf("%s : ", root->symbol->key);
+			attr_print(root->symbol->attr);
+		}
 		else { printf("(null symbol)"); }
 		printf("\n");
 

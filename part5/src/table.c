@@ -321,10 +321,10 @@ void pair_print(struct table * pair) {
 #include "parser.h"
 #include "arg-list.h"
 void attr_print(struct attr * attr) {
-	printf("<");
+	printf("[");
 	if(attr==NULL) { printf("null"); }
 	else {
-		printf("s_type=");
+		printf(" s_type=");
 		switch(attr->symbol_type) {
 			case LIST:          printf("LIST");          break;
 			case VARIABLE:      printf("VARIABLE");      break;
@@ -338,20 +338,23 @@ void attr_print(struct attr * attr) {
 			default: printf("%d", attr->symbol_type); break;
 		}
 
-		printf(",r_type=");
+		printf(", defined=%d", attr->defined);
+
+		printf(", r_type=");
 		switch(attr->return_type) {
-			case INT:   printf("int");   break;
-			case VOID:  printf("void");  break;
-			case CHAR:  printf("char");  break;
-			case FLOAT: printf("float"); break;
+			case VOID: printf("void, value=(void)"); break;
+			case INT: printf("int, value=%d", attr->defined ? attr->value.ival : 0); break;
+			case CHAR: printf("char, value=%c", attr->defined ? attr->value.cval : '?'); break;
+			case FLOAT: printf("float, value=%f", attr->defined ? attr->value.fval : 0); break;
+			case STRING: printf("char[], value=%s", attr->defined ? attr->value.sval : "(null)"); break;
 			default: printf("%d", attr->return_type); break;
 		}
 
 		char * args = al_key(attr->arg_list);
-		printf(",args=%s", args);
+		printf(", args=%s", args);
 		free(args);
 	}
-	printf(">");
+	printf(" ]");
 }
 
 
