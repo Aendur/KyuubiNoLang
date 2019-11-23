@@ -10,25 +10,26 @@
 %token <sval> IDENTIFIER STRING_LITERAL CONSTANT_FLOAT CONSTANT_INT CONSTANT_HEX CONSTANT_CHAR
 
 %token IF ELSE WHILE DO RETURN
-%token OP_INC "++"
-%token OP_DEC "--"
-%token OP_NOT "!"
+
+%token OP_ASSIGN "="
+%token OP_OR "||"
+%token OP_AND "&&"
+%token OP_EQ "=="
+%token OP_NE "!="
+%token OP_LT "<" 
+%token OP_LE "<="
+%token OP_GE ">="
+%token OP_GT ">" 
+%token OP_ADD "+"
+%token OP_SUB "-"
 %token OP_MUL "*"
 %token OP_DIV "/"
 %token OP_MOD "%"
-%token OP_ADD "+"
-%token OP_SUB "-"
-%token OP_NEG
 %token OP_POS
-%token OP_LT "<" 
-%token OP_GT ">" 
-%token OP_LE "<="
-%token OP_GE ">="
-%token OP_EQ "=="
-%token OP_NE "!="
-%token OP_OR "||"
-%token OP_AND "&&"
-%token OP_ASSIGN "="
+%token OP_NEG
+%token OP_NOT "!"
+%token OP_INC "++"
+%token OP_DEC "--"
 
 %token UNRECOGNIZED_TOKEN
 %token INVALID_IDENTIFIER

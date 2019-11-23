@@ -125,5 +125,41 @@ void tc_resolve(Node * tgtnode, Node * srcnode) {
 
 
 void tc_evaluate(Node * node) {
+	if (node == NULL) { fprintf(stderr, "evaluate null node\n"); return; }
+
+	switch(node->type) {
+	case OP_ASSIGN: {} break;
 	
+	case OP_OR:  tc_binary_op(node); break;
+	case OP_AND: tc_binary_op(node); break;
+	case OP_EQ:  tc_binary_op(node); break;
+	case OP_NE:  tc_binary_op(node); break;
+	case OP_LT:  tc_binary_op(node); break;
+	case OP_LE:  tc_binary_op(node); break;
+	case OP_GE:  tc_binary_op(node); break;
+	case OP_GT:  tc_binary_op(node); break;
+	case OP_ADD: tc_binary_op(node); break;
+	case OP_SUB: tc_binary_op(node); break;
+	case OP_MUL: tc_binary_op(node); break;
+	case OP_DIV: tc_binary_op(node); break;
+	case OP_MOD: tc_binary_op(node); break;
+	
+	case OP_POS: {} break;
+	case OP_NEG: {} break;
+	case OP_NOT: {} break;
+	case OP_INC: {} break;
+	case OP_DEC: {} break;
+	default: break;
+	}
+}
+
+
+Symbol * tc_binary_op(Node * node) {
+	if (node == NULL) { fprintf(stderr, "binary op null node\n"); return NULL; }
+	if (node->nleaves != 2) { fprintf(stderr, "binary op does not have 2 operands\n"); return NULL; }
+	Node * op1 = node->leaf[0];
+	Node * op2 = node->leaf[1];
+
+
+
 }
