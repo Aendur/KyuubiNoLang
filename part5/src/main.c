@@ -15,7 +15,7 @@ int nline = 1;
 int ncol0 = 1;
 int ncol1 = 1;
 Node * root = NULL;
-Nodelist * node_list;
+//Nodelist * node_list;
 //Table * symbol_table;
 Tablestack * context_stack;
 int no_scope = 0;
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 	ts_push(context_stack, table_init(16, ":global.scope:"));
 
 	// initialize node list
-	node_list = nl_init();
+	// node_list = nl_init();
 
 
 	// call GNU Bison
@@ -76,7 +76,8 @@ int main(int argc, char** argv) {
 	yylex_destroy();
 	//table_free(&symbol_table);
 	ts_free(&context_stack);
-	nl_free(&node_list);
+	// nl_free(&node_list);
+	node_free_recursive(&root);
 
 	return 0;
 }
