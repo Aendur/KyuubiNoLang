@@ -66,25 +66,25 @@ extern int yydebug;
     WHILE = 272,
     DO = 273,
     RETURN = 274,
-    OP_INC = 275,
-    OP_DEC = 276,
-    OP_NOT = 277,
-    OP_MUL = 278,
-    OP_DIV = 279,
-    OP_MOD = 280,
-    OP_ADD = 281,
-    OP_SUB = 282,
-    OP_NEG = 283,
-    OP_POS = 284,
-    OP_LT = 285,
-    OP_GT = 286,
-    OP_LE = 287,
-    OP_GE = 288,
-    OP_EQ = 289,
-    OP_NE = 290,
-    OP_OR = 291,
-    OP_AND = 292,
-    OP_ASSIGN = 293,
+    OP_ASSIGN = 275,
+    OP_OR = 276,
+    OP_AND = 277,
+    OP_EQ = 278,
+    OP_NE = 279,
+    OP_LT = 280,
+    OP_LE = 281,
+    OP_GE = 282,
+    OP_GT = 283,
+    OP_ADD = 284,
+    OP_SUB = 285,
+    OP_MUL = 286,
+    OP_DIV = 287,
+    OP_MOD = 288,
+    OP_POS = 289,
+    OP_NEG = 290,
+    OP_NOT = 291,
+    OP_INC = 292,
+    OP_DEC = 293,
     UNRECOGNIZED_TOKEN = 294,
     INVALID_IDENTIFIER = 295,
     INVALID_CHAR_CONST = 296,
@@ -105,7 +105,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 66 "src/language.y"
+#line 67 "src/language.y"
 
 	struct node     *node;
 	int              ival;
@@ -125,7 +125,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 73 "src/language.y"
+#line 74 "src/language.y"
 
 	void yyerror (char const *);
 	struct table * add_symbol(int symbol_type, int data_type, const char * key);

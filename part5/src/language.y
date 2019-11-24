@@ -184,8 +184,6 @@ assignment_expression
 	: logical_or_expression                         { $$ = $1; }
 	| postfix_expression '=' logical_or_expression  { $$ = node_init(OP_ASSIGN, "=", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
 	;
-	// | IDENTIFIER '[' assignment_expression ']' '=' logical_or_expression  { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1); free_label($1);}
-	// | IDENTIFIER                               '=' logical_or_expression  { $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); free_label($1); retrieve($$, $$->name); } // use var
 
 logical_or_expression
 	: logical_and_expression                              { $$ = $1; }
@@ -227,10 +225,10 @@ multiplicative_expression
 unary_expression
 	: postfix_expression         { $$ = $1; }
 	| '+' unary_expression       { $$ = $2; }
-	| '-' unary_expression       { $$ = node_init(OP_NEG, "-",  $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	| '!' unary_expression       { $$ = node_init(OP_NOT, "!",  $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	| OP_INC unary_expression    { $$ = node_init(OP_INC, "++", $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	| OP_DEC unary_expression    { $$ = node_init(OP_DEC, "--", $2, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
+	| '-' unary_expression       { $$ = node_init(OP_NEG, "-",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
+	| '!' unary_expression       { $$ = node_init(OP_NOT, "!",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
+	| OP_INC unary_expression    { $$ = node_init(OP_INC, "++", $2, ENDARG); assign_context($$); tc_evaluate($$); }
+	| OP_DEC unary_expression    { $$ = node_init(OP_DEC, "--", $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	;
 
 postfix_expression
@@ -242,11 +240,11 @@ postfix_expression
 
 primary_expression
 	: IDENTIFIER 						{ $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); retrieve($$, $$->name); free_label($1); } // use var
-	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, STRING, NULL); set_symbol_sval($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, FLOAT , NULL); set_symbol_fval($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_ival($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_hval($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, CHAR  , NULL); set_symbol_cval($$->symbol, $1); free_label($1); } // rvalue
+	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, STRING, NULL); set_symbol_str_sval($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, FLOAT , NULL); set_symbol_str_fval($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_str_ival($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_str_hval($$->symbol, $1); free_label($1); } // rvalue
+	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, CHAR  , NULL); set_symbol_str_cval($$->symbol, $1); free_label($1); } // rvalue
 	| '(' assignment_expression ')' 	{ $$ = $2; }
 	;
 

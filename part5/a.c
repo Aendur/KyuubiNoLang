@@ -16,6 +16,11 @@ int main(int argc, char** argv) {
 	s = sscanf(str4, "$%d", &i); printf("%-5s %d %d\n", str4, i, s); i = -1;
 	s = sscanf(str5, "$%d", &i); printf("%-5s %d %d\n", str5, i, s); i = -1;
 
+	float f = 1.0f;
+	float g = 0.0f;
+	printf("%d\n", !f);
+	printf("%d\n", !g);
+	//printf("%d\n", !f);
 	return 0;
 }
 

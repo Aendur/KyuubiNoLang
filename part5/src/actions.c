@@ -207,31 +207,29 @@ Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
 	}
 }
 
-
-void set_symbol_sval(Symbol * symbol, const char * value) {
+void set_symbol_str_sval(Symbol * symbol, const char * value) {
 	symbol->attr->value.sval = malloc(strlen(value)+1);
 	strcpy((char*)symbol->attr->value.sval, value);
 	symbol->attr->defined = true;
 }
-void set_symbol_cval(Symbol * symbol, const char * value) {
+void set_symbol_str_cval(Symbol * symbol, const char * value) {
 	#warning handle special chars
 	// printf("charvalue=%s %d\n", value, strlen(value));
 	symbol->attr->value.cval = value[1];
 	symbol->attr->defined = true;
 }
-void set_symbol_ival(Symbol * symbol, const char * value) {
+void set_symbol_str_ival(Symbol * symbol, const char * value) {
 	symbol->attr->value.ival = strtol(value, NULL, 10);
 	symbol->attr->defined = true;
 }
-void set_symbol_hval(Symbol * symbol, const char * value) {
+void set_symbol_str_hval(Symbol * symbol, const char * value) {
 	symbol->attr->value.ival = strtol(value, NULL, 16);
 	symbol->attr->defined = true;
 }
-void set_symbol_fval(Symbol * symbol, const char * value) {
+void set_symbol_str_fval(Symbol * symbol, const char * value) {
 	symbol->attr->value.fval = strtof(value, NULL);
 	symbol->attr->defined = true;
 }
-
 
 Symbol * retrieve(Node * node, const char * key) {
 	Symbol * s = table_find_back(node->context, key);
