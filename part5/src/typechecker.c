@@ -109,8 +109,12 @@ void tc_evaluate(Node * node) {
 			default: fprintf(stderr, "unknown unary operator\n"); break;
 		}
 	} else if (node->nleaves == 2) {
-		Node * op1 = node->leaf[0]; assert(op1 != NULL); assert(op1->symbol != NULL);
-		Node * op2 = node->leaf[1]; assert(op2 != NULL); assert(op2->symbol != NULL);
+		Node * op1 = node->leaf[0];
+		Node * op2 = node->leaf[1];
+		if (op1 == NULL) { fprintf(stderr, "null binary operand node\n"); return; }
+		if (op1->symbol == NULL) { fprintf(stderr, "null binary operand\n"); return; }
+		if (op2 == NULL) { fprintf(stderr, "null binary operand node\n"); return; }
+		if (op2->symbol == NULL)  {fprintf(stderr, "null binary operand\n"); return; }
 
 		switch(node->type) {
 			case OP_ASSIGN: node->symbol = NULL; break;
@@ -327,9 +331,8 @@ bool tc_binary_promotion(Symbol ** tgt, Symbol * op1, Symbol * op2) {
 
 Symbol * tc_op_add(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	// Symbol * op2 = tc_pull_operand(src2->symbol);
-	// Symbol * op1 = tc_pull_operand(src1->symbol);
-	Symbol * op2 = src2->symbol;
+
+	Symbol * op2 = tc_pull_operand(src2->symbol);
 	Symbol * op1 = src1->symbol;
 	Symbol * tgt = NULL;
 	bool promoted = tc_binary_promotion(&tgt, op1, op2);
@@ -360,11 +363,21 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 	}
 
 
-	// if (tc_temp_symbol(op1)) { table_free(&op1); }
-	// if (tc_temp_symbol(op2)) { table_free(&op2); }
+	if (tc_temp_symbol(op2)) { table_free(&op2); }
 
-	if (promoted) { tc_prune(node); } // prune this subtree tree if symbol was promoted
-	else if(error) { table_free(&tgt); }   // clean up if there was an error
+	
+	if (promoted) { // prune this subtree tree if symbol was promoted
+		tc_prune(node);
+	} else if (error) { // clean up if there was an error
+		table_free(&tgt);
+		src2->symbol = NULL;
+	}
+
 	return tgt;
+
+	//printf("start tab:\n"); table_printf(context_stack->top, 0); getchar();
+	//printf("%s ", op2->key); attr_print(op2->attr); printf("\ntab:\n"); table_printf(context_stack->top, 0); getchar();
+	//printf("%s ", op1->key); attr_print(op1->attr); printf("\ntab:\n"); table_printf(context_stack->top, 0); getchar();
+	//printf("end tab:\n"); table_printf(context_stack->top, 0); getchar();
 }
 
