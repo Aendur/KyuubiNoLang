@@ -82,6 +82,7 @@
 #include "node-list.h"
 #include "arg-list.h"
 #include "misc.h"
+#include "typechecker.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -111,9 +112,9 @@ declaration
 	;
 
 init_declarator
-	: type IDENTIFIER                                            { $$ = node_init(DECLARATION   , "declaration"   ,     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
+	: type IDENTIFIER                                            { $$ = node_init(DECLARATION   , "declaration"   ,     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2);    free_label($2); }
 	| type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(DECLARATION   , "declaration"   , $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
-	| type IDENTIFIER '=' assignment_expression                  { $$ = node_init(INITIALIZATION, "initialization", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
+	| type IDENTIFIER '=' assignment_expression                  { $$ = node_init(INITIALIZATION, "initialization", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2);    free_label($2); }
 	| type IDENTIFIER '[' ']' '=' '{' initializer_list '}'       { $$ = node_init(INITIALIZATION, "initialization", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
 	| type IDENTIFIER '[' ']' '=' '{' initializer_list ',' '}'   { $$ = node_init(INITIALIZATION, "initialization", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
 	| type IDENTIFIER '[' ']' '=' STRING_LITERAL                 { $$ = node_init(INITIALIZATION, "initialization",     ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); free_label($6); }
@@ -211,8 +212,8 @@ relational_expression
 
 additive_expression
 	: multiplicative_expression                           { $$ = $1; }
-	| additive_expression '+' multiplicative_expression   { $$ = node_init(OP_ADD, "+", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	| additive_expression '-' multiplicative_expression   { $$ = node_init(OP_SUB, "-", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
+	| additive_expression '+' multiplicative_expression   { $$ = node_init(OP_ADD, "+", $1, $3, ENDARG); assign_context($$); tc_evaluate($$); }
+	| additive_expression '-' multiplicative_expression   { $$ = node_init(OP_SUB, "-", $1, $3, ENDARG); assign_context($$); tc_evaluate($$); }
 	;
 
 multiplicative_expression
@@ -224,7 +225,7 @@ multiplicative_expression
 
 unary_expression
 	: postfix_expression         { $$ = $1; }
-	| '+' unary_expression       { $$ = $2; }
+	| '+' unary_expression       { $$ = node_init(OP_POS, "+",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	| '-' unary_expression       { $$ = node_init(OP_NEG, "-",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	| '!' unary_expression       { $$ = node_init(OP_NOT, "!",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	| OP_INC unary_expression    { $$ = node_init(OP_INC, "++", $2, ENDARG); assign_context($$); tc_evaluate($$); }

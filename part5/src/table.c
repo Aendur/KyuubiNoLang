@@ -29,9 +29,7 @@ Table * table_init (size_t size, const char * key) {
 	// was actions name context
 	if (key == NULL) {
 		tab->key = malloc(40);
-		//snprintf((char*) tab->key, 40, "%p", (void*)(((size_t)tab << 44) >> 48));
 		snprintf((char*) tab->key, 40, "@%lX", (unsigned long) tab << 40 >> 40);
-		//snprintf((char*) tab->key, 40, "$%d", table_uuid++);
 	} else {
 		tab->key = malloc(strlen(key)+1);
 		strcpy((char*) tab->key, key);
@@ -118,14 +116,17 @@ struct table * table_insert (struct table * tab, const char* key0) {
 	if (tab == NULL) { fprintf(stderr, "Trying to insert on null object\n"); return NULL; }
 
 	const char * key; // = key0;
+	bool temp = false;
 	if (key0 == NULL) {
 		key = malloc(40);
-		snprintf((char*)key, 40, "$%d", ++tab->uuid);
+		snprintf((char*) key, 40, "$%d", ++tab->uuid);
+		temp = true;
 	} else {
 		key = key0;
 	}
 
 	struct table * new_pair = table_init(16, key);
+	new_pair->attr->temporary = temp;
 
 	unsigned long hash = table_hash(new_pair->key);
 	unsigned long index = hash % tab->n_buckets;
@@ -135,8 +136,6 @@ struct table * table_insert (struct table * tab, const char* key0) {
 		tab->buckets[index].last = new_pair;
 		tab->buckets[index].size++;
 		tab->n_keys++;
-		// if(key0==NULL) {free((void*)key);}
-		return new_pair;
 	} else {
 		struct table * pair = tab->buckets[index].first;
 		while(pair != NULL && strcmp(pair->key, new_pair->key) != 0) { pair = pair->next; }
@@ -147,14 +146,13 @@ struct table * table_insert (struct table * tab, const char* key0) {
 			tab->buckets[index].last = new_pair;
 			tab->buckets[index].size++;
 			tab->n_keys++;
-			// if(key0==NULL) {free((void*)key);}
-			return new_pair;
 		} else { // key already present
 			table_free(&new_pair);
-			// if(key0==NULL) {free((void*)key);}
-			return NULL;
 		}
 	}
+
+	if (key != key0) { free((void*)key); }
+	return new_pair;
 }
 
 // Remove a key from the table. The returned pointer must still be freed
@@ -302,6 +300,12 @@ void table_print_debug (Table* tab) {
 	printf("collisions: %lu\n", collisions);
 }
 
+
+// Copy attributes from src to tgt
+void attr_copy(struct attr * tgt, struct attr * src) {
+	memcpy(tgt, src, sizeof(struct attr));
+}
+
 // prints a (key,val) pair object
 //void pair_print(struct pair * pair) {
 void pair_print(struct table * pair) {
@@ -343,9 +347,9 @@ void attr_print(struct attr * attr) {
 		printf(", r_type=");
 		switch(attr->return_type) {
 			case VOID: printf("void, value=(void)"); break;
-			case INT: printf("int, value=%d", attr->defined ? attr->value.ival : 0); break;
+			case INT: printf("int, value=%d", attr->value.ival); break;
 			case CHAR: printf("char, value=%c", attr->defined ? attr->value.cval : '?'); break;
-			case FLOAT: printf("float, value=%f", attr->defined ? attr->value.fval : 0); break;
+			case FLOAT: printf("float, value=%f", attr->value.fval); break;
 			case STRING: printf("char[], value=%s", attr->defined ? attr->value.sval : "(null)"); break;
 			default: printf("%d", attr->return_type); break;
 		}

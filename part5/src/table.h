@@ -30,6 +30,7 @@ struct attr {
 	int symbol_type;
 	int return_type;
 	bool defined;
+	bool temporary;
 	union {
 		int   ival;
 		char  cval;
@@ -55,6 +56,7 @@ struct table * table_rehash (Table** tab);
 //void pair_print(struct pair * pair);
 void pair_print(struct table * pair);
 void attr_print(struct attr * attr);
+void attr_copy(struct attr * tgt, struct attr * src);
 
 void table_printm (Table* tab);
 void table_printf (Table* tab, int level);

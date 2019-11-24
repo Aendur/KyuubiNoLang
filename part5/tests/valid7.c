@@ -1,30 +1,33 @@
 int f(int x) {
-	int a0 = -5;
-	int a1 = !5;
-	int a2 = !0;
-	int a3 = -a0;
-	int a4 = !a0;
-	int a5 = ++a0;
-	int a6 = --a0;
+	int e1 = + + + + + 1;
+	int e2 = + + + + + x;
+	int a1 = - - - - - 1;
+	int a2 = - - - - - x;
+	int b1 = ! ! ! ! ! 1;
+	int b2 = ! ! ! ! ! x;
+	int c1 = ++ ++ ++ ++ ++ x;
+	int d1 = -- -- -- -- -- x;
 }
 
 float f(float x) {
-	float a0 = -5;
-	float a1 = !5;
-	float a2 = !0;
-	float a3 = -a0;
-	float a4 = !a0;
-	float a5 = ++a0;
-	float a6 = --a0;
+	float a1 = - - - - - 1;
+	float a2 = - - - - - x;
+	float b1 = ! ! ! ! ! 1;
+	float b2 = ! ! ! ! ! x;
+	float c1 = ++ ++ ++ ++ ++ x;
+	float d1 = -- -- -- -- -- x;
+	float e1 = + + + + + 1;
+	float e2 = + + + + + x;
 }
 
 char f(char x) {
-	char a0 = -5;
-	char a1 = !5;
-	char a2 = !0;
-	char a3 = -a0;
-	char a4 = !a0;
-	char a5 = ++a0;
-	char a6 = --a0;
-	//char a7 = --5;
+	char a1 = - - - - - 1;
+	char a2 = - - - - - x;
+	char b1 = ! ! ! ! ! 1;
+	char b2 = ! ! ! ! ! x;
+	char c1 = ++ ++ ++ ++ ++ x;
+	char d1 = -- -- -- -- -- x;
+	char e1 = + + + + + 1;
+	char e2 = + + + + + x;
 }
+

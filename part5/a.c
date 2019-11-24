@@ -20,7 +20,11 @@ int main(int argc, char** argv) {
 	float g = 0.0f;
 	printf("%d\n", !f);
 	printf("%d\n", !g);
-	//printf("%d\n", !f);
+	printf("%d\n", (int) 3.1);
+	printf("%d\n", (int) 3.9);
+	printf("%d\n", (int) 4.0);
+	printf("%d\n", (int) 4.1);
+	printf("%d\n", (int) 4.9);
 	return 0;
 }
 
