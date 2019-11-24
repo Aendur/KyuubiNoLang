@@ -10,6 +10,7 @@ void error_types(Node * node, char * type1, char * type2);
 void error_lvalue(Node * n);
 void error_unknown_type(void);
 void error_unknown_class(void);
+void error_div_by_zero(void);
 
 // tools
 void tc_cut_tree(Node * leaf, int index);
@@ -28,7 +29,8 @@ Symbol * tc_op_dec(Node * src);
 
 // Binary ops
 Symbol * tc_pull_operand(Symbol * op);
-bool tc_binary_promotion(Symbol ** tgt, Symbol * op1, Symbol * op2);
+bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2);
+bool div_by_zero(Symbol * num, Symbol * den);
 Symbol * tc_op_add(Node * src1, Node * src2);
 Symbol * tc_op_sub(Node * src1, Node * src2);
 Symbol * tc_op_mul(Node * src1, Node * src2);
