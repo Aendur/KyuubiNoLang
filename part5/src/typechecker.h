@@ -30,6 +30,10 @@ Symbol * tc_op_dec(Node * src);
 Symbol * tc_pull_operand(Symbol * op);
 bool tc_binary_promotion(Symbol ** tgt, Symbol * op1, Symbol * op2);
 Symbol * tc_op_add(Node * src1, Node * src2);
+Symbol * tc_op_sub(Node * src1, Node * src2);
+Symbol * tc_op_mul(Node * src1, Node * src2);
+Symbol * tc_op_div(Node * src1, Node * src2);
+Symbol * tc_op_mod(Node * src1, Node * src2);
 
 
 #endif

@@ -218,9 +218,9 @@ additive_expression
 
 multiplicative_expression
 	: unary_expression                                  { $$ = $1; }
-	| multiplicative_expression '*' unary_expression    { $$ = node_init(OP_MUL, "*", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	| multiplicative_expression '/' unary_expression    { $$ = node_init(OP_DIV, "/", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	| multiplicative_expression '%' unary_expression    { $$ = node_init(OP_MOD, "%", $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
+	| multiplicative_expression '*' unary_expression    { $$ = node_init(OP_MUL, "*", $1, $3, ENDARG); assign_context($$); tc_evaluate($$); }
+	| multiplicative_expression '/' unary_expression    { $$ = node_init(OP_DIV, "/", $1, $3, ENDARG); assign_context($$); tc_evaluate($$); }
+	| multiplicative_expression '%' unary_expression    { $$ = node_init(OP_MOD, "%", $1, $3, ENDARG); assign_context($$); tc_evaluate($$); }
 	;
 
 unary_expression

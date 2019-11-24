@@ -117,20 +117,20 @@ void tc_evaluate(Node * node) {
 		if (op2->symbol == NULL)  {fprintf(stderr, "null binary operand\n"); return; }
 
 		switch(node->type) {
-			case OP_ASSIGN: node->symbol = NULL; break;
-			case OP_OR:     node->symbol = NULL; break;
-			case OP_AND:    node->symbol = NULL; break;
-			case OP_EQ:     node->symbol = NULL; break;
-			case OP_NE:     node->symbol = NULL; break;
-			case OP_LT:     node->symbol = NULL; break;
-			case OP_LE:     node->symbol = NULL; break;
-			case OP_GE:     node->symbol = NULL; break;
-			case OP_GT:     node->symbol = NULL; break;
+			case OP_ASSIGN: node->symbol = NULL; break; /*tc_op_assign(op1, op2); break;*/
+			case OP_OR:     node->symbol = NULL; break; /*tc_op_or(op1, op2); break;*/ 
+			case OP_AND:    node->symbol = NULL; break; /*tc_op_and(op1, op2); break;*/ 
+			case OP_EQ:     node->symbol = NULL; break; /*tc_op_eq(op1, op2); break;*/ 
+			case OP_NE:     node->symbol = NULL; break; /*tc_op_ne(op1, op2); break;*/ 
+			case OP_LT:     node->symbol = NULL; break; /*tc_op_lt(op1, op2); break;*/ 
+			case OP_LE:     node->symbol = NULL; break; /*tc_op_le(op1, op2); break;*/ 
+			case OP_GE:     node->symbol = NULL; break; /*tc_op_ge(op1, op2); break;*/ 
+			case OP_GT:     node->symbol = NULL; break; /*tc_op_gt(op1, op2); break;*/ 
 			case OP_ADD:    node->symbol = tc_op_add(op1, op2); break;
-			case OP_SUB:    node->symbol = NULL; break;
-			case OP_MUL:    node->symbol = NULL; break;
-			case OP_DIV:    node->symbol = NULL; break;
-			case OP_MOD:    node->symbol = NULL; break;
+			case OP_SUB:    node->symbol = tc_op_sub(op1, op2); break;
+			case OP_MUL:    node->symbol = tc_op_mul(op1, op2); break;
+			case OP_DIV:    node->symbol = tc_op_div(op1, op2); break;
+			case OP_MOD:    node->symbol = tc_op_mod(op1, op2); break;
 			default: fprintf(stderr, "unknown binary operator\n"); break;
 		}
 	} else {
@@ -280,56 +280,8 @@ bool tc_binary_promotion(Symbol ** tgt, Symbol * op1, Symbol * op2) {
 	}
 }
 
-// bool tc_type_cvt(int type) {
-// 	switch(type) {
-// 		case FLOAT: return true;
-// 		case CHAR: return true;
-// 		case INT: return true;
-// 		case VOID: return false;
-// 		case STRING: return false;
-// 		default: return false;
-// 	}
-// }
-
-// float tc_type_fsize(int type) {
-// 	switch(type) {
-// 		case FLOAT: return 4.1f;
-// 		case CHAR: return 1.0f;
-// 		case INT: return 4.0f;
-// 		case VOID: return 0.0f;
-// 		case STRING: return -1.0f;
-// 		default: return -1.0f;
-// 	}
-// }
-
-// bool tc_type_array(int type) {
-// 	switch(type) {
-// 		case FLOAT: return false;
-// 		case CHAR: return false;
-// 		case INT: return false;
-// 		case VOID: return false;
-// 		case STRING: return true;
-// 		default: return false;
-// 	}
-// }
-
-// int tc_resolve_types(Node * node, Symbol * tgt, Symbol * src) {
-// 	int type1 = tgt->attr->return_type;
-// 	int type0 = src->attr->return_type;
-// 	//if (type1 == type0)   { return src->attr->type; }
-
-// 	if (!tc_type_cvt(type0) || !tc_type_cvt(type1)) {
-// 		error_type2(node, tc_type_str(type0), tc_type_str(type1));
-// 		return UNDEFINED;
-// 	}
-// 	if (tc_type_fsize(type0) >= tc_type_fsize(type1)) {
-// 		return type0;
-// 	} else {
-// 		return type1;
-// 	}
-// }
-
 Symbol * tc_op_add(Node * src1, Node * src2) {
+	#warning fix tree
 	Node * node = src1->root;
 
 	Symbol * op2 = tc_pull_operand(src2->symbol);
@@ -362,15 +314,15 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
-
-	if (tc_temp_symbol(op2)) { table_free(&op2); }
-
+	if (tc_temp_symbol(op2)) {
+		table_free(&op2);
+		src2->symbol = NULL;
+	}
 	
 	if (promoted) { // prune this subtree tree if symbol was promoted
 		tc_prune(node);
 	} else if (error) { // clean up if there was an error
 		table_free(&tgt);
-		src2->symbol = NULL;
 	}
 
 	return tgt;
@@ -379,5 +331,167 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 	//printf("%s ", op2->key); attr_print(op2->attr); printf("\ntab:\n"); table_printf(context_stack->top, 0); getchar();
 	//printf("%s ", op1->key); attr_print(op1->attr); printf("\ntab:\n"); table_printf(context_stack->top, 0); getchar();
 	//printf("end tab:\n"); table_printf(context_stack->top, 0); getchar();
+}
+
+
+Symbol * tc_op_sub(Node * src1, Node * src2) {
+	Node * node = src1->root;
+	Symbol * op2 = tc_pull_operand(src2->symbol);
+	Symbol * op1 = src1->symbol;
+	Symbol * tgt = NULL;
+	bool promoted = tc_binary_promotion(&tgt, op1, op2);
+
+	int type1 = op1->attr->return_type;
+	int type2 = op2->attr->return_type;
+	bool error = false;
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival - op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival - op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.ival - op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.cval - op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = CHAR; tgt->attr->value.cval = op1->attr->value.cval - op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.cval - op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval - op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval - op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval - op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+	}
+
+	if (tc_temp_symbol(op2)) { table_free(&op2); }
+	if (promoted) { tc_prune(node); } // prune this subtree tree if symbol was promoted
+	else if (error) { table_free(&tgt); src2->symbol = NULL; } // clean up if there was an error
+
+	return tgt;
+}
+
+Symbol * tc_op_mul(Node * src1, Node * src2) {
+	Node * node = src1->root;
+	Symbol * op2 = tc_pull_operand(src2->symbol);
+	Symbol * op1 = src1->symbol;
+	Symbol * tgt = NULL;
+	bool promoted = tc_binary_promotion(&tgt, op1, op2);
+
+	int type1 = op1->attr->return_type;
+	int type2 = op2->attr->return_type;
+	bool error = false;
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival * op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival * op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.ival * op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.cval * op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = CHAR; tgt->attr->value.cval = op1->attr->value.cval * op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.cval * op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval * op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval * op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval * op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+	}
+
+	if (tc_temp_symbol(op2)) { table_free(&op2); }
+	if (promoted) { tc_prune(node); } // prune this subtree tree if symbol was promoted
+	else if (error) { table_free(&tgt); src2->symbol = NULL; } // clean up if there was an error
+
+	return tgt;
+}
+
+Symbol * tc_op_div(Node * src1, Node * src2) {
+	Node * node = src1->root;
+	Symbol * op2 = tc_pull_operand(src2->symbol);
+	Symbol * op1 = src1->symbol;
+	Symbol * tgt = NULL;
+	bool promoted = tc_binary_promotion(&tgt, op1, op2);
+
+	if (op2->attr->defined == false) { op2->attr->value.fval = 1.0f; }
+
+	int type1 = op1->attr->return_type;
+	int type2 = op2->attr->return_type;
+	bool error = false;
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival / op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival / op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.ival / op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.cval / op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = CHAR; tgt->attr->value.cval = op1->attr->value.cval / op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.cval / op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval / op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval / op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval / op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+	}
+
+	if (tc_temp_symbol(op2)) { table_free(&op2); }
+	if (promoted) { tc_prune(node); } // prune this subtree tree if symbol was promoted
+	else if (error) { table_free(&tgt); src2->symbol = NULL; } // clean up if there was an error
+
+	return tgt;
+}
+
+Symbol * tc_op_mod(Node * src1, Node * src2) {
+	Node * node = src1->root;
+	Symbol * op2 = tc_pull_operand(src2->symbol);
+	Symbol * op1 = src1->symbol;
+	Symbol * tgt = NULL;
+	bool promoted = tc_binary_promotion(&tgt, op1, op2);
+
+	if (op2->attr->defined == false) { op2->attr->value.fval = 1.0f; }
+
+	int type1 = op1->attr->return_type;
+	int type2 = op2->attr->return_type;
+	bool error = false;
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.ival % (int) op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.ival % (int) op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.ival % (int) op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.cval % (int) op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.cval % (int) op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.cval % (int) op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.fval % (int) op2->attr->value.ival; break;
+			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.fval % (int) op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.fval % (int) op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+	}
+
+	if (tc_temp_symbol(tgt)) { tgt->attr->return_type = INT; } // mods are ints
+	if (tc_temp_symbol(op2)) { table_free(&op2); }
+	if (promoted) { tc_prune(node); } // prune this subtree tree if symbol was promoted
+	else if (error) { table_free(&tgt); src2->symbol = NULL; } // clean up if there was an error
+
+	return tgt;
 }
 
