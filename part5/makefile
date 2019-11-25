@@ -17,7 +17,12 @@ dbg:
 	src/parser.c      \
 	src/scanner.c     \
 	src/actions.c     \
-	src/typechecker.c \
+	src/typechecker0.c \
+	src/typechecker1.c \
+	src/typechecker2.c \
+	src/typechecker2a.c \
+	src/typechecker2l.c \
+	src/typechecker2r.c \
 	src/misc.c \
 
 rel:
@@ -31,7 +36,12 @@ rel:
 	src/parser.c      \
 	src/scanner.c     \
 	src/actions.c     \
-	src/typechecker.c \
+	src/typechecker0.c \
+	src/typechecker1.c \
+	src/typechecker2.c \
+	src/typechecker2a.c \
+	src/typechecker2l.c \
+	src/typechecker2r.c \
 	src/misc.c \
 
 

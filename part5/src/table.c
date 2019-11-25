@@ -323,7 +323,6 @@ void pair_print(struct table * pair) {
 
 
 #include "parser.h"
-#include "arg-list.h"
 void attr_print(struct attr * attr) {
 	printf("[");
 	if(attr==NULL) { printf("null"); }
@@ -337,7 +336,6 @@ void attr_print(struct attr * attr) {
 			case ARRAY_INDEX:   printf("ARRAY_INDEX");   break;
 			case FUNCTION:      printf("FUNCTION");      break;
 			case FUNCTION_CALL: printf("FUNCTION_CALL"); break;
-			case DECLARATION:   printf("DECLARATION");   break;
 			case GENERIC_NODE:  printf("GENERIC_NODE");  break;
 			default: printf("%d", attr->symbol_type); break;
 		}

@@ -37,6 +37,27 @@ void error_redefinition_fun(const char * name, const char * pars) {
 	yyerror(msg);
 }
 
+void error_redefinition_vf(const char * name) {
+	char msg[ERROR_MSG_BUFF];
+	snprintf(msg, ERROR_MSG_BUFF, "semantic error: declaration of '%s' conflicts with its scope function name", name);
+	++yynerrs;
+	yyerror(msg);
+}
+
+void error_not_variable(const char * name, int type) {
+	const char * typestr;
+	switch(type) {
+		case FUNCTION: typestr = "function"; break;
+		case VARIABLE: typestr = "variable"; break;
+		case ARRAY: typestr = "array"; break;
+		default: typestr = "unknown symbol class"; break;
+	}
+	char msg[ERROR_MSG_BUFF];
+	snprintf(msg, ERROR_MSG_BUFF, "semantic error: '%s' is cannot be used as '%s'", name, typestr);
+	++yynerrs;
+	yyerror(msg);
+}
+
 void error_undeclared(const char * name) {
 	char msg[ERROR_MSG_BUFF];
 	snprintf(msg, ERROR_MSG_BUFF, "semantic error: undeclared symbol '%s'", name);
@@ -158,33 +179,35 @@ void add_symbol_args(struct arg_list * args) {
 Symbol * add_symbol_var(int type, const char * key) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add var with incompatible type %d\n", type); return NULL; }
 	if(key  == NULL) { fprintf(stderr, "add var with null key\n"); return NULL; }
-	
-	Symbol * symbol = table_find(context_stack->top, key);
-	if (symbol == NULL) {
-		symbol = table_insert(context_stack->top, key);
-		symbol->attr->symbol_type = VARIABLE;
-		symbol->attr->return_type = type;
-		return symbol;
-	} else {
-		error_redefinition(key);
-		return NULL;
-	}
+
+	return add_symbol(VARIABLE, type, key);	
+	// Symbol * symbol = table_find(context_stack->top, key);
+	// if (symbol == NULL) {
+	// 	symbol = table_insert(context_stack->top, key);
+	// 	symbol->attr->symbol_type = VARIABLE;
+	// 	symbol->attr->return_type = type;
+	// 	return symbol;
+	// } else {
+	// 	error_redefinition(key);
+	// 	return NULL;
+	// }
 }
 
 Symbol * add_symbol_arr(int type, const char * key, int size) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr with incompatible type %d\n", type); return NULL; }
 	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return NULL; }
 
-	Symbol * symbol = table_find(context_stack->top, key);
-	if (symbol == NULL) {
-		symbol = table_insert(context_stack->top, key);
-		symbol->attr->symbol_type = ARRAY;
-		symbol->attr->return_type = type;
-		return symbol;
-	} else {
-		error_redefinition(key);
-		return NULL;
-	}
+	return add_symbol(ARRAY, type, key);
+	// Symbol * symbol = table_find(context_stack->top, key);
+	// if (symbol == NULL) {
+	// 	symbol = table_insert(context_stack->top, key);
+	// 	symbol->attr->symbol_type = ARRAY;
+	// 	symbol->attr->return_type = type;
+	// 	return symbol;
+	// } else {
+	// 	error_redefinition(key);
+	// 	return NULL;
+	// }
 }
 
 Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
@@ -193,6 +216,10 @@ Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
 
 	Symbol * symbol = NULL;
 	if (key != NULL) {
+		if(context_stack->top->root != NULL && strcmp(context_stack->top->root->key, key) == 0) {
+			error_redefinition_vf(key);
+			return NULL;
+		}
 		symbol = table_find(context_stack->top, key);
 	}
 
@@ -231,14 +258,20 @@ void set_symbol_str_fval(Symbol * symbol, const char * value) {
 	symbol->attr->defined = true;
 }
 
-Symbol * retrieve(Node * node, const char * key) {
+Symbol * retrieve(Node * node, const char * key, int type) {
 	Symbol * s = table_find_back(node->context, key);
 	if (s == NULL) {
 		error_undeclared(key);
 		return NULL;
 	} else {
-		node->symbol = s;
-		return s;
+		if(s->attr->symbol_type != type) {
+			error_not_variable(key, type);
+			return NULL;
+		} else {
+			node->symbol = s;
+			return s;
+		}
 	}
 }
+
 

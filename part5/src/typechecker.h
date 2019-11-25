@@ -5,16 +5,17 @@
 #include "table.h"
 
 // error messengers
-void error_type(Node * n, const char *);
-void error_types(Node * node, char * type1, char * type2);
+void error_type1(Node * node, const char * type1);
+void error_type2(Node * node, const char * type1, const char * type2);	
 void error_lvalue(Node * n);
 void error_unknown_type(void);
 void error_unknown_class(void);
 void error_div_by_zero(void);
 
 // tools
-void tc_cut_tree(Node * leaf, int index);
+void tc_prune(Node * root);
 bool tc_temp_symbol(Symbol * symbol);
+const char * tc_type_str(int type);
 
 // Expressions
 void tc_evaluate(Node * node);
@@ -30,13 +31,25 @@ Symbol * tc_op_dec(Node * src);
 // Binary ops
 Symbol * tc_pull_operand(Symbol * op);
 bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2);
-bool div_by_zero(Symbol * num, Symbol * den);
+bool div_by_zero(Symbol * den);
+//arithmetic
 Symbol * tc_op_add(Node * src1, Node * src2);
 Symbol * tc_op_sub(Node * src1, Node * src2);
 Symbol * tc_op_mul(Node * src1, Node * src2);
 Symbol * tc_op_div(Node * src1, Node * src2);
 Symbol * tc_op_mod(Node * src1, Node * src2);
-
+//relational
+Symbol * tc_op_lt(Node * src1, Node * src2);
+Symbol * tc_op_le(Node * src1, Node * src2);
+Symbol * tc_op_gt(Node * src1, Node * src2);
+Symbol * tc_op_ge(Node * src1, Node * src2);
+Symbol * tc_op_eq(Node * src1, Node * src2);
+Symbol * tc_op_ne(Node * src1, Node * src2);
+//logical
+Symbol * tc_op_or(Node * src1, Node * src2);
+Symbol * tc_op_and(Node * src1, Node * src2);
+//assignment
+Symbol * tc_op_assign(Node * src1, Node * src2);
 
 #endif
 

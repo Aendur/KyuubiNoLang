@@ -95,9 +95,11 @@ extern int yydebug;
     ARRAY_INDEX = 301,
     FUNCTION = 302,
     FUNCTION_CALL = 303,
-    DECLARATION = 304,
-    INITIALIZATION = 305,
-    GENERIC_NODE = 306
+    VAR_DECL = 304,
+    VAR_INIT = 305,
+    ARR_DECL = 306,
+    ARR_INIT = 307,
+    GENERIC_NODE = 308
   };
 #endif
 
@@ -105,14 +107,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 67 "src/language.y"
+#line 70 "src/language.y"
 
 	struct node     *node;
 	int              ival;
 	const  char     *sval;
 	struct arg_list *al;
 
-#line 116 "src/parser.h"
+#line 118 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -125,11 +127,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 74 "src/language.y"
+#line 77 "src/language.y"
 
 	void yyerror (char const *);
 	struct table * add_symbol(int symbol_type, int data_type, const char * key);
 
-#line 134 "src/parser.h"
+#line 136 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */
