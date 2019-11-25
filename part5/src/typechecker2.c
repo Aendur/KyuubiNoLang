@@ -99,9 +99,10 @@ Symbol * tc_op_assign(Node * src1, Node * src2) {
 	}
 
 	if (op2->attr->defined) { // prune this subtree tree if symbol was promoted
+		tgt->attr->defined = true;
 		tc_prune(node);
 		if (tc_temp_symbol(op2)) {
-			table_remove(op2->root, op2->key);
+			table_remove(context_stack->top, op2->key);
 		}
 	}
 	if (error) { // clean up if there was an error
