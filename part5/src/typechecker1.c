@@ -91,7 +91,7 @@ Symbol * tc_op_not(Node * src) {
 
 Symbol * tc_op_inc(Node * src) {
 	if (src->symbol->attr->symbol_type == CONSTANT) {
-		error_lvalue(src->root);
+		error_lvalue2(src->root);
 		return NULL;
 	}
 	Symbol * tgt = NULL;
@@ -108,7 +108,7 @@ Symbol * tc_op_inc(Node * src) {
 
 Symbol * tc_op_dec(Node * src) {
 	if (src->symbol->attr->symbol_type == CONSTANT) {
-		error_lvalue(src->root);
+		error_lvalue2(src->root);
 		return NULL;
 	}
 	Symbol * tgt = NULL;

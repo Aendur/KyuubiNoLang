@@ -61,47 +61,52 @@ bool div_by_zero(Symbol * den) {
 // BINARY ASSIGNMENT OPERATION //
 /////////////////////////////////
 
-/*
 Symbol * tc_op_assign(Node * src1, Node * src2) {
 	Node * node = src1->root;
 	Symbol * op1 = src1->symbol;
+	if (op1->attr->symbol_type == CONSTANT) {
+		error_lvalue1(node);
+		return NULL;
+	}
+
 	Symbol * op2 = src2->symbol;
-	Symbol * tgt = NULL;
-	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
+	Symbol * tgt = op1;
+
 
 	int type1 = op1->attr->return_type;
 	int type2 = op2->attr->return_type;
 	bool error = false;
 	switch(type1) {
 		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival + op2->attr->value.ival; break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.ival + op2->attr->value.cval; break;
-			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.ival + op2->attr->value.fval; break;
+			case INT: tgt->attr->value.ival = op2->attr->value.ival; break;
+			case CHAR: tgt->attr->value.ival = op2->attr->value.cval; break;
+			case FLOAT: error = true; error_cast(tc_type_str(type1), tc_type_str(type2)); break;
 			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = op1->attr->value.cval + op2->attr->value.ival; break;
-			case CHAR: tgt->attr->return_type = CHAR; tgt->attr->value.cval = op1->attr->value.cval + op2->attr->value.cval; break;
-			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.cval + op2->attr->value.fval; break;
+			case INT: error = true; error_cast(tc_type_str(type1), tc_type_str(type2)); break;
+			case CHAR: tgt->attr->value.cval = op2->attr->value.cval; break;
+			case FLOAT: error = true; error_cast(tc_type_str(type1), tc_type_str(type2)); break;
 			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval + op2->attr->value.ival; break;
-			case CHAR: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval + op2->attr->value.cval; break;
-			case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = op1->attr->value.fval + op2->attr->value.fval; break;
+			case INT: tgt->attr->value.fval = op2->attr->value.ival; break;
+			case CHAR: tgt->attr->value.fval = op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->value.fval = op2->attr->value.fval; break;
 			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
+	if (op2->attr->defined) { // prune this subtree tree if symbol was promoted
 		tc_prune(node);
-		table_free(&op2);
+		if (tc_temp_symbol(op2)) {
+			table_remove(op2->root, op2->key);
+		}
 	}
 	if (error) { // clean up if there was an error
-		table_free(&tgt);
+		tgt = NULL;
 	}
 
 	return tgt;
 }
-*/

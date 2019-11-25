@@ -29,9 +29,23 @@ void error_type2(Node * node, const char * type1, const char * type2) {
 	yyerror(msg);
 }
 
-void error_lvalue(Node * node) {
+void error_cast(const char * type1, const char * type2) {
 	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s operator requires lvalue", node->name);
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: cannot implicitly cast from '%s' to '%s'", type2, type1);
+	++yynerrs;
+	yyerror(msg);
+}
+
+void error_lvalue1(Node * node) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s operator requires an lvalue as the left-hand operand", node->name);
+	++yynerrs;
+	yyerror(msg);
+}
+
+void error_lvalue2(Node * node) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s operator requires an lvalue as the right-hand operand", node->name);
 	++yynerrs;
 	yyerror(msg);
 }
@@ -124,7 +138,7 @@ void tc_evaluate(Node * node) {
 		if (op2->symbol == NULL)  {fprintf(stderr, "null binary operand\n"); return; }
 
 		switch(node->type) {
-			case OP_ASSIGN: node->symbol = NULL; break; /*tc_op_assign(op1, op2); break;*/
+			case OP_ASSIGN: node->symbol = tc_op_assign(op1, op2); break;
 			case OP_OR:     node->symbol = tc_op_or(op1, op2); break;
 			case OP_AND:    node->symbol = tc_op_and(op1, op2); break;
 			case OP_EQ:     node->symbol = tc_op_eq(op1, op2); break;

@@ -6,8 +6,10 @@
 
 // error messengers
 void error_type1(Node * node, const char * type1);
-void error_type2(Node * node, const char * type1, const char * type2);	
-void error_lvalue(Node * n);
+void error_type2(Node * node, const char * type1, const char * type2);
+void error_cast(const char * type1, const char * type2);
+void error_lvalue1(Node * n);
+void error_lvalue2(Node * n);
 void error_unknown_type(void);
 void error_unknown_class(void);
 void error_div_by_zero(void);
