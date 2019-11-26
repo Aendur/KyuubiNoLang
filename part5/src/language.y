@@ -164,8 +164,12 @@ statement
 	| iteration_statement       { $$ = $1; }
 	| compound_statement        { $$ = $1; }
 	| return_statement ';'      { $$ = $1; }
+	| inline_asm ';'            { $$ = NULL; } 
 	| error ';'                 { $$ = NULL; } 
 	;
+
+inline_asm
+	: ASM '(' STRING_LITERAL ')'   { printf("%s\n", $3); free_label($3); }
 
 conditional_statement
 	: IF '(' assignment_expression ')' compound_statement                          { $$ = node_init(IF  , "if-statement"      , $3, $5,     ENDARG); assign_context($$); } 

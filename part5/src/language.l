@@ -52,6 +52,8 @@ static const int ERROR_MSG_BUFFER = 256;
 "int"		{ update_position(); int t = INT  ; yylval.ival = t; return t; }
 "float"		{ update_position(); int t = FLOAT; yylval.ival = t; return t; }
 
+"asm"		{ update_position(); return ASM; }
+
 			/* Arithmetical operators */
 "+"			{ update_position(); int t = '+'   ; return t; }
 "-"			{ update_position(); int t = '-'   ; return t; }
