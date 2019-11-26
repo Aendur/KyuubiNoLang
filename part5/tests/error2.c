@@ -5,6 +5,7 @@ int main(int argc, char** argv) {
 	// semantic error: rhs is not declared
 	int a234567890b234567890c234567890d234567890 = a234567890b234567890c234567890d234567890;
 	int abcde = abcde;
+	int __reserved_id;
 
 	// semantic error (redefinition)
 	int abcde = a234567890b234567890c234567890d234567890;

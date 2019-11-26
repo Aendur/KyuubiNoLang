@@ -137,7 +137,11 @@ static void update_position(void) {
 static int identifier(void) {
 	if (yyleng > 32) {
 		// ++yynerrs; // commented, just a warning
-		yyerror("warning (lexical), identifier exceeds 32 characters.");
+		yyerror("warning, identifier exceeds 32 characters.");
+	}
+
+	if (yyleng > 2 && yytext[0] == '_' && yytext[1] == '_') {
+		yyerror("warning, identifiers beginning in '__' (double underscore) are reserved and may cause conflicts.");
 	}
 
 	int t = IDENTIFIER; 

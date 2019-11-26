@@ -66,40 +66,41 @@ extern int yydebug;
     WHILE = 272,
     DO = 273,
     RETURN = 274,
-    OP_ASSIGN = 275,
-    OP_OR = 276,
-    OP_AND = 277,
-    OP_EQ = 278,
-    OP_NE = 279,
-    OP_LT = 280,
-    OP_LE = 281,
-    OP_GE = 282,
-    OP_GT = 283,
-    OP_ADD = 284,
-    OP_SUB = 285,
-    OP_MUL = 286,
-    OP_DIV = 287,
-    OP_MOD = 288,
-    OP_POS = 289,
-    OP_NEG = 290,
-    OP_NOT = 291,
-    OP_INC = 292,
-    OP_DEC = 293,
-    UNRECOGNIZED_TOKEN = 294,
-    INVALID_IDENTIFIER = 295,
-    INVALID_CHAR_CONST = 296,
-    LIST = 297,
-    VARIABLE = 298,
-    CONSTANT = 299,
-    ARRAY = 300,
-    ARRAY_INDEX = 301,
-    FUNCTION = 302,
-    FUNCTION_CALL = 303,
-    VAR_DECL = 304,
-    VAR_INIT = 305,
-    ARR_DECL = 306,
-    ARR_INIT = 307,
-    GENERIC_NODE = 308
+    ASM = 275,
+    OP_ASSIGN = 276,
+    OP_OR = 277,
+    OP_AND = 278,
+    OP_EQ = 279,
+    OP_NE = 280,
+    OP_LT = 281,
+    OP_LE = 282,
+    OP_GE = 283,
+    OP_GT = 284,
+    OP_ADD = 285,
+    OP_SUB = 286,
+    OP_MUL = 287,
+    OP_DIV = 288,
+    OP_MOD = 289,
+    OP_POS = 290,
+    OP_NEG = 291,
+    OP_NOT = 292,
+    OP_INC = 293,
+    OP_DEC = 294,
+    UNRECOGNIZED_TOKEN = 295,
+    INVALID_IDENTIFIER = 296,
+    INVALID_CHAR_CONST = 297,
+    LIST = 298,
+    VARIABLE = 299,
+    CONSTANT = 300,
+    ARRAY = 301,
+    ARRAY_INDEX = 302,
+    FUNCTION = 303,
+    FUNCTION_CALL = 304,
+    VAR_DECL = 305,
+    VAR_INIT = 306,
+    ARR_DECL = 307,
+    ARR_INIT = 308,
+    GENERIC_NODE = 309
   };
 #endif
 
@@ -114,7 +115,7 @@ union YYSTYPE
 	const  char     *sval;
 	struct arg_list *al;
 
-#line 118 "src/parser.h"
+#line 119 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -132,6 +133,6 @@ int yyparse (void);
 	void yyerror (char const *);
 	struct table * add_symbol(int symbol_type, int data_type, const char * key);
 
-#line 136 "src/parser.h"
+#line 137 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */
