@@ -3726,7 +3726,7 @@ yyreduce:
 
   case 92:
 #line 272 "src/language.y"
-    { (yyval.node) = node_init(LIST, "argument-list", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_fcall_args((yyvsp[-2].node), (yyvsp[0].node)); }
+    { (yyval.node) = node_init(LIST, "argument-list", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_fcall_args((yyval.node)); }
 #line 3731 "src/parser.c"
     break;
 

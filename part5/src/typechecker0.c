@@ -124,6 +124,21 @@ const char * tc_type_str(int type) {
 	}
 }
 
+char tc_type_chr(int stype, int rtype) {
+	char ret;
+	switch(rtype) {
+		case VOID: ret = 'v'; break;
+		case INT: ret = 'i'; break;
+		case CHAR: ret = 'c'; break;
+		case FLOAT: ret = 'f'; break;
+		default: ret = '?';  break;
+	}
+	if (stype == ARRAY) {
+		ret -= 0x20;
+	}
+	return ret;
+}
+
 /////////////////
 // Expressions //
 /////////////////
@@ -217,67 +232,53 @@ void tc_arr_decl(Node * node) {
 // list expr -> expr.type
 // NULL expr -> expr.type
 // NULL NULL -> void
+
+// NULL
+// expr
+// list -> list expr
+
 #include <string.h>
-char * tc_fcall_args(Node * list_node, Node * arg_node) {
+char * tc_fcall_args(Node * node) {
 	static char args[128];
-	if(list_node == NULL) {
-		args[0] = 0;
+	static char * pos = args;
+	if(node == NULL) {
+		(*pos) = tc_type_chr(VOID); ++pos;
+		(*pos) = 0;
+	} else if (node->type == LIST) {
+		assert(node->nleaves > 1);
+		assert(node->leaf[0]->symbol != NULL);
+		assert(node->leaf[1]->symbol != NULL);
+		if (node->leaf[0]->type == LIST)
+		Symbol * symbol = node->leaf[0]->symbol;
+		Symbol * symbol = node->leaf[1]->symbol;
+
+
+	node->leaf[0]->type == LIST
+		(*pos) = tc_type_chr()
+	} else {
+		assert(node->nleaves > 0);
+		assert(node->leaf[0]->symbol != NULL);
+		Symbol * symbol = node->leaf[0]->symbol;
+		args[0] = tc_type_chr(symbol->attr->symbol_type, symbol->attr->return_type);
 		args[1] = 0;
 	}
 
-	if (arg_node == NULL) {
-		assert(list_node == NULL);
-		args[0] = 'v';
-		return args;
-	} else {
-		assert(arg_node->symbol != NULL);
-		switch(arg_node->symbol->attr->return_type) {
-			case INT: strncat(args,"i", 127); break;
-			case CHAR: strncat(args,"c", 127); break;
-			case FLOAT: strncat(args,"f", 127); break;
-			default: error_unknown_type(); break;
-		}
-		switch(arg_node->symbol->attr->symbol_type) {
-			case ARRAY: args[strlen(args)-1] -= 0x20; break;
-			case VARIABLE: break;
-			default: error_unknown_class(); break;
-		}
-	}
 	printf("%s\n", args);
+	getchar();
 	return args;
 }
-/*
+
 void tc_fcall(Node * node) {
 	if (node == NULL) { fprintf(stderr, "fcall null node\n"); return; }
 
 	assert(node->type == FUNCTION_CALL);
-	char * argtypes = tc_fcall(;
-	if (node->nleaves == 0) { argtypes = tc_fcall_args(NULL, NULL); }
-	else if (node->nleaves == 1) { argtypes = tc_fcall_args(NULL, NULL); }
-	else { tc_node_types(); }
-	assert(node->nleaves == 1);
-	Node * leaf1 = node->leaf[0]; 
-	if (leaf1 == NULL) {fprintf(stderr, "null arr decl arg node\n"); return; }
-	Symbol * op1 = leaf1->symbol;
-	if (op1 == NULL) {fprintf(stderr, "null arr decl arg\n"); return; }
+	char * argtypes = NULL;
+	if (node->nleaves == 0) { argtypes = tc_fcall_args(NULL); }
+	else if (node->nleaves == 1) { argtypes = tc_fcall_args(node->leaf[0]); }
+	else { fprintf(stderr, "too many leaves for fcall node\n"); return; }
 
-	bool error;
-	if (op1->attr->defined == false) {
-		error_cannot_evaluate();
-		error = true;
-	} else {
-		switch(op1->attr->return_type) {
-			case CHAR: error = false; op1->attr->value.ival = (int) op1->attr->value.cval; break;
-			case INT: error = false; break;
-			default: error = true; error_not_integer(); break;
-		}
-	}
-
-	if(!error) {
-		node->symbol->attr->length = op1->attr->value.ival;
-		if(tc_temp_symbol(op1)) {
-			table_remove(context_stack->top, op1->key);
-		}
-		tc_prune(node);
-	}
-}*/
+	if (argtypes != NULL)
+		printf("arg types: %s\n", argtypes);
+	else 
+		printf("null arg types");
+}

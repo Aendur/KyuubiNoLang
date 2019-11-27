@@ -20,9 +20,11 @@ void error_not_integer(void);
 void tc_prune(Node * root);
 bool tc_temp_symbol(Symbol * symbol);
 const char * tc_type_str(int type);
+char tc_type_chr(int stype, int rtype);
 
 // functions
-char * tc_fcall_args(Node * list_node, Node * arg_node);
+char * tc_fcall_args(Node * node);
+void tc_fcall(Node * node);
 
 // array declaration with size
 void tc_arr_decl(Node * src);
