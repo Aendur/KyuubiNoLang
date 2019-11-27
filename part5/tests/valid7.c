@@ -21,13 +21,11 @@ float f(float x) {
 }
 
 char f(char x) {
-	char a1 = - - - - - 1;
+	char a1 = - - - - - '1';
 	char a2 = - - - - - x;
-	char b1 = ! ! ! ! ! 1;
-	char b2 = ! ! ! ! ! x;
 	char c1 = ++ ++ ++ ++ ++ x;
 	char d1 = -- -- -- -- -- x;
-	char e1 = + + + + + 1;
+	char e1 = + + + + + '1';
 	char e2 = + + + + + x;
 }
 
