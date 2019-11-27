@@ -56,6 +56,9 @@
 %type <node> multiplicative_expression postfix_expression primary_expression argument_call_list
 %type <node> unary_expression
 %type <node> function_definition
+%type <node> var_declarator
+%type <node> arr_declarator
+
 %type <al> argument_list argument
 %type <ival> type
 
@@ -115,12 +118,20 @@ declaration
 	;
 
 init_declarator
+	: var_declarator                                    { $$ = $1; }
+	| arr_declarator                                    { $$ = $1; }
+	| var_declarator '=' assignment_expression          { $$ = node_init(VAR_INIT, "var-init", $1, $3, ENDARG); assign_context($$); tc_evaluate($$); }
+	| arr_declarator '=' '{' initializer_list '}'       { $$ = node_init(ARR_INIT, "arr-init", $1, $4, ENDARG); assign_context($$); }
+	| arr_declarator '=' '{' initializer_list ',' '}'   { $$ = node_init(ARR_INIT, "arr-init", $1, $4, ENDARG); assign_context($$); }
+	| arr_declarator '=' STRING_LITERAL                 { $$ = node_init(ARR_INIT, "arr-init", $1,     ENDARG); assign_context($$); free_label($3); }
+	;
+
+var_declarator
 	: type IDENTIFIER                                            { $$ = node_init(VAR_DECL, "var-decl",     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
-	| type IDENTIFIER '=' assignment_expression                  { $$ = node_init(VAR_INIT, "var-init", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2);  tc_evaluate($$); }
-	| type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(ARR_DECL, "arr-decl", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
-	| type IDENTIFIER '[' ']' '=' '{' initializer_list '}'       { $$ = node_init(ARR_INIT, "arr-init", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
-	| type IDENTIFIER '[' ']' '=' '{' initializer_list ',' '}'   { $$ = node_init(ARR_INIT, "arr-init", $7, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
-	| type IDENTIFIER '[' ']' '=' STRING_LITERAL                 { $$ = node_init(ARR_INIT, "arr-init",     ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); free_label($6); }
+	;
+
+arr_declarator
+	: type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(ARR_DECL, "arr-decl", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
 	;
 
 initializer_list

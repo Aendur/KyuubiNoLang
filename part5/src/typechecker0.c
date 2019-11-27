@@ -138,6 +138,7 @@ void tc_evaluate(Node * node) {
 		if (op2->symbol == NULL)  {fprintf(stderr, "null binary operand\n"); return; }
 
 		switch(node->type) {
+			case VAR_INIT:  node->symbol = tc_op_assign(op1, op2); break;
 			case OP_ASSIGN: node->symbol = tc_op_assign(op1, op2); break;
 			case OP_OR:     node->symbol = tc_op_or(op1, op2); break;
 			case OP_AND:    node->symbol = tc_op_and(op1, op2); break;

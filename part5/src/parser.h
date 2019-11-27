@@ -108,7 +108,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 70 "src/language.y"
+#line 73 "src/language.y"
 
 	struct node     *node;
 	int              ival;
@@ -128,7 +128,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 77 "src/language.y"
+#line 80 "src/language.y"
 
 	void yyerror (char const *);
 	struct table * add_symbol(int symbol_type, int data_type, const char * key);

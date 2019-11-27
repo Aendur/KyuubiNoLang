@@ -73,7 +73,8 @@ char * al_key(struct arg_list * args) {
 	char * key;
 	if(args == NULL) {
 		key = malloc(5);
-		strcpy(key, "void");
+		strcpy(key, "v");
+		// strcpy(key, "void");
 	} else {
 		int N = 9 * args->size + 1;
 		int n = 0;
@@ -82,20 +83,31 @@ char * al_key(struct arg_list * args) {
 
 		struct arg * arg = args->first;
 		while(arg != NULL) {
+			// switch(arg->data_type) {
+			// 	case FLOAT: n = snprintf(pos, N, "float")             ; pos += n; N -= n; break;
+			// 	case CHAR : n = snprintf(pos, N, "char" )             ; pos += n; N -= n; break;
+			// 	case INT  : n = snprintf(pos, N, "int"  )             ; pos += n; N -= n; break;
+			// 	default   : n = snprintf(pos, N, "%d", arg->data_type); pos += n; N -= n; break;
+			// }
+			// switch(arg->decl_type) {
+			// 	case VARIABLE: n = snprintf(pos, N, ","  )                ; pos += n; N -= n; break;
+			// 	case ARRAY   : n = snprintf(pos, N, "[],")                ; pos += n; N -= n; break;
+			// 	default      : n = snprintf(pos, N, "%d,", arg->decl_type); pos += n; N -= n; break;
+			// }
 			switch(arg->data_type) {
-				case FLOAT: n = snprintf(pos, N, "float")             ; pos += n; N -= n; break;
-				case CHAR : n = snprintf(pos, N, "char" )             ; pos += n; N -= n; break;
-				case INT  : n = snprintf(pos, N, "int"  )             ; pos += n; N -= n; break;
+				case FLOAT: n = snprintf(pos, N, "f")             ; pos += n; N -= n; break;
+				case CHAR : n = snprintf(pos, N, "c")             ; pos += n; N -= n; break;
+				case INT  : n = snprintf(pos, N, "i")             ; pos += n; N -= n; break;
 				default   : n = snprintf(pos, N, "%d", arg->data_type); pos += n; N -= n; break;
 			}
 			switch(arg->decl_type) {
-				case VARIABLE: n = snprintf(pos, N, ","  )                ; pos += n; N -= n; break;
-				case ARRAY   : n = snprintf(pos, N, "[],")                ; pos += n; N -= n; break;
+				case VARIABLE:                   break;
+				case ARRAY   : *(pos-1) -= 0x20; break;
 				default      : n = snprintf(pos, N, "%d,", arg->decl_type); pos += n; N -= n; break;
 			}
 			arg = arg->next;
 		}
-		*(pos-1) = 0;
+		// *(pos-1) = 0;
 	}
 	return key;
 }
