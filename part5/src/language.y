@@ -252,9 +252,9 @@ unary_expression
 
 postfix_expression
 	: primary_expression                          { $$ = $1; }
-	| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1, ARRAY); free_label($1);}
-	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1);}
-	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1);}
+	| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1, ARRAY)   ; free_label($1); }
+	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1); tc_fcall($$); }
+	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1); tc_fcall($$); }
 	;
 
 primary_expression
@@ -269,7 +269,7 @@ primary_expression
 
 argument_call_list
 	: assignment_expression                         { $$ = $1; } 
-	| argument_call_list ',' assignment_expression  { $$ = node_init(LIST, "argument-list", $1, $3, ENDARG); assign_context($$); } 
+	| argument_call_list ',' assignment_expression  { $$ = node_init(LIST, "argument-list", $1, $3, ENDARG); assign_context($$); tc_fcall_args($1, $3); } 
 	;
 
 type

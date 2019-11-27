@@ -2081,7 +2081,6 @@ static void update_position(void) {
 // Handles identifiers
 static int identifier(void) {
 	if (yyleng > 32) {
-		// ++yynerrs; // commented, just a warning
 		yyerror("warning, identifier exceeds 32 characters.");
 	}
 

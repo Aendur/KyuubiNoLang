@@ -21,6 +21,8 @@ void tc_prune(Node * root);
 bool tc_temp_symbol(Symbol * symbol);
 const char * tc_type_str(int type);
 
+// functions
+char * tc_fcall_args(Node * list_node, Node * arg_node);
 
 // array declaration with size
 void tc_arr_decl(Node * src);

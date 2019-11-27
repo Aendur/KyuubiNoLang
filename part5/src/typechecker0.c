@@ -207,3 +207,77 @@ void tc_arr_decl(Node * node) {
 	}
 }
 
+// char * tc_fcall_args(Node * list_node) {
+// 	static char args[128];
+// 	if (list_node == NULL) {
+// 		args[0] = "v"
+// 	}
+// }
+
+// list expr -> expr.type
+// NULL expr -> expr.type
+// NULL NULL -> void
+#include <string.h>
+char * tc_fcall_args(Node * list_node, Node * arg_node) {
+	static char args[128];
+	if(list_node == NULL) {
+		args[0] = 0;
+		args[1] = 0;
+	}
+
+	if (arg_node == NULL) {
+		assert(list_node == NULL);
+		args[0] = 'v';
+		return args;
+	} else {
+		assert(arg_node->symbol != NULL);
+		switch(arg_node->symbol->attr->return_type) {
+			case INT: strncat(args,"i", 127); break;
+			case CHAR: strncat(args,"c", 127); break;
+			case FLOAT: strncat(args,"f", 127); break;
+			default: error_unknown_type(); break;
+		}
+		switch(arg_node->symbol->attr->symbol_type) {
+			case ARRAY: args[strlen(args)-1] -= 0x20; break;
+			case VARIABLE: break;
+			default: error_unknown_class(); break;
+		}
+	}
+	printf("%s\n", args);
+	return args;
+}
+/*
+void tc_fcall(Node * node) {
+	if (node == NULL) { fprintf(stderr, "fcall null node\n"); return; }
+
+	assert(node->type == FUNCTION_CALL);
+	char * argtypes = tc_fcall(;
+	if (node->nleaves == 0) { argtypes = tc_fcall_args(NULL, NULL); }
+	else if (node->nleaves == 1) { argtypes = tc_fcall_args(NULL, NULL); }
+	else { tc_node_types(); }
+	assert(node->nleaves == 1);
+	Node * leaf1 = node->leaf[0]; 
+	if (leaf1 == NULL) {fprintf(stderr, "null arr decl arg node\n"); return; }
+	Symbol * op1 = leaf1->symbol;
+	if (op1 == NULL) {fprintf(stderr, "null arr decl arg\n"); return; }
+
+	bool error;
+	if (op1->attr->defined == false) {
+		error_cannot_evaluate();
+		error = true;
+	} else {
+		switch(op1->attr->return_type) {
+			case CHAR: error = false; op1->attr->value.ival = (int) op1->attr->value.cval; break;
+			case INT: error = false; break;
+			default: error = true; error_not_integer(); break;
+		}
+	}
+
+	if(!error) {
+		node->symbol->attr->length = op1->attr->value.ival;
+		if(tc_temp_symbol(op1)) {
+			table_remove(context_stack->top, op1->key);
+		}
+		tc_prune(node);
+	}
+}*/
