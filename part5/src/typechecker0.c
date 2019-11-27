@@ -71,6 +71,21 @@ void error_div_by_zero(void) {
 	yyerror(msg);
 }
 
+void error_cannot_evaluate(void) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: expression cannot be evaluated at compile time");
+	++yynerrs;
+	yyerror(msg);
+}
+
+void error_not_integer(void) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: expression does not evaluate to an integer");
+	++yynerrs;
+	yyerror(msg);
+}
+
+
 ///////////
 // Tools //
 ///////////
@@ -157,6 +172,38 @@ void tc_evaluate(Node * node) {
 		}
 	} else {
 		fprintf(stderr, "unknown op\n");
+	}
+}
+
+
+void tc_arr_decl(Node * node) {
+	if (node == NULL) { fprintf(stderr, "arr decl null node\n"); return; }
+
+	assert(node->type == ARR_DECL);
+	assert(node->nleaves == 1);
+	Node * leaf1 = node->leaf[0]; 
+	if (leaf1 == NULL) {fprintf(stderr, "null arr decl arg node\n"); return; }
+	Symbol * op1 = leaf1->symbol;
+	if (op1 == NULL) {fprintf(stderr, "null arr decl arg\n"); return; }
+
+	bool error;
+	if (op1->attr->defined == false) {
+		error_cannot_evaluate();
+		error = true;
+	} else {
+		switch(op1->attr->return_type) {
+			case CHAR: error = false; op1->attr->value.ival = (int) op1->attr->value.cval; break;
+			case INT: error = false; break;
+			default: error = true; error_not_integer(); break;
+		}
+	}
+
+	if(!error) {
+		node->symbol->attr->length = op1->attr->value.ival;
+		if(tc_temp_symbol(op1)) {
+			table_remove(context_stack->top, op1->key);
+		}
+		tc_prune(node);
 	}
 }
 

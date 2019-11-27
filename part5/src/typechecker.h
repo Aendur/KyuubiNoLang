@@ -13,11 +13,17 @@ void error_lvalue2(Node * n);
 void error_unknown_type(void);
 void error_unknown_class(void);
 void error_div_by_zero(void);
+void error_cannot_evaluate(void);
+void error_not_integer(void);
 
 // tools
 void tc_prune(Node * root);
 bool tc_temp_symbol(Symbol * symbol);
 const char * tc_type_str(int type);
+
+
+// array declaration with size
+void tc_arr_decl(Node * src);
 
 // Expressions
 void tc_evaluate(Node * node);

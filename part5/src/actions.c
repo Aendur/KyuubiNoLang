@@ -166,10 +166,9 @@ void add_symbol_args(struct arg_list * args) {
 		struct arg * arg = args->first;
 		while(arg != NULL) {
 			switch(arg->decl_type) {
-				#warning set arr size
-				case ARRAY   : add_symbol_arr(arg->data_type, arg->name, 0); break;
-				case VARIABLE: add_symbol_var(arg->data_type, arg->name)   ; break;
-				default      : fprintf(stderr, "unknown arg decl type\n")  ; break;
+				case ARRAY   : add_symbol_arr(arg->data_type, arg->name, -1); break;
+				case VARIABLE: add_symbol_var(arg->data_type, arg->name)    ; break;
+				default      : fprintf(stderr, "unknown arg decl type\n")   ; break;
 			}
 			arg = arg->next;
 		}
@@ -193,11 +192,13 @@ Symbol * add_symbol_var(int type, const char * key) {
 	// }
 }
 
-Symbol * add_symbol_arr(int type, const char * key, int size) {
+Symbol * add_symbol_arr(int type, const char * key, int length) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr with incompatible type %d\n", type); return NULL; }
 	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return NULL; }
 
-	return add_symbol(ARRAY, type, key);
+	Symbol * s = add_symbol(ARRAY, type, key);
+	s->attr->length = length;
+	return s;
 	// Symbol * symbol = table_find(context_stack->top, key);
 	// if (symbol == NULL) {
 	// 	symbol = table_insert(context_stack->top, key);

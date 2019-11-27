@@ -37,6 +37,7 @@ struct attr {
 		const char* sval;
 		float fval;
 	} value;
+	int length;
 	struct arg_list * arg_list;
 	struct node * statement_tree;
 };

@@ -131,8 +131,10 @@ var_declarator
 	;
 
 arr_declarator
-	: type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(ARR_DECL, "arr-decl", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2, 0); free_label($2); }
+	: type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(ARR_DECL, "arr-decl", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2,-1); free_label($2); tc_arr_decl($$); }
+	| type IDENTIFIER '[' ']'                                    { $$ = node_init(ARR_DECL, "arr-decl", ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2,-1); free_label($2); }
 	;
+
 
 initializer_list
 	: assignment_expression                      { $$ = $1; }

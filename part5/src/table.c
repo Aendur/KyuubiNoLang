@@ -351,6 +351,9 @@ void attr_print(struct attr * attr) {
 			case STRING: printf("char[], value=%s", attr->defined ? attr->value.sval : "(null)"); break;
 			default: printf("%d", attr->return_type); break;
 		}
+		
+		printf(", length=%d", attr->length);
+
 
 		char * args = al_key(attr->arg_list);
 		printf(", args=%s", args);
