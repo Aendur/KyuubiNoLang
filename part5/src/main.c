@@ -19,6 +19,8 @@ Node * root = NULL;
 //Table * symbol_table;
 Tablestack * context_stack;
 int no_scope = 0;
+FILE * output;
+
 
 
 int main(int argc, char** argv) {
@@ -44,19 +46,18 @@ int main(int argc, char** argv) {
 	// initialize node list
 	// node_list = nl_init();
 
-
+	// Open output file
+	// output = fopen("k.tac", "w");
+	
 	// call GNU Bison
 	yyparse();
-	//printf("%d\n", yynerrs);
-	
-	// tc_typecheck_lazy(root);
 
-	// if (yynerrs == 0) {
+	if (yynerrs == 0) {
 		printf("------------------------------\n");
 		printf("SYNTAX TREE\n");
 		printf("------------------------------\n");
 		print_tree(root, 0);
-	// }
+	}
 
 	//#if DEBUG
 	//nl_print(node_list);
@@ -65,12 +66,19 @@ int main(int argc, char** argv) {
 	printf("------------------------------\n");
 	printf("SYMBOL TABLE\n");
 	printf("------------------------------\n");
-	// table_printf(context_stack->bot);
 	ts_printf(context_stack);
+
+
+	printf("------------------------------\n");
+	printf("OUTPUT\n");
+	printf("------------------------------\n");
 
 
 	// close input file
 	fclose(yyin);
+
+	// close output file;
+	// fclose(output);
 
 	// release resources
 	yylex_destroy();
@@ -78,6 +86,7 @@ int main(int argc, char** argv) {
 	ts_free(&context_stack);
 	// nl_free(&node_list);
 	node_free_recursive(&root);
+
 
 	return 0;
 }
