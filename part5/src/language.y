@@ -268,8 +268,8 @@ primary_expression
 	;
 
 argument_call_list
-	: assignment_expression                         { $$ = $1; } 
-	| argument_call_list ',' assignment_expression  { $$ = node_init(LIST, "argument-list", $1, $3, ENDARG); assign_context($$); tc_fcall_args($$); } 
+	: assignment_expression                         { $$ = $1; tc_fcall_args(NULL, $1); } 
+	| argument_call_list ',' assignment_expression  { $$ = node_init(LIST, "argument-list", $1, $3, ENDARG); assign_context($$); tc_fcall_args($1, $3); } 
 	;
 
 type

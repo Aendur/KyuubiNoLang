@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "misc.h"
 #include "table-stack.h"
+//#include "table.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -85,6 +86,13 @@ void error_not_integer(void) {
 	yyerror(msg);
 }
 
+void error_undeclared_fun(const char * name, const char * args) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: there is no definition of '%s' with argument types '%s'", name, args);
+	++yynerrs;
+	yyerror(msg);
+}
+
 
 ///////////
 // Tools //
@@ -96,12 +104,6 @@ void tc_prune(Node * root) {
 		node_free_recursive(&(root->leaf[root->nleaves]));
 	}
 }
-
-//void tc_cut_tree(Node * leaf, int index) {
-//	Node * root = leaf->root;
-//	root->nleaves--;
-//	node_free_recursive(&(root->leaf[index]));
-//}
 
 bool tc_temp_symbol(Symbol * symbol) {
 	bool a = symbol->attr->temporary;
@@ -222,49 +224,31 @@ void tc_arr_decl(Node * node) {
 	}
 }
 
-// char * tc_fcall_args(Node * list_node) {
-// 	static char args[128];
-// 	if (list_node == NULL) {
-// 		args[0] = "v"
-// 	}
-// }
-
-// list expr -> expr.type
-// NULL expr -> expr.type
+// list expr -> include
+// NULL expr -> init
+// list NULL -> collect
 // NULL NULL -> void
 
-// NULL
-// expr
-// list -> list expr
-
 #include <string.h>
-char * tc_fcall_args(Node * node) {
+char * tc_fcall_args(Node * list_node, Node * expr_node) {
 	static char args[128];
 	static char * pos = args;
-	if(node == NULL) {
-		(*pos) = tc_type_chr(VOID); ++pos;
-		(*pos) = 0;
-	} else if (node->type == LIST) {
-		assert(node->nleaves > 1);
-		assert(node->leaf[0]->symbol != NULL);
-		assert(node->leaf[1]->symbol != NULL);
-		if (node->leaf[0]->type == LIST)
-		Symbol * symbol = node->leaf[0]->symbol;
-		Symbol * symbol = node->leaf[1]->symbol;
 
-
-	node->leaf[0]->type == LIST
-		(*pos) = tc_type_chr()
+	Symbol * s;
+	if (expr_node != NULL) {
+		s = expr_node->symbol;
+		if (s==NULL) { return args; }
+		*pos = tc_type_chr(s->attr->symbol_type, s->attr->return_type);
+		*(++pos) = 0;
 	} else {
-		assert(node->nleaves > 0);
-		assert(node->leaf[0]->symbol != NULL);
-		Symbol * symbol = node->leaf[0]->symbol;
-		args[0] = tc_type_chr(symbol->attr->symbol_type, symbol->attr->return_type);
-		args[1] = 0;
+		if (list_node == NULL) {
+			*pos = tc_type_chr(VARIABLE, VOID);
+			*(++pos) = 0;
+		} else {
+			pos = args;
+		}
 	}
 
-	printf("%s\n", args);
-	getchar();
 	return args;
 }
 
@@ -272,13 +256,21 @@ void tc_fcall(Node * node) {
 	if (node == NULL) { fprintf(stderr, "fcall null node\n"); return; }
 
 	assert(node->type == FUNCTION_CALL);
-	char * argtypes = NULL;
-	if (node->nleaves == 0) { argtypes = tc_fcall_args(NULL); }
-	else if (node->nleaves == 1) { argtypes = tc_fcall_args(node->leaf[0]); }
-	else { fprintf(stderr, "too many leaves for fcall node\n"); return; }
+	Symbol * funct = NULL;
+	char * key = NULL; 
+	if (node->nleaves == 0) {
+		key = tc_fcall_args(NULL, NULL);
+		funct = table_find(node->symbol, key);
+	} else if (node->nleaves == 1) {
+		key = tc_fcall_args(node->leaf[0], NULL);
+		funct = table_find(node->symbol, key);
+	} else {
+		fprintf(stderr, "too many leaves for fcall node\n");
+	}
 
-	if (argtypes != NULL)
-		printf("arg types: %s\n", argtypes);
-	else 
-		printf("null arg types");
+	if (funct == NULL) {
+		error_undeclared_fun(node->symbol->key, key);
+	} else {
+		node->symbol = funct;
+	}
 }

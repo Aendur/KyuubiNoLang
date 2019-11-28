@@ -15,6 +15,7 @@ void error_unknown_class(void);
 void error_div_by_zero(void);
 void error_cannot_evaluate(void);
 void error_not_integer(void);
+void error_undeclared_fun(const char * name, const char * args);
 
 // tools
 void tc_prune(Node * root);
@@ -23,7 +24,7 @@ const char * tc_type_str(int type);
 char tc_type_chr(int stype, int rtype);
 
 // functions
-char * tc_fcall_args(Node * node);
+char * tc_fcall_args(Node * list_node, Node * expr_node);
 void tc_fcall(Node * node);
 
 // array declaration with size

@@ -51,12 +51,12 @@ int main(int argc, char** argv) {
 	
 	// tc_typecheck_lazy(root);
 
-	if (yynerrs == 0) {
+	// if (yynerrs == 0) {
 		printf("------------------------------\n");
 		printf("SYNTAX TREE\n");
 		printf("------------------------------\n");
 		print_tree(root, 0);
-	}
+	// }
 
 	//#if DEBUG
 	//nl_print(node_list);

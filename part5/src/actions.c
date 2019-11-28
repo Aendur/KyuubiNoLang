@@ -32,7 +32,7 @@ void error_redefinition(const char * name) {
 
 void error_redefinition_fun(const char * name, const char * pars) {
 	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s' with parameters '%s'", name, pars);
+	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s' with argument types '%s'", name, pars);
 	++yynerrs;
 	yyerror(msg);
 }
