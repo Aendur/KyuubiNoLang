@@ -65,6 +65,10 @@ test-al:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_ALIST \
 	src/arg-list.c
 
+test-lines:
+	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_LINES \
+	src/lines.c
+
 
 help:
 	@echo "make targets:"
@@ -77,4 +81,5 @@ help:
 	@echo "    test-hash"
 	@echo "    test-tstack"
 	@echo "    test-al"
+	@echo "    test-lines"
 
