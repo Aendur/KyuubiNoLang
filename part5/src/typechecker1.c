@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "misc.h"
 #include "table-stack.h"
+#include "error.h"
 
 #include <assert.h>
 #include <stdio.h>

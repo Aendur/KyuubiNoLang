@@ -2,103 +2,15 @@
 #include "parser.h"
 #include "misc.h"
 #include "table-stack.h"
-//#include "table.h"
+#include "error.h"
 
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 extern int yynerrs;
-static const int ERROR_MSG_BUFFER=256;
 extern Tablestack * context_stack;
-
-/////////////////////
-// Error messaging //
-/////////////////////
-
-void error_type1(Node * node, const char * type1) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s requires 'int', 'char' or 'float' types, not '%s'", node->name, type1);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_type2(Node * node, const char * type1, const char * type2) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: incompatible types, '%s' %s '%s'", type1, node->name, type2);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_cast(const char * type1, const char * type2) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: cannot implicitly cast from '%s' to '%s'", type2, type1);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_lvalue1(Node * node) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s operator requires an lvalue as the left-hand operand", node->name);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_lvalue2(Node * node) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s operator requires an lvalue as the right-hand operand", node->name);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_unknown_type(void) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: unable to determine symbol type");
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_unknown_class(void) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: unable to determine symbol class");
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_div_by_zero(void) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: integer division by zero");
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_cannot_evaluate(void) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: expression cannot be evaluated at compile time");
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_not_integer(void) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: expression does not evaluate to an integer");
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_undeclared_fun(const char * name, const char * args) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: there is no definition of '%s' with argument types '%s'", name, args);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_no_context(void) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: unable to determine context");
-	++yynerrs;
-	yyerror(msg);
-}
 
 ///////////
 // Tools //
@@ -235,7 +147,7 @@ void tc_arr_decl(Node * node) {
 // list NULL -> collect
 // NULL NULL -> void
 
-#include <string.h>
+
 char * tc_fcall_args(Node * list_node, Node * expr_node) {
 	static char args[128];
 	static char * pos = args;
@@ -308,3 +220,4 @@ void tc_return(Node * node) {
 		fprintf(stderr, "cannot return more than one expression\n");
 	}
 }
+

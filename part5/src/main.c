@@ -20,7 +20,7 @@ Node * root = NULL;
 //Table * symbol_table;
 Tablestack * context_stack;
 int no_scope = 0;
-FILE * output;
+FILE * output = NULL;
 struct lines * output_lines;
 
 int main(int argc, char** argv) {
@@ -45,9 +45,6 @@ int main(int argc, char** argv) {
 
 	// initialize node list
 	// node_list = nl_init();
-
-	// Open output file
-	output = fopen("k.tac", "w");
 	
 	// Init output text buffer
 	output_lines = lines_init();
@@ -71,12 +68,14 @@ int main(int argc, char** argv) {
 	printf("------------------------------\n");
 	printf("OUTPUT\n");
 	printf("------------------------------\n");
+	// Open output file
+	output = stdout; //fopen("k.tac", "w");
 	lines_write(output, output_lines);
 
 	// close input file
 	fclose(yyin);
 	// close output file;
-	fclose(output);
+	if (output != stdout) { fclose(output); }
 
 	// release resources
 	yylex_destroy();

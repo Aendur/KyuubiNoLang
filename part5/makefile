@@ -25,6 +25,7 @@ dbg:
 	src/typechecker2r.c \
 	src/misc.c \
 	src/lines.c \
+	src/error.c \
 
 rel:
 	gcc -okyu -std=c18 -m64 -O3 \
@@ -45,6 +46,7 @@ rel:
 	src/typechecker2r.c \
 	src/misc.c \
 	src/lines.c \
+	src/error.c \
 
 
 test-node:

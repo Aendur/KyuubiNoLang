@@ -4,6 +4,7 @@
 #include "node-list.h"
 #include "table-stack.h"
 #include "arg-list.h"
+#include "error.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -12,9 +13,7 @@ extern int nline;
 extern int ncol0;
 extern int ncol1;
 extern Tablestack * context_stack;
-
 extern int yynerrs;
-static const int ERROR_MSG_BUFFER = 256;
 
 ////////////////////
 // ERROR HANDLERS //
@@ -22,56 +21,6 @@ static const int ERROR_MSG_BUFFER = 256;
 void yyerror (char const * msg) {
 	fprintf(stderr, "Line %d, column %d: %s\n", nline, ncol0, msg);
 }
-
-void error_redefinition(const char * name) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: redefinition of '%s'", name);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_redefinition_fun(const char * name, const char * pars) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: redefinition of '%s' with argument types '%s'", name, pars);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_redefinition_vf(const char * name) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: declaration of '%s' conflicts with its scope function name", name);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_not_variable(const char * name, int type) {
-	const char * typestr;
-	switch(type) {
-		case FUNCTION: typestr = "function"; break;
-		case VARIABLE: typestr = "variable"; break;
-		case ARRAY: typestr = "array"; break;
-		default: typestr = "unknown symbol class"; break;
-	}
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: '%s' is cannot be used as '%s'", name, typestr);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_undeclared(const char * name) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: undeclared symbol '%s'", name);
-	++yynerrs;
-	yyerror(msg);
-}
-
-void error_no_return(const char * name) {
-	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: non-void function '%s' needs a topmost return statement", name);
-	++yynerrs;
-	yyerror(msg);
-}
-
 
 ////////////////////
 // SCOPE MANAGERS //
@@ -154,7 +103,7 @@ Table * finish_fun(const char * name) {
 	if (context_stack->size < 3) { fprintf(stderr, "stack too short (fun)\n"); return NULL; }
 
 	Symbol * new_context = ts_pull(context_stack);
-	if (new_context->attr->function_returns == false) { error_no_return(name); }
+	if (new_context->attr->function_returns == false) { warning_no_return(name); }
 	new_context = ts_pull(context_stack);
 	return  new_context;
 }

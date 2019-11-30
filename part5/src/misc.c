@@ -21,3 +21,16 @@ char * str_ptr(const char * prefix, void* address, const char * suffix) {
 	return str;
 }
 
+char * function_label(Symbol * args) {
+	if (args != NULL) {
+		Symbol * func = args->root;
+		if (func != NULL) {
+			int size = sizeof(args->key) + sizeof(func->key) + 3;
+			char * str = malloc(size);
+			snprintf(str, size, "%s_%s:", func->key, args->key);
+			return str;
+		}
+	}
+	return NULL;
+}
+

@@ -97,15 +97,9 @@
 int yylex (void);
 void free_label(const char * str);
 extern Node * root;
-//extern Nodelist * node_list;
-
 %}
 
 %%
- //start
- //	: declaration_list             { root = $1; }
- //	;
-
 declaration_list
 	: declaration                   { $$ = $1; }
 	| declaration_list declaration  { $$ = node_init(LIST, "declaration-list" , $1, $2, ENDARG); assign_context($$); }
@@ -128,14 +122,13 @@ init_declarator
 	;
 
 var_declarator
-	: type IDENTIFIER                                            { $$ = node_init(VAR_DECL, "var-decl",     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
+	: type IDENTIFIER                               { $$ = node_init(VAR_DECL, "var-decl",     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
 	;
 
 arr_declarator
-	: type IDENTIFIER '[' assignment_expression ']'              { $$ = node_init(ARR_DECL, "arr-decl", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2,-1); free_label($2); tc_arr_decl($$); }
-	| type IDENTIFIER '[' ']'                                    { $$ = node_init(ARR_DECL, "arr-decl", ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2,-1); free_label($2); }
+	: type IDENTIFIER '[' assignment_expression ']' { $$ = node_init(ARR_DECL, "arr-decl", $4, ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2,-1); free_label($2); tc_arr_decl($$); }
+	| type IDENTIFIER '[' ']'                       { $$ = node_init(ARR_DECL, "arr-decl", ENDARG); assign_context($$); $$->symbol=add_symbol_arr($1,$2,-1); free_label($2); }
 	;
-
 
 initializer_list
 	: assignment_expression                      { $$ = $1; }
@@ -152,7 +145,6 @@ function_declarator
 	| type IDENTIFIER '(' VOID ')'             { $$ = $2; begin_fun($1, $2, NULL); }
 	| type IDENTIFIER '(' error ')'            { $$ = NULL; free_label($2); }
 	;
-
 
 argument_list
 	: argument                   { $$ = $1; }

@@ -6,12 +6,6 @@
 
 // error
 void yyerror (char const * msg);
-void error_redefinition(const char * name);
-void error_redefinition_fun(const char * name, const char * pars);
-void error_redefinition_vf(const char * name);
-void error_not_variable(const char * name, int type);
-void error_undeclared(const char * name);
-void error_no_return(const char * name);
 
 // scope
 Table * begin(const char * name);
