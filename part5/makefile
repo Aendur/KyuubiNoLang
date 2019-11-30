@@ -26,6 +26,7 @@ dbg:
 	src/misc.c \
 	src/lines.c \
 	src/error.c \
+	src/generator.c \
 
 rel:
 	gcc -okyu -std=c18 -m64 -O3 \
@@ -47,6 +48,7 @@ rel:
 	src/misc.c \
 	src/lines.c \
 	src/error.c \
+	src/generator.c \
 
 
 test-node:

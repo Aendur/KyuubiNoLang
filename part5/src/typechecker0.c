@@ -3,6 +3,7 @@
 #include "misc.h"
 #include "table-stack.h"
 #include "error.h"
+#include "generator.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -203,6 +204,7 @@ void tc_return(Node * node) {
 	if (node->nleaves == 0) {
 		if (context->attr->return_type == VOID) {
 			node->context->attr->function_returns = true;
+			gen_function_end(node->context, NULL);
 		} else {
 			error_type2(node, tc_type_str(context->attr->return_type), tc_type_str(VOID));
 		}
@@ -213,6 +215,7 @@ void tc_return(Node * node) {
 
 		if (context->attr->return_type == expr->attr->return_type) {
 			node->context->attr->function_returns = true;
+			gen_function_end(node->context, expr);
 		} else {
 			error_type2(node, tc_type_str(context->attr->return_type), tc_type_str(expr->attr->return_type));
 		}

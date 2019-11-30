@@ -5,6 +5,7 @@
 #include "table-stack.h"
 #include "arg-list.h"
 #include "error.h"
+#include "generator.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -80,11 +81,11 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 		new_context = table_insert(context_stack->top, key);
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
-		if (type == VOID) { new_context->attr->function_returns = true; }
 		new_context->attr->arg_list = args;
 		new_context->root = context_stack->top;
 		ts_push(context_stack, new_context);
 		add_symbol_args(args);
+		gen_function_begin(new_context);		
 	} else {
 		error_redefinition_fun(name, key);
 		al_free(&args);
@@ -103,7 +104,12 @@ Table * finish_fun(const char * name) {
 	if (context_stack->size < 3) { fprintf(stderr, "stack too short (fun)\n"); return NULL; }
 
 	Symbol * new_context = ts_pull(context_stack);
-	if (new_context->attr->function_returns == false) { warning_no_return(name); }
+	
+	if (new_context->attr->function_returns == false) {
+		gen_function_end(new_context, NULL);
+		if(new_context->attr->return_type != VOID) { warning_no_return(name); }
+	}
+	
 	new_context = ts_pull(context_stack);
 	return  new_context;
 }
