@@ -56,6 +56,7 @@
 %type <node> multiplicative_expression postfix_expression primary_expression argument_call_list
 %type <node> unary_expression
 %type <node> function_definition
+%type <sval> function_declarator
 %type <node> var_declarator
 %type <node> arr_declarator
 
@@ -142,12 +143,16 @@ initializer_list
 	;
 
 function_definition
-	: type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' error ')'                                                             { $$ = NULL; free_label($2); }
+	: function_declarator '{' statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $3  , ENDARG); assign_body($$); finish_fun($1); assign_context($$); free_label($1); }
+	| function_declarator '{'                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish_fun($1); assign_context($$); free_label($1); }
 	;
+
+function_declarator
+	: type IDENTIFIER '(' argument_list ')'    { $$ = $2; begin_fun($1, $2, $4);   }
+	| type IDENTIFIER '(' VOID ')'             { $$ = $2; begin_fun($1, $2, NULL); }
+	| type IDENTIFIER '(' error ')'            { $$ = NULL; free_label($2); }
+	;
+
 
 argument_list
 	: argument                   { $$ = $1; }
