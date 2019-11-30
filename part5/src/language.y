@@ -240,7 +240,7 @@ multiplicative_expression
 
 unary_expression
 	: postfix_expression         { $$ = $1; }
-	| '+' unary_expression       { $$ = node_init(OP_POS, "+",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
+	| '+' unary_expression       { $$ = $2; } //$$ = node_init(OP_POS, "+",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	| '-' unary_expression       { $$ = node_init(OP_NEG, "-",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	| '!' unary_expression       { $$ = node_init(OP_NOT, "!",  $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	| OP_INC unary_expression    { $$ = node_init(OP_INC, "++", $2, ENDARG); assign_context($$); tc_evaluate($$); }

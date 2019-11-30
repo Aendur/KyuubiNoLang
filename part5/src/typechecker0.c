@@ -26,7 +26,7 @@ void tc_prune(Node * root) {
 
 bool tc_temp_symbol(Symbol * symbol) {
 	bool a = symbol->attr->temporary;
-	bool b = ( symbol->key[0] == '$'
+	bool b = ( symbol->key[0] == '%'
 		&&   symbol->key[1] >= '0'
 		&&   symbol->key[1] <= '9'
 	);
@@ -190,10 +190,10 @@ void tc_fcall(Node * node) {
 	if (funct == NULL) {
 		error_undeclared_fun(node->symbol->key, key);
 	} else {
-		node->symbol = funct;
+		// node->symbol = funct;
+		node->symbol = add_symbol(CONSTANT, funct->attr->return_type, NULL);
 	}
 }
-
 
 void tc_return(Node * node) {
 	if (node == NULL) { fprintf(stderr, "return null node\n"); return; }

@@ -27,6 +27,7 @@ struct bucket {
 };
 
 struct attr {
+	char code[40];
 	int symbol_type;
 	int return_type;
 	bool defined;
@@ -39,6 +40,7 @@ struct attr {
 		float fval;
 	} value;
 	int length;
+	int arg_num;
 	struct arg_list * arg_list;
 	struct node * statement_tree;
 };

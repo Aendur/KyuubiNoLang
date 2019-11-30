@@ -15,11 +15,11 @@ struct lines * lines_init(void) {
 
 struct line * line_init(const char * str) {
 	struct line * line = malloc(sizeof(struct line));
-	line->text = malloc(sizeof(str) + 1);
+	line->text = malloc(strlen(str) + 1);
 	strcpy((char*) line->text, str);
 	line->root = NULL;
 	line->next = NULL;
-	line->prev = NULL;
+	// line->prev = NULL;
 	return line;
 }
 
@@ -42,7 +42,7 @@ struct line * lines_append(struct lines * lines, const char * text) {
 		assert(lines->last != NULL);
 		struct line * line = line_init(text);
 		line->root = lines;
-		line->prev = lines->last;
+		// line->prev = lines->last;
 		
 		lines->last->next = line;
 		lines->last       = line;

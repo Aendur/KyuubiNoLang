@@ -134,12 +134,26 @@ void assign_body(Node * node) {
 // SYMBOL TABLE MANIP //
 ////////////////////////
 void add_symbol_args(struct arg_list * args) {
+	int arg_num = 0;
+	Symbol * symbol;
 	if (args != NULL) {
 		struct arg * arg = args->first;
 		while(arg != NULL) {
 			switch(arg->decl_type) {
-				case ARRAY   : add_symbol_arr(arg->data_type, arg->name, -1); break;
-				case VARIABLE: add_symbol_var(arg->data_type, arg->name)    ; break;
+				case ARRAY: {
+					symbol = add_symbol_arr(arg->data_type, arg->name, -1);
+					if(symbol != NULL) {
+						snprintf(symbol->attr->code, sizeof(symbol->attr->code)-1, "#%d", arg_num++);
+						symbol->attr->arg_num = arg_num;
+					}
+				} break;
+				case VARIABLE: {
+					symbol = add_symbol_var(arg->data_type, arg->name)    ;
+					if(symbol != NULL) {
+						snprintf(symbol->attr->code, sizeof(symbol->attr->code)-1, "#%d", arg_num++);
+						symbol->attr->arg_num = arg_num;
+					}
+				} break;
 				default      : fprintf(stderr, "unknown arg decl type\n")   ; break;
 			}
 			arg = arg->next;

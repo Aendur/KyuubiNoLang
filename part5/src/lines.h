@@ -14,7 +14,7 @@ struct line {
 	const char * text;
 	struct lines * root;
 	struct line * next;
-	struct line * prev;
+	//struct line * prev;
 };
 
 struct lines * lines_init(void);

@@ -3573,7 +3573,7 @@ yyreduce:
 
   case 71:
 #line 243 "src/language.y"
-    { (yyval.node) = node_init(OP_POS, "+",  (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
+    { (yyval.node) = (yyvsp[0].node); }
 #line 3578 "src/parser.c"
     break;
 
