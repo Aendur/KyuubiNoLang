@@ -3,6 +3,7 @@
 #include "misc.h"
 #include "table-stack.h"
 #include "error.h"
+#include "generator.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -12,43 +13,18 @@ extern int yynerrs;
 //static const int ERROR_MSG_BUFFER=256;
 extern Tablestack * context_stack;
 
+
 //////////////////////
 // UNARY OPERATIONS //
 //////////////////////
 bool tc_unary_promotion(Symbol ** tgt, Symbol * src) {
-	if (src->attr->defined) {
-		if (tc_temp_symbol(src)) {
-			(*tgt) = src;
-			return true;
-		} else {
-			(*tgt) = add_symbol(CONSTANT, src->attr->return_type, NULL);
-			(*tgt)->attr->defined = true;
-			return false;
-		}
+	if (tc_temp_symbol(src)) {
+		(*tgt) = src;
 	} else {
 		(*tgt) = add_symbol(CONSTANT, src->attr->return_type, NULL);
-		(*tgt)->attr->defined = false;
-		return false;
+		(*tgt)->attr->defined = src->attr->defined;
 	}
-}
-
-Symbol * tc_op_pos(Node * src) {
-	Symbol * tgt = NULL;
-	bool promoted = tc_unary_promotion(&tgt, src->symbol);
-
-	bool error = false;
-	int type = src->symbol->attr->return_type;
-	switch(type) {
-		case INT: tgt->attr->value.ival = src->symbol->attr->value.ival; break;
-		case CHAR: tgt->attr->value.cval = src->symbol->attr->value.cval; break;
-		case FLOAT: tgt->attr->value.fval = src->symbol->attr->value.fval; break;
-		default: error = true; error_type1(src->root, tc_type_str(type)); break;
-	}
-	
-	if (promoted) { tc_prune(src->root); } // prune this subtree tree if symbol was promoted
-	else if(error) { table_free(&tgt); }   // clean up if there was an error
-
-	return tgt;
+	return src->attr->defined;
 }
 
 Symbol * tc_op_neg(Node * src) {
@@ -64,8 +40,13 @@ Symbol * tc_op_neg(Node * src) {
 		default: error = true; error_type1(src->root, tc_type_str(type)); break;
 	}
 	
-	if (promoted) { tc_prune(src->root); } // prune this subtree tree if symbol was promoted
-	else if(error) { table_free(&tgt); }   // clean up if there was an error
+	// prune this subtree tree if symbol was promoted
+	if (promoted) { tc_prune(src->root); }
+	// otherwise, 
+	else {
+		if(error) { if(tc_temp_symbol(tgt)) table_free(&tgt); } // clean up if there was an error
+		else { gen_unary("minus", tgt, src->symbol); } // generate code for this node
+	}
 
 	return tgt;
 }

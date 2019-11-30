@@ -6,6 +6,7 @@
 
 void gen_function_begin(Symbol * args);
 void gen_function_end(Symbol * args, Symbol * expr);
+void gen_unary(const char * instruction, Symbol * tgt, Symbol * src);
 
 #endif
 

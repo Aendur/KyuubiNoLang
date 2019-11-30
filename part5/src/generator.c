@@ -40,3 +40,12 @@ void gen_function_end(Symbol * args, Symbol * expr) {
 
 	lines_append(output_lines, msg);
 }
+
+
+void gen_unary(const char * instruction, Symbol * tgt, Symbol * src) {
+	int size = strlen(instruction) + strlen(tgt->attr->code) + strlen(src->attr->code) + 8;
+	char * line = malloc(size);
+	snprintf(line, size, "\t%s %s, %s", instruction, tgt->attr->code, src->attr->code);
+	lines_append(output_lines, line);
+	free(line);
+}

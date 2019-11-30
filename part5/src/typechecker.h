@@ -6,6 +6,7 @@
 
 // tools
 void tc_prune(Node * root);
+void tc_graft(Node * root, int index);
 bool tc_temp_symbol(Symbol * symbol);
 const char * tc_type_str(int type);
 char tc_type_chr(int stype, int rtype);
@@ -23,7 +24,7 @@ void tc_evaluate(Node * node);
 
 // Unary ops
 bool tc_unary_promotion(Symbol ** tgt, Symbol * src);
-Symbol * tc_op_pos(Node * src);
+// Symbol * tc_op_pos(Node * src);
 Symbol * tc_op_neg(Node * src);
 Symbol * tc_op_not(Node * src);
 Symbol * tc_op_inc(Node * src);

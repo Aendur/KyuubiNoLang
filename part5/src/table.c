@@ -119,7 +119,7 @@ struct table * table_insert (struct table * tab, const char* key0) {
 	bool temp = false;
 	if (key0 == NULL) {
 		key = malloc(40);
-		snprintf((char*) key, 40, "%%%d", ++tab->uuid);
+		snprintf((char*) key, 40, "$%d", ++tab->uuid);
 		temp = true;
 	} else {
 		key = key0;
@@ -127,6 +127,7 @@ struct table * table_insert (struct table * tab, const char* key0) {
 
 	struct table * new_pair = table_init(16, key);
 	new_pair->attr->temporary = temp;
+	if(temp) { snprintf(new_pair->attr->code, sizeof(new_pair->attr->code), "%s", key); }
 
 	unsigned long hash = table_hash(new_pair->key);
 	unsigned long index = hash % tab->n_buckets;
@@ -161,9 +162,9 @@ struct table * table_retire (struct table * tab,  const char* key) {
 	if (key == NULL) { fprintf(stderr, "Trying to remove null key\n"); return NULL; }
 
 	int uuid = -1;
-	int is_uuid = sscanf(key, "%%%d", &uuid);
+	int is_uuid = sscanf(key, "$%d", &uuid);
 	if (is_uuid && uuid !=  tab->uuid) {
-		fprintf(stderr, "Can only remove last temp value (last=%%%d, current=%%%d)\n", tab->uuid, uuid);
+		fprintf(stderr, "Can only remove last temp value (last=$%d, current=$%d)\n", tab->uuid, uuid);
 		return NULL;
 	}
 
@@ -555,13 +556,13 @@ int main(void) {
 	table_insert(tab, NULL);
 	table_insert(tab, NULL);
 	table_printf(tab,0);
-	table_remove(tab, "%%0"); table_printf(tab, 0); getchar();
-	table_remove(tab, "%%1"); table_printf(tab, 0); getchar();
-	table_remove(tab, "%%2"); table_printf(tab, 0); getchar();
-	table_remove(tab, "%%2"); table_printf(tab, 0); getchar();
-	table_remove(tab, "%%0"); table_printf(tab, 0); getchar();
-	table_remove(tab, "%%1"); table_printf(tab, 0); getchar();
-	table_remove(tab, "%%0"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$0"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$1"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$2"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$2"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$0"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$1"); table_printf(tab, 0); getchar();
+	table_remove(tab, "$0"); table_printf(tab, 0); getchar();
 
 	table_free(&tab);
 

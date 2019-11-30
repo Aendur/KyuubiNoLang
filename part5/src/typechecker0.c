@@ -24,9 +24,20 @@ void tc_prune(Node * root) {
 	}
 }
 
+void tc_graft(Node * root, int index) {
+	if (root == NULL) { fprintf(stderr, "null root\n"); return; }
+	if (index >= root->nleaves) { fprintf(stderr, "not enought leaves\n"); return; }
+	if (root->leaf[index] == NULL) { fprintf(stderr, "null leaf\n"); return; }
+	if (root->leaf[index]->nleaves != 1) { fprintf(stderr, "cannot graft n:1\n"); return; }
+
+	Node * leaf = root->leaf[index]->leaf[0];
+	node_free(&root->leaf[index]);
+	root->leaf[index] = leaf;
+}
+
 bool tc_temp_symbol(Symbol * symbol) {
 	bool a = symbol->attr->temporary;
-	bool b = ( symbol->key[0] == '%'
+	bool b = ( symbol->key[0] == '$'
 		&&   symbol->key[1] >= '0'
 		&&   symbol->key[1] <= '9'
 	);
@@ -73,7 +84,7 @@ void tc_evaluate(Node * node) {
 		if (op1 == NULL) {fprintf(stderr, "null unary operand node\n"); return; }
 		if (op1->symbol == NULL) {fprintf(stderr, "null unary operand\n"); return; }
 		switch(node->type) {
-			case OP_POS: node->symbol = tc_op_pos(op1); break;
+			case OP_POS: break; //node->symbol = tc_op_pos(op1); break;
 			case OP_NEG: node->symbol = tc_op_neg(op1); break;
 			case OP_NOT: node->symbol = tc_op_not(op1); break;
 			case OP_INC: node->symbol = tc_op_inc(op1); break;
