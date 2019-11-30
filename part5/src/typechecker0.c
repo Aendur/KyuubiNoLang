@@ -93,6 +93,12 @@ void error_undeclared_fun(const char * name, const char * args) {
 	yyerror(msg);
 }
 
+void error_no_context(void) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: unable to determine context");
+	++yynerrs;
+	yyerror(msg);
+}
 
 ///////////
 // Tools //
@@ -272,5 +278,33 @@ void tc_fcall(Node * node) {
 		error_undeclared_fun(node->symbol->key, key);
 	} else {
 		node->symbol = funct;
+	}
+}
+
+
+void tc_return(Node * node) {
+	if (node == NULL) { fprintf(stderr, "return null node\n"); return; }
+
+	Table * context = node->context;
+	if (context == NULL) { error_no_context(); return; }
+	
+	if (node->nleaves == 0) {
+		if (context->attr->return_type == VOID) {
+			node->context->attr->function_returns = true;
+		} else {
+			error_type2(node, tc_type_str(context->attr->return_type), tc_type_str(VOID));
+		}
+	} else if (node->nleaves == 1) {
+		assert(node->leaf[0] != NULL);
+		assert(node->leaf[0]->symbol != NULL);
+		Symbol * expr = node->leaf[0]->symbol;
+
+		if (context->attr->return_type == expr->attr->return_type) {
+			node->context->attr->function_returns = true;
+		} else {
+			error_type2(node, tc_type_str(context->attr->return_type), tc_type_str(expr->attr->return_type));
+		}
+	} else {
+		fprintf(stderr, "cannot return more than one expression\n");
 	}
 }

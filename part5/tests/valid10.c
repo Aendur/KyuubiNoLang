@@ -1,16 +1,19 @@
-int min (int x, char y) { return x; }
-int min (int x, char y, float z) { return x; }
-int min (int x, char y, float z, char w[]) { return x; }
+int add (int x, int y) { return x + y; }
+int add (int x, int y, int z) { return x + y + z; }
+int add (int x, int y, int z, int w) { return x + y + z + w; }
 
-int add(int x, int y) {
-	return x + y;
+//float add(float x) {
+//	x = 3.0;
+//}
+
+void add(float x, float y) {
+	x + y;
 }
 
-
 int main (void) {
-	//int a = min(1, 2 );
-	//int b = min(1, 2 ,3);
-	//int c = min(1, 2 ,3, 4);
-	return add(add(a,b),c);
+	int a = add(1, 2);
+	int b = add(1, 2 ,3);
+	int c = add(1, 2 ,3, 4);
+	return add(add(a,b),add(a,b,c), 5,6);
 }
 

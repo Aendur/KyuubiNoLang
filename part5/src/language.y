@@ -62,10 +62,10 @@
 %type <al> argument_list argument
 %type <ival> type
 
-%destructor { free_label($$); } <sval>
-%destructor { fprintf(stderr, "CALL AL DTOR\n"); al_free(&$$); } <al>
 %destructor { root = $$; } declaration_list
-%destructor { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&$$); } <node>
+%destructor { node_free_recursive(&$$); } <node>
+%destructor { free_label($$); } <sval>
+%destructor { al_free(&$$); } <al>
 
  // %start start
 %start declaration_list
@@ -142,10 +142,10 @@ initializer_list
 	;
 
 function_definition
-	: type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
-	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish(); finish(); assign_context($$); free_label($2); }
+	: type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); } statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $8  , ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' argument_list ')' '{' { begin_fun($1, $2, $4);   }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
+	| type IDENTIFIER '(' VOID ')'          '{' { begin_fun($1, $2, NULL); }                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish_fun($2); assign_context($$); free_label($2); }
 	| type IDENTIFIER '(' error ')'                                                             { $$ = NULL; free_label($2); }
 	;
 
@@ -195,8 +195,8 @@ iteration_statement
 	;
 
 return_statement
-	: RETURN                        { $$ = node_init(RETURN, "return-statement",     ENDARG); assign_context($$); }
-	| RETURN assignment_expression  { $$ = node_init(RETURN, "return-statement", $2, ENDARG); assign_context($$); }
+	: RETURN                        { $$ = node_init(RETURN, "return-statement",     ENDARG); assign_context($$); tc_return($$); }
+	| RETURN assignment_expression  { $$ = node_init(RETURN, "return-statement", $2, ENDARG); assign_context($$); tc_return($$); }
 	;
 
 assignment_expression

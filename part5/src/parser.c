@@ -2733,194 +2733,194 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
   switch (yytype)
     {
     case 9: /* IDENTIFIER  */
-#line 65 "src/language.y"
+#line 67 "src/language.y"
       { free_label(((*yyvaluep).sval)); }
 #line 2739 "src/parser.c"
         break;
 
     case 10: /* STRING_LITERAL  */
-#line 65 "src/language.y"
+#line 67 "src/language.y"
       { free_label(((*yyvaluep).sval)); }
 #line 2745 "src/parser.c"
         break;
 
     case 11: /* CONSTANT_FLOAT  */
-#line 65 "src/language.y"
+#line 67 "src/language.y"
       { free_label(((*yyvaluep).sval)); }
 #line 2751 "src/parser.c"
         break;
 
     case 12: /* CONSTANT_INT  */
-#line 65 "src/language.y"
+#line 67 "src/language.y"
       { free_label(((*yyvaluep).sval)); }
 #line 2757 "src/parser.c"
         break;
 
     case 13: /* CONSTANT_HEX  */
-#line 65 "src/language.y"
+#line 67 "src/language.y"
       { free_label(((*yyvaluep).sval)); }
 #line 2763 "src/parser.c"
         break;
 
     case 14: /* CONSTANT_CHAR  */
-#line 65 "src/language.y"
+#line 67 "src/language.y"
       { free_label(((*yyvaluep).sval)); }
 #line 2769 "src/parser.c"
         break;
 
     case 73: /* declaration_list  */
-#line 67 "src/language.y"
+#line 65 "src/language.y"
       { root = ((*yyvaluep).node); }
 #line 2775 "src/parser.c"
         break;
 
     case 74: /* declaration  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2781 "src/parser.c"
         break;
 
     case 75: /* init_declarator  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2787 "src/parser.c"
         break;
 
     case 76: /* var_declarator  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2793 "src/parser.c"
         break;
 
     case 77: /* arr_declarator  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2799 "src/parser.c"
         break;
 
     case 78: /* initializer_list  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2805 "src/parser.c"
         break;
 
     case 79: /* function_definition  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2811 "src/parser.c"
         break;
 
     case 84: /* argument_list  */
-#line 66 "src/language.y"
-      { fprintf(stderr, "CALL AL DTOR\n"); al_free(&((*yyvaluep).al)); }
+#line 68 "src/language.y"
+      { al_free(&((*yyvaluep).al)); }
 #line 2817 "src/parser.c"
         break;
 
     case 85: /* argument  */
-#line 66 "src/language.y"
-      { fprintf(stderr, "CALL AL DTOR\n"); al_free(&((*yyvaluep).al)); }
+#line 68 "src/language.y"
+      { al_free(&((*yyvaluep).al)); }
 #line 2823 "src/parser.c"
         break;
 
     case 86: /* compound_statement  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2829 "src/parser.c"
         break;
 
     case 88: /* statement_list  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2835 "src/parser.c"
         break;
 
     case 89: /* statement  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2841 "src/parser.c"
         break;
 
     case 91: /* conditional_statement  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2847 "src/parser.c"
         break;
 
     case 92: /* iteration_statement  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2853 "src/parser.c"
         break;
 
     case 93: /* return_statement  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2859 "src/parser.c"
         break;
 
     case 94: /* assignment_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2865 "src/parser.c"
         break;
 
     case 95: /* logical_or_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2871 "src/parser.c"
         break;
 
     case 96: /* logical_and_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2877 "src/parser.c"
         break;
 
     case 97: /* equality_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2883 "src/parser.c"
         break;
 
     case 98: /* relational_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2889 "src/parser.c"
         break;
 
     case 99: /* additive_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2895 "src/parser.c"
         break;
 
     case 100: /* multiplicative_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2901 "src/parser.c"
         break;
 
     case 101: /* unary_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2907 "src/parser.c"
         break;
 
     case 102: /* postfix_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2913 "src/parser.c"
         break;
 
     case 103: /* primary_expression  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2919 "src/parser.c"
         break;
 
     case 104: /* argument_call_list  */
-#line 68 "src/language.y"
-      { fprintf(stderr, "CALL NODE DTOR\n"); node_free_recursive(&((*yyvaluep).node)); }
+#line 66 "src/language.y"
+      { node_free_recursive(&((*yyvaluep).node)); }
 #line 2925 "src/parser.c"
         break;
 
@@ -3294,7 +3294,7 @@ yyreduce:
 
   case 20:
 #line 145 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-7].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish_fun((yyvsp[-7].sval)); assign_context((yyval.node)); free_label((yyvsp[-7].sval)); }
 #line 3299 "src/parser.c"
     break;
 
@@ -3306,7 +3306,7 @@ yyreduce:
 
   case 22:
 #line 146 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-7].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish_fun((yyvsp[-7].sval)); assign_context((yyval.node)); free_label((yyvsp[-7].sval)); }
 #line 3311 "src/parser.c"
     break;
 
@@ -3318,7 +3318,7 @@ yyreduce:
 
   case 24:
 #line 147 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish_fun((yyvsp[-6].sval)); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
 #line 3323 "src/parser.c"
     break;
 
@@ -3330,7 +3330,7 @@ yyreduce:
 
   case 26:
 #line 148 "src/language.y"
-    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish(); finish(); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
+    { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish_fun((yyvsp[-6].sval)); assign_context((yyval.node)); free_label((yyvsp[-6].sval)); }
 #line 3335 "src/parser.c"
     break;
 
@@ -3480,13 +3480,13 @@ yyreduce:
 
   case 51:
 #line 198 "src/language.y"
-    { (yyval.node) = node_init(RETURN, "return-statement",     ENDARG); assign_context((yyval.node)); }
+    { (yyval.node) = node_init(RETURN, "return-statement",     ENDARG); assign_context((yyval.node)); tc_return((yyval.node)); }
 #line 3485 "src/parser.c"
     break;
 
   case 52:
 #line 199 "src/language.y"
-    { (yyval.node) = node_init(RETURN, "return-statement", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); }
+    { (yyval.node) = node_init(RETURN, "return-statement", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_return((yyval.node)); }
 #line 3491 "src/parser.c"
     break;
 

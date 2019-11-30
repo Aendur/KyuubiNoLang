@@ -31,6 +31,7 @@ struct attr {
 	int return_type;
 	bool defined;
 	bool temporary;
+	bool function_returns;
 	union {
 		int   ival;
 		char  cval;

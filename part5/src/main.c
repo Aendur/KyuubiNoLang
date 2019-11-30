@@ -7,6 +7,7 @@
 #include "table.h"
 #include "table-stack.h"
 // #include "actions.h"
+#include "lines.h"
 
 //#include <getopt.h>
 
@@ -20,8 +21,7 @@ Node * root = NULL;
 Tablestack * context_stack;
 int no_scope = 0;
 FILE * output;
-
-
+struct lines * output_lines;
 
 int main(int argc, char** argv) {
 	// handle cmd line arguments
@@ -47,7 +47,10 @@ int main(int argc, char** argv) {
 	// node_list = nl_init();
 
 	// Open output file
-	// output = fopen("k.tac", "w");
+	output = fopen("k.tac", "w");
+	
+	// Init output text buffer
+	output_lines = lines_init();
 	
 	// call GNU Bison
 	yyparse();
@@ -59,10 +62,6 @@ int main(int argc, char** argv) {
 		print_tree(root, 0);
 	}
 
-	//#if DEBUG
-	//nl_print(node_list);
-	//#endif
-
 	printf("------------------------------\n");
 	printf("SYMBOL TABLE\n");
 	printf("------------------------------\n");
@@ -72,13 +71,12 @@ int main(int argc, char** argv) {
 	printf("------------------------------\n");
 	printf("OUTPUT\n");
 	printf("------------------------------\n");
-
+	lines_write(output, output_lines);
 
 	// close input file
 	fclose(yyin);
-
 	// close output file;
-	// fclose(output);
+	fclose(output);
 
 	// release resources
 	yylex_destroy();
@@ -86,6 +84,7 @@ int main(int argc, char** argv) {
 	ts_free(&context_stack);
 	// nl_free(&node_list);
 	node_free_recursive(&root);
+	lines_free(&output_lines);
 
 
 	return 0;

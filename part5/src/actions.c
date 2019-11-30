@@ -14,7 +14,7 @@ extern int ncol1;
 extern Tablestack * context_stack;
 
 extern int yynerrs;
-static const int ERROR_MSG_BUFF = 256;
+static const int ERROR_MSG_BUFFER = 256;
 
 ////////////////////
 // ERROR HANDLERS //
@@ -24,22 +24,22 @@ void yyerror (char const * msg) {
 }
 
 void error_redefinition(const char * name) {
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s'", name);
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: redefinition of '%s'", name);
 	++yynerrs;
 	yyerror(msg);
 }
 
 void error_redefinition_fun(const char * name, const char * pars) {
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: redefinition of '%s' with argument types '%s'", name, pars);
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: redefinition of '%s' with argument types '%s'", name, pars);
 	++yynerrs;
 	yyerror(msg);
 }
 
 void error_redefinition_vf(const char * name) {
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: declaration of '%s' conflicts with its scope function name", name);
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: declaration of '%s' conflicts with its scope function name", name);
 	++yynerrs;
 	yyerror(msg);
 }
@@ -52,15 +52,22 @@ void error_not_variable(const char * name, int type) {
 		case ARRAY: typestr = "array"; break;
 		default: typestr = "unknown symbol class"; break;
 	}
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: '%s' is cannot be used as '%s'", name, typestr);
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: '%s' is cannot be used as '%s'", name, typestr);
 	++yynerrs;
 	yyerror(msg);
 }
 
 void error_undeclared(const char * name) {
-	char msg[ERROR_MSG_BUFF];
-	snprintf(msg, ERROR_MSG_BUFF, "semantic error: undeclared symbol '%s'", name);
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: undeclared symbol '%s'", name);
+	++yynerrs;
+	yyerror(msg);
+}
+
+void error_no_return(const char * name) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: non-void function '%s' needs a topmost return statement", name);
 	++yynerrs;
 	yyerror(msg);
 }
@@ -124,6 +131,7 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 		new_context = table_insert(context_stack->top, key);
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
+		if (type == VOID) { new_context->attr->function_returns = true; }
 		new_context->attr->arg_list = args;
 		new_context->root = context_stack->top;
 		ts_push(context_stack, new_context);
@@ -139,6 +147,15 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 Table * finish(void) {
 	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
 	Symbol * new_context = ts_pull(context_stack);
+	return  new_context;
+}
+
+Table * finish_fun(const char * name) {
+	if (context_stack->size < 3) { fprintf(stderr, "stack too short (fun)\n"); return NULL; }
+
+	Symbol * new_context = ts_pull(context_stack);
+	if (new_context->attr->function_returns == false) { error_no_return(name); }
+	new_context = ts_pull(context_stack);
 	return  new_context;
 }
 

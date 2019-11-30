@@ -16,6 +16,7 @@ void error_div_by_zero(void);
 void error_cannot_evaluate(void);
 void error_not_integer(void);
 void error_undeclared_fun(const char * name, const char * args);
+void error_no_context(void);
 
 // tools
 void tc_prune(Node * root);
@@ -26,6 +27,7 @@ char tc_type_chr(int stype, int rtype);
 // functions
 char * tc_fcall_args(Node * list_node, Node * expr_node);
 void tc_fcall(Node * node);
+void tc_return(Node * node);
 
 // array declaration with size
 void tc_arr_decl(Node * src);
