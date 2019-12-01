@@ -42,7 +42,6 @@ Symbol * tc_op_neg(Node * src) {
 		case FLOAT: tgt->attr->value.fval = -src->symbol->attr->value.fval; break;
 		default: error = true; error_type1(src->root->name, tc_type_str(type)); break;
 	}
-	
 	// prune this subtree tree if symbol was promoted (CTE)
 	if (promoted) { tc_prune(src->root); }
 	// otherwise,
@@ -52,27 +51,34 @@ Symbol * tc_op_neg(Node * src) {
 		// otherwise, generate code for this node (cannot perform CTE)
 		else { gen_unary("minus", tgt, src->symbol); } 
 	}
-
 	return tgt;
 }
 
 Symbol * tc_op_not(Node * src) {
 	Symbol * tgt = NULL;
+
+	// try to evaluate expression at compile time
 	bool promoted = tc_unary_promotion(&tgt, src->symbol);
 
 	bool error = false;
 	int type = src->symbol->attr->return_type;
+	// compile time evaluation
 	switch(type) {
-		case INT: tgt->attr->value.ival = !(src->symbol->attr->value.ival); break;
-		case CHAR: tgt->attr->value.ival = !(src->symbol->attr->value.cval); break;
-		case FLOAT: tgt->attr->value.ival = !(src->symbol->attr->value.fval); break;
+		case INT: tgt->attr->value.ival = !src->symbol->attr->value.ival; break;
+		case CHAR: tgt->attr->value.ival = !src->symbol->attr->value.cval; break;
+		case FLOAT: tgt->attr->value.ival = !src->symbol->attr->value.fval; break;
 		default: error = true; error_type1(src->root->name, tc_type_str(type)); break;
 	}
-	
-	if (tc_temp_symbol(tgt)) { tgt->attr->return_type = INT; } // bools are ints
-	if (promoted) { tc_prune(src->root); } // prune this subtree tree if symbol was promoted
-	else if(error) { table_free(&tgt); }   // clean up if there was an error
-
+	tgt->attr->return_type = INT; // bools are ints
+	// prune this subtree tree if symbol was promoted (CTE)
+	if (promoted) { tc_prune(src->root); }
+	// otherwise,
+	else {
+		// if there was an error, clean up
+		if(error) { if(tc_temp_symbol(tgt)) table_free(&tgt); }
+		// otherwise, generate code for this node (cannot perform CTE)
+		else { gen_unary("not", tgt, src->symbol); } 
+	}
 	return tgt;
 }
 
@@ -89,7 +95,12 @@ Symbol * tc_op_inc(Node * src) {
 		case FLOAT: src->symbol->attr->value.fval += 1; tgt = src->symbol; break;
 		default: error_type1(src->root->name, tc_type_str(type)); break;
 	}
-	// tc_cut_tree(src, 0);
+	//if(src->symbol->attr->defined) {
+	//	tc_prune(src->root);
+	//} else {
+	//	//gen_binary
+	//}
+	
 	return tgt;
 }
 
@@ -109,4 +120,5 @@ Symbol * tc_op_dec(Node * src) {
 	// tc_cut_tree(src, 0);
 	return tgt;
 }
+
 

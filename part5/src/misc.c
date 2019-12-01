@@ -9,6 +9,7 @@ char * str_ptr(const char * prefix, void* address, const char * suffix) {
 	if(suffix != NULL) { size += strlen(suffix); }
 	char * str = calloc(size, sizeof(char));
 
+	address = (void*) (((size_t) address << 44) >> 44);
 	if (prefix == NULL && suffix == NULL) {
 		snprintf(str, size, "%p", address);
 	} else if (prefix != NULL && suffix == NULL) {
