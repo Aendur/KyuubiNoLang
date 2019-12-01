@@ -192,8 +192,8 @@ iteration_statement
 	;
 
 return_statement
-	: RETURN                        { $$ = node_init(RETURN, "return-statement",     ENDARG); assign_context($$); tc_return($$); }
-	| RETURN assignment_expression  { $$ = node_init(RETURN, "return-statement", $2, ENDARG); assign_context($$); tc_return($$); }
+	: RETURN                        { $$ = node_init(RETURN, "return-statement",     ENDARG); assign_context($$); tc_evaluate($$); }
+	| RETURN assignment_expression  { $$ = node_init(RETURN, "return-statement", $2, ENDARG); assign_context($$); tc_evaluate($$); }
 	;
 
 assignment_expression
@@ -277,7 +277,6 @@ type
 	;
 
 %%
-
 void free_label(const char * str) {
 	free((void*) str);
 }

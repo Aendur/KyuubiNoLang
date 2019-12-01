@@ -14,7 +14,7 @@ char tc_type_chr(int stype, int rtype);
 // functions
 char * tc_fcall_args(Node * list_node, Node * expr_node);
 void tc_fcall(Node * node);
-void tc_return(Node * node);
+Symbol * tc_return(Node * src);
 
 // array declaration with size
 void tc_arr_decl(Node * src);

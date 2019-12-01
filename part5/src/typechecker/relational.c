@@ -33,21 +33,21 @@ Symbol * tc_op_lt(Node * src1, Node * src2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival < op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival < op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival < op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval < op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval < op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval < op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval < op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval < op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval < op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
-		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
 	tgt->attr->return_type = INT; // bools are ints
@@ -81,21 +81,21 @@ Symbol * tc_op_le(Node * src1, Node * src2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival <= op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival <= op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival <= op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval <= op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval <= op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval <= op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval <= op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval <= op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval <= op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
-		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
 	tgt->attr->return_type = INT; // bools are ints
@@ -129,21 +129,21 @@ Symbol * tc_op_ge(Node * src1, Node * src2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival >= op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival >= op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival >= op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval >= op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval >= op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval >= op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval >= op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval >= op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval >= op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
-		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
 	tgt->attr->return_type = INT; // bools are ints
@@ -177,21 +177,21 @@ Symbol * tc_op_gt(Node * src1, Node * src2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival > op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival > op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival > op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval > op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval > op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval > op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval > op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval > op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval > op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
-		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
 	tgt->attr->return_type = INT; // bools are ints
@@ -225,21 +225,21 @@ Symbol * tc_op_eq(Node * src1, Node * src2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival == op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival == op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival == op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval == op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval == op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval == op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval == op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval == op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval == op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
-		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
 	tgt->attr->return_type = INT; // bools are ints
@@ -273,21 +273,21 @@ Symbol * tc_op_ne(Node * src1, Node * src2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival != op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival != op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival != op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case CHAR: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval != op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval != op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval != op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
 		case FLOAT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval != op2->attr->value.ival); break;
 			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval != op2->attr->value.cval); break;
 			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval != op2->attr->value.fval); break;
-			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 		} break;
-		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
 	tgt->attr->return_type = INT; // bools are ints

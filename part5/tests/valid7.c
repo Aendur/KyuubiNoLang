@@ -1,16 +1,22 @@
 int f(int x) {
-//	int p1 = + + + 1;
-//	int p2 = + + + x;
-//	int p3 = + + + p1;
-	int n1 = - - - - - - - - - 1;
-	int n2 = - - - - - - - - - n1;
-	int n3 = - - - - - - - - - x;
-//	int b1 = ! ! ! 1;
-//	int b2 = ! ! ! x;
-//	int b3 = ! ! ! b1;
+	// int p1 = + + + 1;
+	// int p2 = + + + x;
+	// int p3 = + + + p1;
+	int n1 = - - - 1;
+	int n2 = - - - n1;
+	int n3 = - - - x;
+	int n4 = - - - n3;
+	// int b1 = ! ! ! 1;
+	// int b2 = ! ! ! x;
+	// int b3 = ! ! ! b1;
 	// int c1 = ++ ++ ++ ++ ++ x;
 	// int d1 = -- -- -- -- -- x;
 	return 5;
+	return n1;
+	return n2;
+	return n3;
+	return n4;
+	return x;
 }
 
 // float f(float x) {

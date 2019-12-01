@@ -7,7 +7,7 @@ bison:
 	bison -Wall src/language.y
 
 dbg:
-	gcc -okyu -std=c18 -m64 -g -Wall -Wextra -DDEBUG \
+	gcc -okyu -std=c18 -m64 -g -Wall -Wextra -Isrc -DDEBUG \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \
@@ -17,19 +17,19 @@ dbg:
 	src/parser.c      \
 	src/scanner.c     \
 	src/actions.c     \
-	src/typechecker0.c \
-	src/typechecker1.c \
-	src/typechecker2.c \
-	src/typechecker2a.c \
-	src/typechecker2l.c \
-	src/typechecker2r.c \
+	src/typechecker/base.c \
+	src/typechecker/unary.c \
+	src/typechecker/binary.c \
+	src/typechecker/arithmetic.c \
+	src/typechecker/logical.c \
+	src/typechecker/relational.c \
 	src/misc.c \
 	src/lines.c \
 	src/error.c \
 	src/generator.c \
 
 rel:
-	gcc -okyu -std=c18 -m64 -O3 \
+	gcc -okyu -std=c18 -m64 -O3 -Isrc \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \
@@ -39,12 +39,12 @@ rel:
 	src/parser.c      \
 	src/scanner.c     \
 	src/actions.c     \
-	src/typechecker0.c \
-	src/typechecker1.c \
-	src/typechecker2.c \
-	src/typechecker2a.c \
-	src/typechecker2l.c \
-	src/typechecker2r.c \
+	src/typechecker/base.c \
+	src/typechecker/unary.c \
+	src/typechecker/binary.c \
+	src/typechecker/arithmetic.c \
+	src/typechecker/logical.c \
+	src/typechecker/relational.c \
 	src/misc.c \
 	src/lines.c \
 	src/error.c \

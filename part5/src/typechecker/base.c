@@ -77,9 +77,12 @@ char tc_type_chr(int stype, int rtype) {
 void tc_evaluate(Node * node) {
 	if (node == NULL) { fprintf(stderr, "evaluate null node\n"); return; }
 
-	//fprintf(stderr, "unary op does not have 1 operand\n"); return NULL; 
-
-	if (node->nleaves == 1) {
+	if (node->nleaves == 0) {
+		switch(node->type) {
+			case RETURN: node->symbol = tc_return(NULL); break; //node->symbol = tc_op_pos(op1); break;
+			default: fprintf(stderr, "unknown 0-ary operator\n"); break;
+		}
+	} else if (node->nleaves == 1) {
 		Node * op1 = node->leaf[0]; 
 		if (op1 == NULL) {fprintf(stderr, "null unary operand node\n"); return; }
 		if (op1->symbol == NULL) {fprintf(stderr, "null unary operand\n"); return; }
@@ -89,6 +92,7 @@ void tc_evaluate(Node * node) {
 			case OP_NOT: node->symbol = tc_op_not(op1); break;
 			case OP_INC: node->symbol = tc_op_inc(op1); break;
 			case OP_DEC: node->symbol = tc_op_dec(op1); break;
+			case RETURN: node->symbol = tc_return(op1); break;
 			default: fprintf(stderr, "unknown unary operator\n"); break;
 		}
 	} else if (node->nleaves == 2) {
@@ -206,32 +210,97 @@ void tc_fcall(Node * node) {
 	}
 }
 
-void tc_return(Node * node) {
-	if (node == NULL) { fprintf(stderr, "return null node\n"); return; }
-
-	Table * context = node->context;
-	if (context == NULL) { error_no_context(); return; }
+Symbol * tc_return(Node * op1) {
+	Symbol * context = context_stack->top;
+	if (context == NULL) { error_no_context(); return NULL; }
 	
-	if (node->nleaves == 0) {
-		if (context->attr->return_type == VOID) {
-			node->context->attr->function_returns = true;
-			gen_function_end(node->context, NULL);
-		} else {
-			error_type2(node, tc_type_str(context->attr->return_type), tc_type_str(VOID));
-		}
-	} else if (node->nleaves == 1) {
-		assert(node->leaf[0] != NULL);
-		assert(node->leaf[0]->symbol != NULL);
-		Symbol * expr = node->leaf[0]->symbol;
+	Symbol * tgt = NULL;
 
-		if (context->attr->return_type == expr->attr->return_type) {
-			node->context->attr->function_returns = true;
-			gen_function_end(node->context, expr);
+	if (op1 == NULL) {
+		if (context->attr->return_type == VOID) {
+			context->attr->function_returns = true;
+			gen_function_end(context, NULL);
 		} else {
-			error_type2(node, tc_type_str(context->attr->return_type), tc_type_str(expr->attr->return_type));
+			error_type2("return type", tc_type_str(context->attr->return_type), tc_type_str(VOID));
 		}
 	} else {
-		fprintf(stderr, "cannot return more than one expression\n");
+		assert(op1->symbol != NULL);
+		Symbol * expr = op1->symbol;
+
+		if (context->attr->return_type == expr->attr->return_type) {
+			context->attr->function_returns = true;
+			
+			if(expr->attr->defined == true) {
+				//tgt = expr;
+				tgt = add_symbol(CONSTANT, expr->attr->return_type, str_ptr("return", op1->root, NULL));
+				// memcpy(&(tgt->attr->value), &(expr->attr->value), sizeof(tgt->attr->value));
+				// tgt->attr->defined = true;
+				// tgt->attr->temporary = true;
+				// attr_print(tgt->attr);
+				attr_copy(tgt->attr, expr->attr);
+				gen_set_defined_code(tgt);
+				table_remove(context, expr->key);
+				tc_prune(op1->root);
+			} else {
+				tgt = expr;
+			}
+			gen_function_end(context, tgt);
+		} else {
+			error_type2("return type", tc_type_str(context->attr->return_type), tc_type_str(expr->attr->return_type));
+		}
 	}
+
+	return tgt;
 }
 
+/*
+Symbol * tc_op_assign(Node * tgt1, Node * src2) {
+	Node * node = tgt1->root;
+	Symbol * tgt = tgt1->symbol;
+	if (tgt->attr->symbol_type == CONSTANT) {
+		error_lvalue1(node);
+		return NULL;
+	}
+	Symbol * op2 = src2->symbol;
+
+	int type1 = tgt->attr->return_type;
+	int type2 = op2->attr->return_type;
+	bool error = false;
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: tgt->attr->value.ival = op2->attr->value.ival; break;
+			case CHAR: tgt->attr->value.ival = op2->attr->value.cval; break;
+			case FLOAT: error = true; error_cast(tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: error = true; error_cast(tc_type_str(type1), tc_type_str(type2)); break;
+			case CHAR: tgt->attr->value.cval = op2->attr->value.cval; break;
+			case FLOAT: error = true; error_cast(tc_type_str(type1), tc_type_str(type2)); break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: tgt->attr->value.fval = op2->attr->value.ival; break;
+			case CHAR: tgt->attr->value.fval = op2->attr->value.cval; break;
+			case FLOAT: tgt->attr->value.fval = op2->attr->value.fval; break;
+			default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+		} break;
+		default: error = true; error_type2(node, tc_type_str(type1), tc_type_str(type2)); break;
+	}
+
+	// prune this subtree tree if symbol was promoted
+	if (op2->attr->defined) {
+		tgt->attr->defined = true;
+		tc_prune(node);
+		strcpy(tgt->attr->code, op2->attr->code);
+		if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); }
+	} else {
+		strcpy(tgt->attr->code, op2->attr->code);
+	}
+
+	// clean up if there was an error
+	if (error) { tgt = NULL; }
+
+	return tgt;
+}
+*/

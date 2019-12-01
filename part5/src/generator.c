@@ -9,6 +9,8 @@
 
 extern struct lines * output_lines;
 
+// tc_pull_operand
+
 void gen_function_begin(Symbol * args) {
 	char * label = function_label(args);
 	if (label != NULL) {
@@ -17,14 +19,28 @@ void gen_function_begin(Symbol * args) {
 	}
 }
 
+void gen_set_defined_code(Symbol * symbol) {
+	if(symbol->attr->defined) {
+		switch(symbol->attr->return_type) {
+			case INT: snprintf(symbol->attr->code, sizeof(symbol->attr->code), "%d", symbol->attr->value.ival); break;
+			case CHAR: snprintf(symbol->attr->code, sizeof(symbol->attr->code), "'%c'", symbol->attr->value.cval); break;
+			case FLOAT: snprintf(symbol->attr->code, sizeof(symbol->attr->code), "%f", symbol->attr->value.fval); break;
+			default: fprintf(stderr, "dont know how to set this type\n"); break;
+		}
+	}
+}
+
 void gen_function_end(Symbol * args, Symbol * expr) {
-	char msg[24] = "\treturn";
-	
+	//if (expr != NULL && expr->attr->defined)  {
+	//	
+	//}
+
+	char msg[40] = "\treturn";
 	if (args->attr->function_returns) {
 		switch(args->attr->return_type) {
-			case INT: strncat(strncat(msg, " ", 23), expr->key, 23); break;
-			case CHAR: strncat(strncat(msg, " ", 23), expr->key, 23); break;
-			case FLOAT: strncat(strncat(msg, " ", 23), expr->key, 23); break;
+			case INT: strncat(strncat(msg, " ", sizeof(msg)-1), expr->attr->code, sizeof(msg)-1); break;
+			case CHAR: strncat(strncat(msg, " ", sizeof(msg)-1), expr->attr->code, sizeof(msg)-1); break;
+			case FLOAT: strncat(strncat(msg, " ", sizeof(msg)-1), expr->attr->code, sizeof(msg)-1); break;
 			case VOID: break; 
 			default: fprintf(stderr, "cant return this type\n"); break;
 		}

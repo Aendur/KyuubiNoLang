@@ -58,16 +58,16 @@ void warning_no_return(const char * name) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void error_type1(Node * node, const char * type1) {
+void error_type1(const char * op, const char * type1) {
 	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s requires 'int', 'char' or 'float' types, not '%s'", node->name, type1);
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: %s requires 'int', 'char' or 'float' types, not '%s'", op, type1);
 	++yynerrs;
 	yyerror(msg);
 }
 
-void error_type2(Node * node, const char * type1, const char * type2) {
+void error_type2(const char * op, const char * type1, const char * type2) {
 	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: incompatible types, '%s' %s '%s'", type1, node->name, type2);
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: incompatible types, '%s' %s '%s'", type1, op, type2);
 	++yynerrs;
 	yyerror(msg);
 }

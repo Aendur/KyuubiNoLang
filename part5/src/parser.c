@@ -3429,13 +3429,13 @@ yyreduce:
 
   case 47:
 #line 195 "src/language.y"
-    { (yyval.node) = node_init(RETURN, "return-statement",     ENDARG); assign_context((yyval.node)); tc_return((yyval.node)); }
+    { (yyval.node) = node_init(RETURN, "return-statement",     ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
 #line 3434 "src/parser.c"
     break;
 
   case 48:
 #line 196 "src/language.y"
-    { (yyval.node) = node_init(RETURN, "return-statement", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_return((yyval.node)); }
+    { (yyval.node) = node_init(RETURN, "return-statement", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
 #line 3440 "src/parser.c"
     break;
 
@@ -3937,7 +3937,6 @@ yyreturn:
   return yyresult;
 }
 #line 279 "src/language.y"
-
 
 void free_label(const char * str) {
 	free((void*) str);
