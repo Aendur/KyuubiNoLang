@@ -13,7 +13,6 @@ extern int yynerrs;
 //static const int ERROR_MSG_BUFFER=256;
 extern Tablestack * context_stack;
 
-
 //////////////////////////////////
 // BINARY ARITHMETIC OPERATIONS //
 //////////////////////////////////
