@@ -44,11 +44,20 @@ bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2) {
 }
 
 bool div_by_zero(Symbol * den) {
-	switch(den->attr->return_type) {
-		case INT: if (den->attr->value.ival == 0) { error_div_by_zero(); return true; } else { return false; }
-		case CHAR: if (den->attr->value.cval == 0) { error_div_by_zero(); return true; } else { return false; }
-		case FLOAT: if (den->attr->value.fval == 0.0f) { error_div_by_zero(); return true; } else { return false; }
-		default: return false;
+	if (den->attr->defined) {
+		switch(den->attr->return_type) {
+			case INT: if ((int) den->attr->value.ival == 0) { error_div_by_zero(); return true; } else { return false; }
+			case CHAR: if ((int) den->attr->value.cval == 0) { error_div_by_zero(); return true; } else { return false; }
+			case FLOAT: if ((int) den->attr->value.fval == 0) { error_div_by_zero(); return true; } else { return false; }
+			default: return false;
+		}
+	} else {
+		switch(den->attr->return_type) {
+			case INT: den->attr->value.ival = 1; return false;
+			case CHAR: den->attr->value.cval = (char) 1; return false;
+			case FLOAT: den->attr->value.fval = 1.0f; return false;
+			default: return false;
+		}
 	}
 }
 

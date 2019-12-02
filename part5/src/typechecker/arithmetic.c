@@ -96,7 +96,7 @@ Symbol * tc_op_sub(Node * src1, Node * src2) {
 
 	// if CTE was not possible, generate code for this node
 	if (!promoted && !error) {
-		gen_binary("add", tgt, src1->symbol, src2->symbol);
+		gen_binary("sub", tgt, src1->symbol, src2->symbol);
 	}
 	// clean up
 	tc_prune(node);
@@ -140,7 +140,7 @@ Symbol * tc_op_mul(Node * src1, Node * src2) {
 
 	// if CTE was not possible, generate code for this node
 	if (!promoted && !error) {
-		gen_binary("add", tgt, src1->symbol, src2->symbol);
+		gen_binary("mul", tgt, src1->symbol, src2->symbol);
 	}
 	// clean up
 	tc_prune(node);
@@ -188,7 +188,7 @@ Symbol * tc_op_div(Node * src1, Node * src2) {
 
 	// if CTE was not possible, generate code for this node
 	if (!promoted && !error) {
-		gen_binary("add", tgt, src1->symbol, src2->symbol);
+		gen_binary("div", tgt, src1->symbol, src2->symbol);
 	}
 	// clean up
 	tc_prune(node);
@@ -236,7 +236,7 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 
 	// if CTE was not possible, generate code for this node
 	if (!promoted && !error) {
-		gen_binary("add", tgt, src1->symbol, src2->symbol);
+		gen_binary("mod", tgt, src1->symbol, src2->symbol);
 	}
 	// clean up
 	tc_prune(node);
