@@ -9,7 +9,14 @@
 
 extern struct lines * output_lines;
 
-// tc_pull_operand
+void gen_asm(const char * str) {
+	int size = strlen(str);
+	char * new_str = malloc(size+1);
+	strncpy(new_str, str+1, size);
+	new_str[size-2] = 0;
+	lines_append(output_lines, new_str);
+	free(new_str);
+}
 
 void gen_function_begin(Symbol * args) {
 	char * label = function_label(args);

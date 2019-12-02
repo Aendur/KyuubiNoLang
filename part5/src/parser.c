@@ -3399,7 +3399,7 @@ yyreduce:
 
   case 42:
 #line 182 "src/language.y"
-    { printf("%s\n", (yyvsp[-1].sval)); free_label((yyvsp[-1].sval)); }
+    { tc_asm((yyvsp[-1].sval)); free_label((yyvsp[-1].sval)); }
 #line 3404 "src/parser.c"
     break;
 

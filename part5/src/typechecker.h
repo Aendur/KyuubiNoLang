@@ -6,7 +6,7 @@
 
 // tools
 void tc_prune(Node * root);
-void tc_graft(Node * root, int index);
+// void tc_graft(Node * root, int index);
 bool tc_temp_symbol(Symbol * symbol);
 const char * tc_type_str(int type);
 char tc_type_chr(int stype, int rtype);
@@ -15,6 +15,9 @@ char tc_type_chr(int stype, int rtype);
 char * tc_fcall_args(Node * list_node, Node * expr_node);
 void tc_fcall(Node * node);
 Symbol * tc_return(Node * src);
+
+// asm
+void tc_asm(const char * str);
 
 // array declaration with size
 void tc_arr_decl(Node * src);

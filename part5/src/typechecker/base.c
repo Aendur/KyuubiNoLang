@@ -24,16 +24,16 @@ void tc_prune(Node * root) {
 	}
 }
 
-void tc_graft(Node * root, int index) {
-	if (root == NULL) { fprintf(stderr, "null root\n"); return; }
-	if (index >= root->nleaves) { fprintf(stderr, "not enought leaves\n"); return; }
-	if (root->leaf[index] == NULL) { fprintf(stderr, "null leaf\n"); return; }
-	if (root->leaf[index]->nleaves != 1) { fprintf(stderr, "cannot graft n:1\n"); return; }
+// void tc_graft(Node * root, int index) {
+// 	if (root == NULL) { fprintf(stderr, "null root\n"); return; }
+// 	if (index >= root->nleaves) { fprintf(stderr, "not enought leaves\n"); return; }
+// 	if (root->leaf[index] == NULL) { fprintf(stderr, "null leaf\n"); return; }
+// 	if (root->leaf[index]->nleaves != 1) { fprintf(stderr, "cannot graft n:1\n"); return; }
 
-	Node * leaf = root->leaf[index]->leaf[0];
-	node_free(&root->leaf[index]);
-	root->leaf[index] = leaf;
-}
+// 	Node * leaf = root->leaf[index]->leaf[0];
+// 	node_free(&root->leaf[index]);
+// 	root->leaf[index] = leaf;
+// }
 
 bool tc_temp_symbol(Symbol * symbol) {
 	bool a = symbol->attr->temporary;
@@ -67,6 +67,12 @@ char tc_type_chr(int stype, int rtype) {
 		ret -= 0x20;
 	}
 	return ret;
+}
+
+void tc_asm(const char * str) {
+	if (str != NULL) {
+		gen_asm(str);
+	}
 }
 
 /////////////////

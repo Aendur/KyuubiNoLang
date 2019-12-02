@@ -34,7 +34,9 @@ Node * node_init(int type, const char * name, ...) {
 	// count number of args
 	n0->nleaves = 0;
 	Node * n1;
-	while((n1 = va_arg(argn, Node*)) != ENDARG) { ++n0->nleaves; }
+	while((n1 = va_arg(argn, Node*)) != ENDARG) {
+		if (n1 != NULL) ++n0->nleaves;
+	}
 	va_end(argn);
 
 	// #ifdef DEBUG
@@ -44,16 +46,19 @@ Node * node_init(int type, const char * name, ...) {
 	// append nodes
 	if (n0->nleaves > 0) {
 		n0->leaf = malloc(n0->nleaves * sizeof(Node*));
-		for(int l = 0; l < n0->nleaves; ++l) {
+
+		int l = 0;		
+		while(l < n0->nleaves) {
 			n0->leaf[l] = NULL;
 			n1 = va_arg(args, Node*);
 
 			if (n1 == ENDARG) {
-				fprintf(stderr, "endarg child\n");
+				fprintf(stderr, "%s (%d): init endarg child\n", __FILE__, __LINE__);
 			} else if (n1 == NULL) {
-				//fprintf(stderr, "null child\n");
+				fprintf(stderr, "%s (%d): init null child\n", __FILE__, __LINE__);
 			} else {
-				n0->leaf[l] = n1;
+				//fprintf(stderr, "%s (%d): init valid child\n", __FILE__, __LINE__);
+				n0->leaf[l++] = n1;
 				n1->root = n0;
 			}
 		}

@@ -179,7 +179,7 @@ statement
 	;
 
 inline_asm
-	: ASM '(' STRING_LITERAL ')'   { printf("%s\n", $3); free_label($3); }
+	: ASM '(' STRING_LITERAL ')'   { tc_asm($3); free_label($3); }
 
 conditional_statement
 	: IF '(' assignment_expression ')' compound_statement                          { $$ = node_init(IF  , "if-statement"      , $3, $5,     ENDARG); assign_context($$); } 
