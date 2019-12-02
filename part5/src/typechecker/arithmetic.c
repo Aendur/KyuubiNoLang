@@ -209,6 +209,9 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 	int type2 = op2->attr->return_type;
 
 	bool error = false;
+	if (promoted) {
+		EVALUATE(OP_MOD,INT)
+	}
 	switch(type1) {
 		case INT: switch(type2) {
 			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (int) op1->attr->value.ival % (int) op2->attr->value.ival; break;
@@ -243,3 +246,5 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
+
+

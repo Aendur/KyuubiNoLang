@@ -1,29 +1,59 @@
-#include <stdio.h>
+//#include <stdio.h>
 
-int g(int a, int b) {
-	return a+b;
+#define OPERATOR(op) OPERATOR_##op
+#define OPERATOR_OP_ADD +
+#define OPERATOR_OP_SUB -
+#define OPERATOR_OP_MUL *
+#define OPERATOR_OP_DIV /
+#define OPERATOR_OP_MOD %
+
+#define ATTR_VTYPE(type)   ATTR_VTYPE_##type
+#define ATTR_VTYPE_INT     attr->value.ival
+#define ATTR_VTYPE_CHAR    attr->value.cval
+#define ATTR_VTYPE_FLOAT   attr->value.fval
+#define CAST_TYPE(type)    CAST_TYPE_##type
+#define CAST_TYPE_INT      (int)
+#define CAST_TYPE_CHAR     (char)
+#define CAST_TYPE_FLOAT    (float)
+#define CAST_TYPE_VOID     
+
+#define EVAL_CASE(op,ect0,ecast,ect1,ect2) \
+	case ect2: tgt->attr->return_ect = ect0; tgt->ATTR_VTYPE(ect0) = (CAST_TYPE(ecast) op1->ATTR_VTYPE(ect1) OPERATOR(op) CAST_TYPE(ecast) op2->ATTR_VTYPE(ect1)); break;
+
+#define EVAL_CASES_INT(op) \
+	case INT: switch(type2) { \
+		EVAL_CASE(op,INT,INT,INT,INT) \
+		EVAL_CASE(op,INT,INT,INT,CHAR) \
+		EVAL_CASE(op,FLOAT,FLOAT,INT,FLOAT) \
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; \
+	} break; \
+
+#define EVAL_CASES_CHAR(op) \
+	case CHAR: switch(type2) { \
+		EVAL_CASE(op,INT,INT,CHAR,INT) \
+		EVAL_CASE(op,CHAR,CHAR,CHAR,CHAR) \
+		EVAL_CASE(op,FLOAT,FLOAT,CHAR,FLOAT) \
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; \
+	} break; \
+
+#define EVAL_CASES_CHAR(op) \
+	case FLOAT: switch(type2) { \
+		EVAL_CASE(op,FLOAT,FLOAT,FLOAT,INT) \
+		EVAL_CASE(op,FLOAT,FLOAT,FLOAT,CHAR) \
+		EVAL_CASE(op,FLOAT,FLOAT,FLOAT,FLOAT) \
+		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; \
+	} break; \
+
+
+#define EVALUATE(op,etype) \
+switch(type1) { \
+	EVAL_CASES_INT(op) \
+	EVAL_CASES_CHAR(op) \
+	EVAL_CASES_FLOAT(op) \
+	default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; \
 }
 
-int reduce(int vec[], int(*lambda)(int,int) ) {
-//int reduce(int vec[], int lambda (int a,int b) {return a+b} ) {
-	int x = vec[0];
-	x = lambda(x, vec[1]);
-	x = lambda(x, vec[2]);
-	return x;
-}
-
-int main(int argc, char** argv) {
-	// printf("%d\n", 4.9f || 0.0f);
-	// printf("%d\n", 4.9f && 0.0f);
-	// printf("%d\n", 0.0f || 0.0f);
-	// printf("%d\n", 0.0f && 0.0f);
-	// printf("%d\n", 4.9f || 1.0f);
-	// printf("%d\n", 4.9f && 1.0f);
-	int v[3] = {1,2,3};
-	printf("%d\n", reduce(v, &g));
-
-	char str[512];
-	printf("%d\n", sizeof(str));
-	return 0;
+int main() {
+	EVALUATE(OP_MOD,INT,);
 }
 

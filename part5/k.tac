@@ -1,26 +1,24 @@
 .code
-matToIntCast:
-  mov $1, #1    // tamanho da matriz
-  mema $2, $1    // aloca matriz de mesmo tamanho
-  mov $3, $1    // iterador
-  sub $3, $3, 1  // se tem tamanho n, comece pela posicao n-1
-  // setar todas as posicoes de memoria para inteiro
-start:      
-  mov $4, #0[$3]  
-  println $4        
-  fltoint $5, $4  
-  mov #0[$3], $5
-  brz end, $3
-  sub $3, $3, 1        
-  jump start
-end:
-  return $2
-    // calculando indice de acesso
 main:
-  mema $0, 2
-  mov $0[0], 1.11
-  mov $0[1], 5.4
-  push $0
-  param 2
-  call matToIntCast, 2
+	mov $0, 'a'
+	mov $1, 'b'
+
+	mov $2, 1
+	mov $3, 2
+
+	mov $4, 1.5
+	mov $5, 2.5
+
+	slt $6, $0, $1
+	println $6
+	
+	slt $7, $2, $3
+	println $7
+	
+	slt $8, $4, $5
+	println $8
+
+
+
+
 
