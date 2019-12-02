@@ -1,0 +1,27 @@
+# 1 "a.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 32 "<command-line>" 2
+# 1 "a.c"
+# 80 "a.c"
+int main() {
+ switch(type1) { 
+	case INT: switch(type2) { 
+	case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = ((int) op1->attr->value.ival + (int) op2->attr->value.ival); break; 
+	case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = ((int) op1->attr->value.ival + (int) op2->attr->value.ival); break; 
+	case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = ((float) op1->attr->value.ival + (float) op2->attr->value.ival); break; 
+	default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; } break; 
+	case CHAR: switch(type2) { 
+	case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = ((int) op1->attr->value.cval + (int) op2->attr->value.cval); break; 
+	case CHAR: tgt->attr->return_type = CHAR; tgt->attr->value.cval = ((char) op1->attr->value.cval + (char) op2->attr->value.cval); break; 
+	case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = ((float) op1->attr->value.cval + (float) op2->attr->value.cval); break; 
+	default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; } break; 
+	case FLOAT: switch(type2) { 
+	case INT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = ((float) op1->attr->value.fval + (float) op2->attr->value.fval); break; 
+	case CHAR: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = ((float) op1->attr->value.fval + (float) op2->attr->value.fval); break; 
+	case FLOAT: tgt->attr->return_type = FLOAT; tgt->attr->value.fval = ((float) op1->attr->value.fval + (float) op2->attr->value.fval); break; 
+	default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; } break; 
+	default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break; };
+}

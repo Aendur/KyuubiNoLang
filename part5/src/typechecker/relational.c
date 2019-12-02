@@ -1,4 +1,5 @@
 #include "typechecker.h"
+#include "evaluator.h"
 #include "generator.h"
 #include "parser.h"
 #include "misc.h"
