@@ -11,6 +11,7 @@
 #include <string.h>
 
 extern int yynerrs;
+extern void * kindex;
 //static const int ERROR_MSG_BUFFER=256;
 extern Tablestack * context_stack;
 
@@ -29,22 +30,17 @@ Symbol * tc_pull_operand(Symbol * op) {
 }
 
 bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2) {
-	if ((*op1)->attr->defined && (*op2)->attr->defined) {
-		if (tc_temp_symbol(*op1) && tc_temp_symbol(*op2)) {
-			(*op2) = tc_pull_operand(*op2);
-			(*tgt) = (*op1);
-			return true;
-		} else {
-			(*op2) = tc_pull_operand(*op2);
-			(*tgt) = add_symbol(CONSTANT, (*op1)->attr->return_type, NULL);
-			(*tgt)->attr->defined = true;
-			return true;
-		}
-	} else {
-		(*tgt) = add_symbol(CONSTANT, (*op1)->attr->return_type, NULL);
-		(*tgt)->attr->defined = false;
-		return false;
-	}
+	bool defined = ((*op1)->attr->defined && (*op2)->attr->defined);
+	bool temp2 = tc_temp_symbol(*op2);
+	bool temp1 = tc_temp_symbol(*op1);
+	
+	if (temp2) { (*op2) = table_retire(context_stack->top, (*op2)->key); }
+	if (temp1) { (*op1) = table_retire(context_stack->top, (*op1)->key); }
+	
+	(*tgt) = add_symbol(CONSTANT, (*op1)->attr->return_type, NULL);
+	(*tgt)->attr->defined = defined;
+	
+	return defined;
 }
 
 bool div_by_zero(Symbol * den) {

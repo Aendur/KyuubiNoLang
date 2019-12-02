@@ -256,11 +256,11 @@ postfix_expression
 
 primary_expression
 	: IDENTIFIER 						{ $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); retrieve($$, $$->name, VARIABLE); free_label($1); } // use var
-	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, STRING, NULL); set_symbol_str_sval($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, FLOAT , NULL); set_symbol_str_fval($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_str_ival($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, INT   , NULL); set_symbol_str_hval($$->symbol, $1); free_label($1); } // rvalue
-	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol(CONSTANT, CHAR  , NULL); set_symbol_str_cval($$->symbol, $1); free_label($1); } // rvalue
+	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(STRING_LITERAL, $1); free_label($1); } // rvalue
+	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_FLOAT, $1); free_label($1); } // rvalue
+	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_INT  , $1); free_label($1); } // rvalue
+	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_HEX  , $1); free_label($1); } // rvalue
+	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_CHAR , $1); free_label($1); } // rvalue
 	| '(' assignment_expression ')' 	{ $$ = $2; }
 	;
 

@@ -5,6 +5,7 @@
 #include "table-stack.h"
 #include "arg-list.h"
 #include "error.h"
+#include "misc.h"
 #include "generator.h"
 #include <stdio.h>
 #include <string.h>
@@ -164,18 +165,7 @@ void add_symbol_args(struct arg_list * args) {
 Symbol * add_symbol_var(int type, const char * key) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add var with incompatible type %d\n", type); return NULL; }
 	if(key  == NULL) { fprintf(stderr, "add var with null key\n"); return NULL; }
-
 	return add_symbol(VARIABLE, type, key);	
-	// Symbol * symbol = table_find(context_stack->top, key);
-	// if (symbol == NULL) {
-	// 	symbol = table_insert(context_stack->top, key);
-	// 	symbol->attr->symbol_type = VARIABLE;
-	// 	symbol->attr->return_type = type;
-	// 	return symbol;
-	// } else {
-	// 	error_redefinition(key);
-	// 	return NULL;
-	// }
 }
 
 Symbol * add_symbol_arr(int type, const char * key, int length) {
@@ -185,16 +175,23 @@ Symbol * add_symbol_arr(int type, const char * key, int length) {
 	Symbol * s = add_symbol(ARRAY, type, key);
 	s->attr->length = length;
 	return s;
-	// Symbol * symbol = table_find(context_stack->top, key);
-	// if (symbol == NULL) {
-	// 	symbol = table_insert(context_stack->top, key);
-	// 	symbol->attr->symbol_type = ARRAY;
-	// 	symbol->attr->return_type = type;
-	// 	return symbol;
-	// } else {
-	// 	error_redefinition(key);
-	// 	return NULL;
-	// }
+}
+
+Symbol * add_symbol_cte(int type, const char * val) {
+	if(val == NULL) { fprintf(stderr, "add cte with null val\n"); return NULL; }
+	static void * kindex = 0;
+	char * key = str_ptr("$k", kindex, NULL);
+	Symbol * s = NULL;
+	switch(type) {
+		case STRING_LITERAL: s = add_symbol(CONSTANT, STRING, NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_sval(s, val); s->attr->temporary = true; } break;
+		case CONSTANT_FLOAT: s = add_symbol(CONSTANT, FLOAT , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_fval(s, val); s->attr->temporary = true; } break;
+		case CONSTANT_INT  : s = add_symbol(CONSTANT, INT   , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_ival(s, val); s->attr->temporary = true; } break;
+		case CONSTANT_HEX  : s = add_symbol(CONSTANT, INT   , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_hval(s, val); s->attr->temporary = true; } break;
+		case CONSTANT_CHAR : s = add_symbol(CONSTANT, CHAR  , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_cval(s, val); s->attr->temporary = true; } break;
+		default: fprintf(stderr, "add cte with incompatible type %d\n", type); break;
+	}
+	free(key);
+	return s;
 }
 
 Symbol * add_symbol(int symbol_type, int data_type, const char * key) {

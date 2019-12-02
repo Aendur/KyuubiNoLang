@@ -8,6 +8,7 @@ void gen_function_begin(Symbol * args);
 void gen_function_end(Symbol * args, Symbol * expr);
 void gen_set_defined_code(Symbol * symbol);
 void gen_unary(const char * instruction, Symbol * tgt, Symbol * src);
+void gen_binary(const char * instruction, Symbol * tgt, Symbol * src1, Symbol * src2);
 
 #endif
 

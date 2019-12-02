@@ -359,6 +359,7 @@ void attr_print(struct attr * attr) {
 
 		printf(", arg_num=%d", attr->arg_num);
 
+		printf(", temp=%d", attr->temporary);
 
 		char * args = al_key(attr->arg_list);
 		printf(", args=%s", args);

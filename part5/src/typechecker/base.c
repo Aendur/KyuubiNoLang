@@ -37,11 +37,9 @@ void tc_graft(Node * root, int index) {
 
 bool tc_temp_symbol(Symbol * symbol) {
 	bool a = symbol->attr->temporary;
-	bool b = ( symbol->key[0] == '$'
-		&&   symbol->key[1] >= '0'
-		&&   symbol->key[1] <= '9'
-	);
-	assert(a == b);
+	bool b = ( symbol->key[0] == '$' && symbol->key[1] >= '0' && symbol->key[1] <= '9' );
+	bool c = ( symbol->key[0] == '$' && symbol->key[1] == 'k');
+	assert(a == b || a == c);
 	return a;
 }
 

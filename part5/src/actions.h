@@ -19,6 +19,7 @@ void assign_body(Node * node);
 void add_symbol_args(struct arg_list * args);
 Symbol * add_symbol_var(int type, const char * key);
 Symbol * add_symbol_arr(int type, const char * key, int size);
+Symbol * add_symbol_cte(int type, const char * val);
 Symbol * add_symbol(int symbol_type, int data_type, const char * key);
 Symbol * retrieve(Node * node, const char * key, int type);
 void set_symbol_str_sval(Symbol * symbol, const char * value);

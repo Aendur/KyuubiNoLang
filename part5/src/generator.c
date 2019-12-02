@@ -27,6 +27,8 @@ void gen_set_defined_code(Symbol * symbol) {
 			case FLOAT: snprintf(symbol->attr->code, sizeof(symbol->attr->code), "%f", symbol->attr->value.fval); break;
 			default: fprintf(stderr, "dont know how to set this type\n"); break;
 		}
+	} else {
+		// snprintf(symbol->attr->code, sizeof(symbol->attr->code), "%s", symbol->key);
 	}
 }
 
@@ -62,6 +64,20 @@ void gen_unary(const char * instruction, Symbol * tgt, Symbol * src) {
 	int size = strlen(instruction) + strlen(tgt->attr->code) + strlen(src->attr->code) + 8;
 	char * line = malloc(size);
 	snprintf(line, size, "\t%s %s, %s", instruction, tgt->attr->code, src->attr->code);
+	lines_append(output_lines, line);
+	free(line);
+}
+
+void gen_binary(const char * instruction, Symbol * tgt, Symbol * src1, Symbol * src2) {
+	gen_set_defined_code(src1);
+	gen_set_defined_code(src2);
+	int size =
+		strlen(instruction)
+		+ strlen(tgt->attr->code)
+		+ strlen(src1->attr->code)
+		+ strlen(src2->attr->code) + 8;
+	char * line = malloc(size);
+	snprintf(line, size, "\t%s %s, %s, %s", instruction, tgt->attr->code, src1->attr->code, src2->attr->code);
 	lines_append(output_lines, line);
 	free(line);
 }

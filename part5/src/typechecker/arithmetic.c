@@ -1,4 +1,5 @@
 #include "typechecker.h"
+#include "generator.h"
 #include "parser.h"
 #include "misc.h"
 #include "table-stack.h"
@@ -49,14 +50,14 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("add", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
 
@@ -93,14 +94,14 @@ Symbol * tc_op_sub(Node * src1, Node * src2) {
 		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("add", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
 
@@ -137,14 +138,14 @@ Symbol * tc_op_mul(Node * src1, Node * src2) {
 		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("add", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
 
@@ -185,14 +186,14 @@ Symbol * tc_op_div(Node * src1, Node * src2) {
 		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
 	}
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("add", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
 
@@ -233,13 +234,13 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 
 	tgt->attr->return_type = INT; // mod is int
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("add", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
