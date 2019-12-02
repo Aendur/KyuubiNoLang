@@ -64,13 +64,14 @@ int main(int argc, char** argv) {
 	printf("------------------------------\n");
 	ts_printf(context_stack);
 
-
-	printf("------------------------------\n");
-	printf("OUTPUT\n");
-	printf("------------------------------\n");
-	// Open output file
-	output = stdout; //fopen("k.tac", "w");
-	lines_write(output, output_lines);
+	if (yynerrs == 0) {
+		printf("------------------------------\n");
+		printf("OUTPUT\n");
+		printf("------------------------------\n");
+		// Open output file
+		output = stdout; //fopen("k.tac", "w");
+		lines_write(output, output_lines);
+	}
 
 	// close input file
 	fclose(yyin);

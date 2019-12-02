@@ -1,4 +1,5 @@
 #include "typechecker.h"
+#include "generator.h"
 #include "parser.h"
 #include "misc.h"
 #include "table-stack.h"
@@ -22,12 +23,10 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 	Symbol * op1 = src1->symbol;
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
-
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
 	
 	int type1 = op1->attr->return_type;
 	int type2 = op2->attr->return_type;
-
 	bool error = false;
 	switch(type1) {
 		case INT: switch(type2) {
@@ -53,14 +52,14 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 
 	tgt->attr->return_type = INT; // bools are ints
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("or", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
 
@@ -101,14 +100,14 @@ Symbol * tc_op_and(Node * src1, Node * src2) {
 
 	tgt->attr->return_type = INT; // bools are ints
 
-	if (promoted) { // prune this subtree tree if symbol was promoted
-		tc_prune(node);
-		table_free(&op2);
+	// if CTE was not possible, generate code for this node
+	if (!promoted && !error) {
+		gen_binary("and", tgt, src1->symbol, src2->symbol);
 	}
-	if (error) { // clean up if there was an error
-		table_free(&tgt);
-	}
-
+	// clean up
+	tc_prune(node);
+	if(tc_temp_symbol(op2)) table_free(&op2);
+	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
 
