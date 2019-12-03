@@ -28,12 +28,14 @@ void yyerror (char const * msg) {
 // SCOPE MANAGERS //
 ////////////////////
 
-Table * begin(const char * name) {
+Table * begin(const char * key) {
 	if (context_stack->top == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
 
+	char * name = NULL;
 	Symbol * new_context;
 	// if there is a name, search for it in the current context
-	if (name != NULL) {
+	if (key != NULL) {
+		name = (char*) key;
 		new_context = table_find(context_stack->top, name);
 		
 		// if it exists, error
@@ -41,10 +43,16 @@ Table * begin(const char * name) {
 			error_redefinition(name);
 			return NULL;
 		}
+	} else {
+		do {
+			free(name);
+			name = random_label(9);
+		} while (table_find(context_stack->top, name) != NULL);
 	}
 
 	// if there is not a name, or it does not exist, create a new context
 	new_context = table_insert(context_stack->top, name);
+	if (key == NULL) { free(name); }
 
 	if (new_context == NULL) {
 		// if it was not inserted, error

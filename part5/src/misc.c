@@ -35,3 +35,21 @@ char * function_label(Symbol * args) {
 	return NULL;
 }
 
+char * random_label(int len) {
+	char alphabet[64] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789";
+	const int size = 63;
+	const int siz = 53;
+
+
+	char * label = malloc(len+2);
+	int i = 0;
+	label[i++] = alphabet[rand() % siz];
+	while (i < len) {
+		label[i] = alphabet[rand() % size];
+		++i;
+	}
+	label[i] = 0;
+
+	//printf("%d %s\n", strlen(label), label);
+	return label;
+}

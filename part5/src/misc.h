@@ -7,6 +7,7 @@
 // misc
 char * str_ptr(const char * prefix, void* address, const char * suffix);
 char * function_label(Symbol * args);
+char * random_label(int len);
 
 #endif
 

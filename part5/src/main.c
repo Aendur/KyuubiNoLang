@@ -3,11 +3,13 @@
 #include "scanner.h"
 #include "typechecker.h"
 #include "node.h"
+#include "misc.h"
 #include "node-list.h"
 #include "table.h"
 #include "table-stack.h"
 // #include "actions.h"
 #include "lines.h"
+#include <time.h>
 
 //#include <getopt.h>
 
@@ -19,11 +21,13 @@ Node * root = NULL;
 //Nodelist * node_list;
 //Table * symbol_table;
 Tablestack * context_stack;
-int no_scope = 0;
+//int no_scope = 0;
 FILE * output = NULL;
 struct lines * output_lines;
 
 int main(int argc, char** argv) {
+	srand(time(NULL));
+
 	// handle cmd line arguments
 	if (argc < 2) {
 		fprintf(stderr, "Missing input file.\n");
