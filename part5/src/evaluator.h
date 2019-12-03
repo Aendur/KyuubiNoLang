@@ -38,7 +38,7 @@
 #define RESOLVE_FLOATFLOAT FLOAT
 
 #define EVAL_CASE(op,ect0,ecast,ect1,ect2) \
-	case ect2: tgt->attr->return_type = ect0; tgt->ATTR_VTYPE(ect0) = (CAST_TYPE(ecast) op1->ATTR_VTYPE(ect1) OPERATOR(op) CAST_TYPE(ecast) op2->ATTR_VTYPE(ect1)); break;
+	case ect2: tgt->attr->return_type = ect0; tgt->ATTR_VTYPE(ect0) = (CAST_TYPE(ecast) op1->ATTR_VTYPE(ect1) OPERATOR(op) CAST_TYPE(ecast) op2->ATTR_VTYPE(ect2)); break;
 
 #define EVAL_CASES_OP_ADD(ect1) EVAL_CASES_ARITHMETIC(OP_ADD,ect1)
 #define EVAL_CASES_OP_SUB(ect1) EVAL_CASES_ARITHMETIC(OP_SUB,ect1)
