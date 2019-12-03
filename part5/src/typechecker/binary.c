@@ -170,10 +170,10 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 	bool error = false;
 	
 	// perform CTE if possible
-	if (promoted) { EVALUATE(OP_ADD); }
+	EVALUATE(OP_ADD);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("add", op[0], op[1], op[2]);
 	}
@@ -192,10 +192,10 @@ Symbol * tc_op_sub(Node * src1, Node * src2) {
 	bool error = false;
 	
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_SUB); }
+	EVALUATE(OP_SUB);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("sub", op[0], op[1], op[2]);
 	}
@@ -214,10 +214,10 @@ Symbol * tc_op_mul(Node * src1, Node * src2) {
 	bool error = false;
 	
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_MUL); }
+	EVALUATE(OP_MUL);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("mul", op[0], op[1], op[2]);
 	}
@@ -238,10 +238,10 @@ Symbol * tc_op_div(Node * src1, Node * src2) {
 	bool error = false;
 	
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_DIV); }
+	EVALUATE(OP_DIV);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("div", op[0], op[1], op[2]);
 	}
@@ -262,10 +262,10 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 	bool error = false;
 	
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_MOD); }
+	EVALUATE(OP_MOD);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("mod", op[0], op[1], op[2]);
 	}
@@ -288,10 +288,10 @@ Symbol * tc_op_and(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if (promoted) { EVALUATE(OP_AND); }
+	EVALUATE(OP_AND);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("and", op[0], op[1], op[2]);
 	}
@@ -310,10 +310,10 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_OR); }
+	EVALUATE(OP_OR);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("or", op[0], op[1], op[2]);
 	}
@@ -336,10 +336,10 @@ Symbol * tc_op_lt(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_LT); }
+	EVALUATE(OP_LT);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("slt", op[0], op[1], op[2]);
 	}
@@ -359,10 +359,10 @@ Symbol * tc_op_le(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_LE); }
+	EVALUATE(OP_LE);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("sleq", op[0], op[1], op[2]);
 	}
@@ -382,10 +382,10 @@ Symbol * tc_op_ge(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_GE); }
+	EVALUATE(OP_GE);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("slt", op[0], op[1], op[2]);
 		gen_unary ("not", op[0], op[0]);
@@ -405,10 +405,10 @@ Symbol * tc_op_gt(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_GT); }
+	EVALUATE(OP_GT);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("sleq", op[0], op[1], op[2]);
 		gen_unary ("not" , op[0], op[0]);
@@ -429,10 +429,10 @@ Symbol * tc_op_eq(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_EQ); }
+	EVALUATE(OP_EQ);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("seq", op[0], op[1], op[2]);
 	}
@@ -452,10 +452,10 @@ Symbol * tc_op_ne(Node * src1, Node * src2) {
 	bool error = false;
 
 	// perform CTE if possible
-	if(promoted) { EVALUATE(OP_NE); }
+	EVALUATE(OP_NE);
 	
 	// if CTE was not possible, generate code for this node
-	else if (!error) {
+	if (!promoted && !error) {
 		tc_gen_cast(op);
 		gen_binary("seq", op[0], op[1], op[2]);
 		gen_unary ("not", op[0], op[0]);
