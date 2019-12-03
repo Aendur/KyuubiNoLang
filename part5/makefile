@@ -20,9 +20,6 @@ dbg:
 	src/typechecker/base.c \
 	src/typechecker/unary.c \
 	src/typechecker/binary.c \
-	src/typechecker/arithmetic.c \
-	src/typechecker/logical.c \
-	src/typechecker/relational.c \
 	src/misc.c \
 	src/lines.c \
 	src/error.c \
@@ -42,9 +39,6 @@ rel:
 	src/typechecker/base.c \
 	src/typechecker/unary.c \
 	src/typechecker/binary.c \
-	src/typechecker/arithmetic.c \
-	src/typechecker/logical.c \
-	src/typechecker/relational.c \
 	src/misc.c \
 	src/lines.c \
 	src/error.c \

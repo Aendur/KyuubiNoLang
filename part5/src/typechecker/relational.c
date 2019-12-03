@@ -24,38 +24,11 @@ Symbol * tc_op_lt(Node * src1, Node * src2) {
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
-	
-	int type1 = op1->attr->return_type;
-	int type2 = op2->attr->return_type;
 	bool error = false;
-	switch(type1) {
-		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival < op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival < op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival < op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval < op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval < op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval < op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval < op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval < op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval < op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-	}
-
-	tgt->attr->return_type = INT; // bool is int
-
-	// if CTE was not possible, generate code for this node
-	if (!promoted && !error) {
-		gen_binary("slt", tgt, src1->symbol, src2->symbol);
-	}
+	// perform CTE if possible
+	if(promoted) { EVALUATE(OP_LT); }
+		// if CTE was not possible, generate code for this node
+	else if(!error) { gen_binary("slt", tgt, src1->symbol, src2->symbol); }
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
@@ -69,41 +42,12 @@ Symbol * tc_op_le(Node * src1, Node * src2) {
 	Symbol * op1 = src1->symbol;
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
-
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
-	
-	int type1 = op1->attr->return_type;
-	int type2 = op2->attr->return_type;
-
 	bool error = false;
-	switch(type1) {
-		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival <= op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival <= op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival <= op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval <= op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval <= op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval <= op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval <= op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval <= op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval <= op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-	}
-
-	tgt->attr->return_type = INT; // bool is int
-
+	// perform CTE if possible
+	if(promoted) { EVALUATE(OP_LE); }
 	// if CTE was not possible, generate code for this node
-	if (!promoted && !error) {
-		gen_binary("sleq", tgt, src1->symbol, src2->symbol);
-	}
+	else if(!error) { gen_binary("sleq", tgt, src1->symbol, src2->symbol); }
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
@@ -117,42 +61,12 @@ Symbol * tc_op_ge(Node * src1, Node * src2) {
 	Symbol * op1 = src1->symbol;
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
-
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
-	
-	int type1 = op1->attr->return_type;
-	int type2 = op2->attr->return_type;
-
 	bool error = false;
-	switch(type1) {
-		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival >= op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival >= op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival >= op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval >= op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval >= op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval >= op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval >= op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval >= op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval >= op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-	}
-
-	tgt->attr->return_type = INT; // bool is int
-
+	// perform CTE if possible
+	if(promoted) { EVALUATE(OP_GE); }
 	// if CTE was not possible, generate code for this node
-	if (!promoted && !error) {
-		gen_binary("slt", tgt, src1->symbol, src2->symbol);
-		gen_unary ("not", tgt, tgt);
-	}
+	else if(!error) { gen_binary("slt", tgt, src1->symbol, src2->symbol); gen_unary ("not", tgt, tgt); }
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
@@ -165,42 +79,12 @@ Symbol * tc_op_gt(Node * src1, Node * src2) {
 	Symbol * op1 = src1->symbol;
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
-
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
-	
-	int type1 = op1->attr->return_type;
-	int type2 = op2->attr->return_type;
-
 	bool error = false;
-	switch(type1) {
-		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival > op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival > op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival > op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval > op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval > op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval > op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval > op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval > op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval > op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-	}
-
-	tgt->attr->return_type = INT; // bool is int
-
+	// perform CTE if possible
+	if(promoted) { EVALUATE(OP_GT); }
 	// if CTE was not possible, generate code for this node
-	if (!promoted && !error) {
-		gen_binary("sleq", tgt, src1->symbol, src2->symbol);
-		gen_unary ("not" , tgt, tgt);
-	}
+	else if(!error) { gen_binary("sleq", tgt, src1->symbol, src2->symbol); gen_unary ("not" , tgt, tgt); }
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
@@ -214,41 +98,12 @@ Symbol * tc_op_eq(Node * src1, Node * src2) {
 	Symbol * op1 = src1->symbol;
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
-
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
-	
-	int type1 = op1->attr->return_type;
-	int type2 = op2->attr->return_type;
-
 	bool error = false;
-	switch(type1) {
-		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival == op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival == op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival == op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval == op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval == op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval == op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval == op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval == op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval == op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-	}
-
-	tgt->attr->return_type = INT; // bool is int
-
+	// perform CTE if possible
+	if(promoted) { EVALUATE(OP_EQ); }
 	// if CTE was not possible, generate code for this node
-	if (!promoted && !error) {
-		gen_binary("seq", tgt, src1->symbol, src2->symbol);
-	}
+	else if(!error) { gen_binary("seq", tgt, src1->symbol, src2->symbol); }
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
@@ -262,42 +117,12 @@ Symbol * tc_op_ne(Node * src1, Node * src2) {
 	Symbol * op1 = src1->symbol;
 	Symbol * op2 = src2->symbol;
 	Symbol * tgt = NULL;
-
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
-	
-	int type1 = op1->attr->return_type;
-	int type2 = op2->attr->return_type;
-
 	bool error = false;
-	switch(type1) {
-		case INT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival != op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival != op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.ival != op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case CHAR: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval != op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval != op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.cval != op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		case FLOAT: switch(type2) {
-			case INT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval != op2->attr->value.ival); break;
-			case CHAR: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval != op2->attr->value.cval); break;
-			case FLOAT: tgt->attr->return_type = INT; tgt->attr->value.ival = (op1->attr->value.fval != op2->attr->value.fval); break;
-			default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-		} break;
-		default: error = true; error_type2(node->name, tc_type_str(type1), tc_type_str(type2)); break;
-	}
-
-	tgt->attr->return_type = INT; // bool is int
-
+	// perform CTE if possible
+	if(promoted) { EVALUATE(OP_NE); }
 	// if CTE was not possible, generate code for this node
-	if (!promoted && !error) {
-		gen_binary("seq", tgt, src1->symbol, src2->symbol);
-		gen_unary ("not", tgt, tgt);
-	}
+	else if(!error) { gen_binary("seq", tgt, src1->symbol, src2->symbol); gen_unary ("not", tgt, tgt); }
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
