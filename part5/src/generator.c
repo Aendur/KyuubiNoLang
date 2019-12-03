@@ -88,3 +88,35 @@ void gen_binary(const char * instruction, Symbol * tgt, Symbol * src1, Symbol * 
 	lines_append(output_lines, line);
 	free(line);
 }
+
+void gen_implicit_cast(Symbol * op1, Symbol * op2) {
+	int type1 = op1->attr->return_type;
+	int type2 = op2->attr->return_type;
+	int size = 12 + strlen(op1->attr->code) + strlen(op2->attr->code);
+	char * line = malloc(size);
+	bool cast = false;
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: cast = false; break;
+			case CHAR: snprintf(line, size, "\tchtoint %s, %s", op2->attr->code, op2->attr->code); cast = true; break;
+			case FLOAT: snprintf(line, size, "\tinttofl %s, %s", op1->attr->code, op1->attr->code); cast = true; break;
+			default: cast = false; break;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: snprintf(line, size, "\tchtoint %s, %s", op1->attr->code, op1->attr->code); cast = true; break;
+			case CHAR: cast = false; break;
+			case FLOAT: snprintf(line, size, "\tchtofl %s, %s", op1->attr->code, op1->attr->code); cast = true; break;
+			default: cast = false; break;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: snprintf(line, size, "\tinttofl %s, %s", op2->attr->code, op2->attr->code); cast = true; break;
+			case CHAR: snprintf(line, size, "\tchtofl %s, %s", op2->attr->code, op2->attr->code); cast = true; break;
+			case FLOAT: cast = false; break;
+			default: cast = false; break;
+		} break;
+		default: cast = false; break;
+	}
+	if (cast) { lines_append(output_lines, line); }
+	free(line);
+}
+

@@ -25,10 +25,15 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 	Symbol * tgt = NULL;
 	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
 	bool error = false;
+	// int type1 = op1->attr->return_type;
+	// int type2 = op2->attr->return_type;
 	// perform CTE if possible
 	if (promoted) { EVALUATE(OP_ADD); }
 	// if CTE was not possible, generate code for this node
-	else if (!error) { gen_binary("add", tgt, src1->symbol, src2->symbol); }
+	else if (!error) {
+		gen_implicit_cast(op1, op2);
+		gen_binary("add", tgt, src1->symbol, src2->symbol);
+	}
 	// clean up
 	tc_prune(node);
 	if(tc_temp_symbol(op2)) table_free(&op2);
