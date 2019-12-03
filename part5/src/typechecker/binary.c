@@ -61,6 +61,48 @@ bool div_by_zero(Symbol * den) {
 	}
 }
 
+int tc_who_casts(int type1, int type2) {
+	switch(type1) {
+		case INT: switch(type2) {
+			case INT: return 0;
+			case CHAR: return 2;
+			case FLOAT: return 1;
+			default: return -1;
+		} break;
+		case CHAR: switch(type2) {
+			case INT: return 1;
+			case CHAR: return 0;
+			case FLOAT: return 1;
+			default: return -1;
+		} break;
+		case FLOAT: switch(type2) {
+			case INT: return 2;
+			case CHAR: return 2;
+			case FLOAT: return 0;
+			default: return -1;
+		} break;
+		default: return -1;
+	}
+}
+
+void tc_gen_cast(Symbol * op[3]) {
+	int t[3] = {
+		op[0]->attr->return_type,
+		op[1]->attr->return_type,
+		op[2]->attr->return_type,
+	};
+	int caster = tc_who_casts(t[1], t[2]);
+	if(caster) {
+		int other = 3-caster;
+		if(tc_temp_symbol(op[caster])) {
+	 		gen_cast(t[other], op[caster], op[caster]);
+		} else {
+			gen_cast(t[other], op[0], op[caster]);
+			op[caster] = op[0];
+		}
+	}
+}
+
 /////////////////////////////////
 // BINARY ASSIGNMENT OPERATION //
 /////////////////////////////////

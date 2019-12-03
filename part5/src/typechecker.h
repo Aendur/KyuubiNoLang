@@ -6,7 +6,6 @@
 
 // tools
 void tc_prune(Node * root);
-// void tc_graft(Node * root, int index);
 bool tc_temp_symbol(Symbol * symbol);
 const char * tc_type_str(int type);
 char tc_type_chr(int stype, int rtype);
@@ -25,6 +24,7 @@ void tc_arr_decl(Node * src);
 // Expressions
 void tc_evaluate(Node * node);
 
+
 // Unary ops
 bool tc_unary_promotion(Symbol ** tgt, Symbol * src);
 // Symbol * tc_op_pos(Node * src);
@@ -37,6 +37,8 @@ Symbol * tc_op_dec(Node * src);
 Symbol * tc_pull_operand(Symbol * op);
 bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2);
 bool div_by_zero(Symbol * den);
+int tc_who_casts(int type1, int type2);
+void tc_gen_cast(Symbol * op[3]);
 //arithmetic
 Symbol * tc_op_add(Node * src1, Node * src2);
 Symbol * tc_op_sub(Node * src1, Node * src2);

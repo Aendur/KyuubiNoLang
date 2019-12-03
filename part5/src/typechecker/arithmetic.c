@@ -20,101 +20,119 @@ extern Tablestack * context_stack;
 
 Symbol * tc_op_add(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op1 = src1->symbol;
-	Symbol * op2 = src2->symbol;
-	Symbol * tgt = NULL;
-	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
+	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
+	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
-	// int type1 = op1->attr->return_type;
-	// int type2 = op2->attr->return_type;
+	
 	// perform CTE if possible
 	if (promoted) { EVALUATE(OP_ADD); }
+	
 	// if CTE was not possible, generate code for this node
 	else if (!error) {
-		gen_implicit_cast(op1, op2);
-		gen_binary("add", tgt, src1->symbol, src2->symbol);
+		tc_gen_cast(op);
+		gen_binary("add", op[0], op[1], op[2]);
 	}
+	
 	// clean up
 	tc_prune(node);
-	if(tc_temp_symbol(op2)) table_free(&op2);
-	if(tc_temp_symbol(op1)) table_free(&op1);
-	return tgt;
+	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
+	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	return op[0];
 }
+
+Symbol * tc_op_or(Node * src1, Node * src2) {(void) src1; (void) src2; return NULL;}
+Symbol * tc_op_and(Node * src1, Node * src2) {(void) src1; (void) src2; return NULL;}
+
 
 Symbol * tc_op_sub(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op1 = src1->symbol;
-	Symbol * op2 = src2->symbol;
-	Symbol * tgt = NULL;
-	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
+	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
+	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
+	
 	// perform CTE if possible
 	if(promoted) { EVALUATE(OP_SUB); }
+	
 	// if CTE was not possible, generate code for this node
-	else if (!error) { gen_binary("sub", tgt, src1->symbol, src2->symbol); }
+	else if (!error) {
+		tc_gen_cast(op);
+		gen_binary("sub", op[0], op[1], op[2]);
+	}
+	
 	// clean up
 	tc_prune(node);
-	if(tc_temp_symbol(op2)) table_free(&op2);
-	if(tc_temp_symbol(op1)) table_free(&op1);
-	return tgt;
+	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
+	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	return op[0];
 }
 
 Symbol * tc_op_mul(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op1 = src1->symbol;
-	Symbol * op2 = src2->symbol;
-	Symbol * tgt = NULL;
-	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
+	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
+	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
+	
 	// perform CTE if possible
 	if(promoted) { EVALUATE(OP_MUL); }
+	
 	// if CTE was not possible, generate code for this node
-	else if (!error) { gen_binary("mul", tgt, src1->symbol, src2->symbol); }
+	else if (!error) {
+		tc_gen_cast(op);
+		gen_binary("mul", op[0], op[1], op[2]);
+	}
+	
 	// clean up
 	tc_prune(node);
-	if(tc_temp_symbol(op2)) table_free(&op2);
-	if(tc_temp_symbol(op1)) table_free(&op1);
-	return tgt;
+	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
+	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	return op[0];
 }
 
 Symbol * tc_op_div(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op1 = src1->symbol;
-	Symbol * op2 = src2->symbol;
-	Symbol * tgt = NULL;
+	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
 
-	if (div_by_zero(op2)) { return NULL; }
-	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
+	if (div_by_zero(op[2])) { return NULL; }
+	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
+	
 	// perform CTE if possible
 	if(promoted) { EVALUATE(OP_DIV); }
+	
 	// if CTE was not possible, generate code for this node
-	else if (!error) { gen_binary("div", tgt, src1->symbol, src2->symbol); }
+	else if (!error) {
+		tc_gen_cast(op);
+		gen_binary("div", op[0], op[1], op[2]);
+	}
+	
 	// clean up
 	tc_prune(node);
-	if(tc_temp_symbol(op2)) table_free(&op2);
-	if(tc_temp_symbol(op1)) table_free(&op1);
-	return tgt;
+	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
+	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	return op[0];
 }
 
 Symbol * tc_op_mod(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op1 = src1->symbol;
-	Symbol * op2 = src2->symbol;
-	Symbol * tgt = NULL;
+	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
 
-	if (div_by_zero(op2)) { return NULL; }
-	bool promoted = tc_binary_promotion(&tgt, &op1, &op2);
+	if (div_by_zero(op[2])) { return NULL; }
+	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
+	
 	// perform CTE if possible
 	if(promoted) { EVALUATE(OP_MOD); }
+	
 	// if CTE was not possible, generate code for this node
-	else if (!error) { gen_binary("mod", tgt, src1->symbol, src2->symbol); }
+	else if (!error) {
+		tc_gen_cast(op);
+		gen_binary("mod", op[0], op[1], op[2]);
+	}
+	
 	// clean up
 	tc_prune(node);
-	if(tc_temp_symbol(op2)) table_free(&op2);
-	if(tc_temp_symbol(op1)) table_free(&op1);
-	return tgt;
+	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
+	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	return op[0];
 }
-
 

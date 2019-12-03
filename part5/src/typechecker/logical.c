@@ -17,7 +17,7 @@ extern Tablestack * context_stack;
 ///////////////////////////////
 // BINARY LOGICAL OPERATIONS //
 ///////////////////////////////
-
+/*
 Symbol * tc_op_and(Node * src1, Node * src2) {
 	Node * node = src1->root;
 	Symbol * op1 = src1->symbol;
@@ -53,4 +53,4 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 	if(tc_temp_symbol(op1)) table_free(&op1);
 	return tgt;
 }
-
+*/

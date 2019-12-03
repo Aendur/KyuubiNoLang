@@ -12,7 +12,7 @@ int add(int x) {
 	int a3 = x + 2 + 3;
 	return x + a1 + a2 + a3;
 }
-
+/*
 int sub(void) {
 	int a1 = 1 - 2 - 3;
 	int a2 = a1 - 2 - 3;
@@ -79,3 +79,4 @@ int mod(int x) {
 	return x % a1 % a2 % a3;
 }
 
+*/
