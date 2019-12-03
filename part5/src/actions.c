@@ -44,10 +44,8 @@ Table * begin(const char * key) {
 			return NULL;
 		}
 	} else {
-		do {
-			free(name);
-			name = random_label(9);
-		} while (table_find(context_stack->top, name) != NULL);
+		// create a unique random name if arg is NULL
+		do { free(name); name = random_label(NULL, 9, NULL); } while (table_find(context_stack->top, name) != NULL);
 	}
 
 	// if there is not a name, or it does not exist, create a new context
@@ -62,6 +60,9 @@ Table * begin(const char * key) {
 		// otherwise push it into the stack
 		new_context->root = context_stack->top;
 		ts_push(context_stack, new_context);
+
+		gen_context_begin(new_context);
+
 		return new_context;
 	}
 }

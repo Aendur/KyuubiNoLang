@@ -1,8 +1,12 @@
 int test(int x) {
+	asm("//int a;");
 	int a;
-	if (x < 0) { a = -1; }
-	if (x == 0) { a = 0; }
-	else { a = 1; }
+	asm("//if (x < 0) { a = 0; }");
+	if (x < 0) { a = 0; }
+	asm("//if (x == 0) { a = 1; } else { a = 2; }");
+	if (x == 0) { a = 1; }
+	else { a = 2; }
+	asm("//return 3 * a;");
 	return 3 * a;
 }
 

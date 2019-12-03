@@ -145,17 +145,15 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 	// prune this subtree tree if symbol was promoted
 	if (op2->attr->defined) {
 		tgt->attr->defined = true;
-		tc_prune(node);
-		//strcpy(tgt->attr->code, op2->attr->code);
 		gen_set_defined_code(tgt);
 		if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); }
+		tc_prune(node);
 	} else {
 		strcpy(tgt->attr->code, op2->attr->code);
 	}
 
 	// clean up if there was an error
 	if (error) { tgt = NULL; }
-
 	return tgt;
 }
 
@@ -179,9 +177,9 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -201,9 +199,9 @@ Symbol * tc_op_sub(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -223,9 +221,9 @@ Symbol * tc_op_mul(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -247,9 +245,9 @@ Symbol * tc_op_div(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -271,9 +269,9 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -297,9 +295,9 @@ Symbol * tc_op_and(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -319,9 +317,9 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -345,9 +343,9 @@ Symbol * tc_op_lt(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -368,9 +366,9 @@ Symbol * tc_op_le(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -392,9 +390,9 @@ Symbol * tc_op_ge(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -415,9 +413,9 @@ Symbol * tc_op_gt(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -438,9 +436,9 @@ Symbol * tc_op_eq(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 
@@ -462,9 +460,9 @@ Symbol * tc_op_ne(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	tc_prune(node);
 	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
 	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	tc_prune(node);
 	return op[0];
 }
 

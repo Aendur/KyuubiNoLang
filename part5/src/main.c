@@ -27,6 +27,12 @@ struct lines * output_lines;
 
 int main(int argc, char** argv) {
 	srand(time(NULL));
+	// printf("'%s' ", random_label(NULL, 0, NULL)); printf("'%s' ", random_label(NULL, 1, NULL)); printf("'%s'\n", random_label(NULL, 2, NULL));
+	// printf("'%s' ", random_label("", 0, NULL)); printf("'%s' ", random_label("", 1, NULL)); printf("'%s'\n", random_label("", 2, NULL));
+	// printf("'%s' ", random_label("a", 0, NULL)); printf("'%s' ", random_label("a", 1, NULL)); printf("'%s'\n", random_label("a", 2, NULL));
+	// printf("'%s' ", random_label(NULL, 0, "")); printf("'%s' ", random_label(NULL, 1, "")); printf("'%s'\n", random_label(NULL, 2, ""));
+	// printf("'%s' ", random_label(NULL, 0, "b")); printf("'%s' ", random_label(NULL, 1, "b")); printf("'%s'\n", random_label(NULL, 2, "b"));
+	// return 0;
 
 	// handle cmd line arguments
 	if (argc < 2) {

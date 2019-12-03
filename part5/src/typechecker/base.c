@@ -235,14 +235,10 @@ Symbol * tc_return(Node * op1) {
 			context->attr->function_returns = true;
 			
 			if(expr->attr->defined == true) {
-				// tgt = expr;
-				char * tgt_key = str_ptr("ret", op1->root, NULL);
+				char * tgt_key = NULL;
+				do { free(tgt_key); tgt_key = random_label("ret.", 9, NULL); } while (table_find(context_stack->top, tgt_key) != NULL);
 				tgt = add_symbol(CONSTANT, expr->attr->return_type, tgt_key);
 				free(tgt_key);
-				// memcpy(&(tgt->attr->value), &(expr->attr->value), sizeof(tgt->attr->value));
-				// tgt->attr->defined = true;
-				// tgt->attr->temporary = true;
-				// attr_print(tgt->attr);
 				attr_copy(tgt->attr, expr->attr);
 				gen_set_defined_code(tgt);
 				if(tc_temp_symbol(expr)) { table_remove(context, expr->key); }
