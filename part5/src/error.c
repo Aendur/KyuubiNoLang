@@ -142,5 +142,11 @@ void error_no_context(void) {
 	yyerror(msg);
 }
 
+void error_init_array(void) {
+	char msg[ERROR_MSG_BUFFER];
+	snprintf(msg, ERROR_MSG_BUFFER, "semantic error: unable to initialize array from this initializer");
+	++yynerrs;
+	yyerror(msg);
+}
 
 

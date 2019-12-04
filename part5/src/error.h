@@ -25,6 +25,7 @@ void error_cannot_evaluate(void);
 void error_not_integer(void);
 void error_undeclared_fun(const char * name, const char * args);
 void error_no_context(void);
+void error_init_array(void);
 
 
 

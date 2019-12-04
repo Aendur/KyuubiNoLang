@@ -32,6 +32,7 @@ struct attr {
 	char *reserved_while;
 	int symbol_type;
 	int return_type;
+	bool global;
 	bool defined;
 	bool temporary;
 	bool function_returns;

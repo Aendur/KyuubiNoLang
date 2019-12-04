@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 extern int nline;
 extern int ncol0;
@@ -152,7 +153,7 @@ void add_symbol_args(struct arg_list * args) {
 		struct arg * arg = args->first;
 		while(arg != NULL) {
 			switch(arg->decl_type) {
-				case ARRAY: add_symbol_arr(arg->data_type, arg->name, -1); break;
+				case ARRAY: add_symbol_var(arg->data_type, arg->name, true)->attr->symbol_type=ARRAY; break;
 				case VARIABLE: add_symbol_var(arg->data_type, arg->name, true); break;
 				default: fprintf(stderr, "unknown arg decl type\n")   ; break;
 			}
@@ -189,13 +190,39 @@ Symbol * add_symbol_var(int type, const char * key, bool is_arg) {
 	return ret;
 }
 
-Symbol * add_symbol_arr(int type, const char * key, int length) {
+Symbol * add_symbol_arr(int type, const char * key, void* value) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add arr with incompatible type %d\n", type); return NULL; }
-	if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return NULL; }
+	//if(key  == NULL) { fprintf(stderr, "add arr with null key\n"); return NULL; }
+	char * new_key = NULL;
+	if(key  == NULL) {
+		new_key = random_label("str_", 9, NULL);
+	} else {
+		new_key = (char*) key;
+	}
+	Symbol * symbol = table_find(ts_bot(context_stack), new_key);
+	if (symbol != NULL) {
+		error_redefinition(new_key);
+		if (key == NULL) { free(new_key); }
+		return NULL;
+	} else {
+		symbol = table_insert(ts_bot(context_stack), new_key);
+		symbol->attr->symbol_type = ARRAY;
+		symbol->attr->return_type = type;
+		snprintf(symbol->attr->code, sizeof(symbol->attr->code), "&%s", symbol->key);
 
-	Symbol * s = add_symbol(ARRAY, type, key);
-	s->attr->length = length;
-	return s;
+		if (type == CHAR) {
+			if (value != NULL) {
+				const char * val = (const char *) value;
+				set_symbol_str_sval(symbol, val);
+				symbol->attr->length = strlen(val) + 1;
+				symbol->attr->defined = true;
+				gen_global_str(symbol);
+			}
+		}
+
+		if (key == NULL) { free(new_key); }
+		return symbol;
+	}
 }
 
 Symbol * add_symbol_cte(int type, const char * val) {
@@ -204,7 +231,6 @@ Symbol * add_symbol_cte(int type, const char * val) {
 	char * key = str_ptr("$k", ++kindex, NULL);
 	Symbol * s = NULL;
 	switch(type) {
-		//case STRING_LITERAL: s = add_symbol(CONSTANT, STRING, NULL /*key*/); if (s!=NULL) { set_symbol_str_sval(s, val); s->attr->temporary = true; } break;
 		case CONSTANT_FLOAT: s = add_symbol(CONSTANT, FLOAT , key); if (s!=NULL) { set_symbol_str_fval(s, val); } break;
 		case CONSTANT_INT  : s = add_symbol(CONSTANT, INT   , key); if (s!=NULL) { set_symbol_str_ival(s, val); } break;
 		case CONSTANT_HEX  : s = add_symbol(CONSTANT, INT   , key); if (s!=NULL) { set_symbol_str_hval(s, val); } break;
@@ -260,25 +286,20 @@ Symbol * add_symbol(int symbol_type, int data_type, const char * key0) {
 void set_symbol_str_sval(Symbol * symbol, const char * value) {
 	symbol->attr->value.sval = malloc(strlen(value)+1);
 	strcpy((char*)symbol->attr->value.sval, value);
-	symbol->attr->defined = true;
 }
 void set_symbol_str_cval(Symbol * symbol, const char * value) {
-	#warning handle special chars
-	// printf("charvalue=%s %d\n", value, strlen(value));
-	symbol->attr->value.cval = value[1];
-	symbol->attr->defined = true;
+	char * pos = (char*) value;
+	char c = lit_to_char(&pos);
+	symbol->attr->value.cval = c;
 }
 void set_symbol_str_ival(Symbol * symbol, const char * value) {
 	symbol->attr->value.ival = strtol(value, NULL, 10);
-	symbol->attr->defined = true;
 }
 void set_symbol_str_hval(Symbol * symbol, const char * value) {
 	symbol->attr->value.ival = strtol(value, NULL, 16);
-	symbol->attr->defined = true;
 }
 void set_symbol_str_fval(Symbol * symbol, const char * value) {
 	symbol->attr->value.fval = strtof(value, NULL);
-	symbol->attr->defined = true;
 }
 
 Symbol * retrieve(Node * node, const char * key, int type) {
@@ -287,7 +308,28 @@ Symbol * retrieve(Node * node, const char * key, int type) {
 		error_undeclared(key);
 		return NULL;
 	} else {
-		if(s->attr->symbol_type != type) {
+		//int stype = s->attr->symbol_type;
+		if (false) { //stype != type) {
+			error_not_variable(key, type);
+			return NULL;
+		} else {
+			node->symbol = s;
+			if (type != FUNCTION)
+				ts_push(operation_stack, s);
+			return s;
+		}
+	}
+}
+
+Symbol * retrieve_fun(Node * node, const char * key, int type) {
+	assert(type == FUNCTION);
+	Symbol * s = table_find_back(node->context, key);
+	if (s == NULL) {
+		error_undeclared(key);
+		return NULL;
+	} else {
+		int stype = s->attr->symbol_type;
+		if (stype != type) {
 			error_not_variable(key, type);
 			return NULL;
 		} else {

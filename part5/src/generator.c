@@ -71,7 +71,7 @@ void gen_function_end(Symbol * args, Symbol * expr) {
 }
 
 void gen_set_defined_code(Symbol * symbol) {
-	if(symbol->attr->defined) {
+	if(symbol->attr->defined && symbol->attr->symbol_type != ARRAY) {
 		switch(symbol->attr->return_type) {
 			case INT: snprintf(symbol->attr->code, sizeof(symbol->attr->code), "%d", symbol->attr->value.ival); break;
 			case CHAR: snprintf(symbol->attr->code, sizeof(symbol->attr->code), "'%c'", symbol->attr->value.cval); break;
@@ -223,3 +223,17 @@ void gen_global_var(Symbol * var) {
 	lines_append(output_table, line);
 	free(line);
 }
+
+void gen_global_str(Symbol * var) {
+	int size = sizeof(var->attr->code) + sizeof(var->attr->value.sval) + 16;
+	char * line = malloc(size);
+	snprintf(line, size, "char %s[] = %s", var->key, var->attr->value.sval);
+	if(var->attr->defined) {
+		free((char*) var->attr->value.sval);
+		var->attr->value.sval = NULL;
+	}
+	lines_append(output_table, line);
+	free(line);
+}
+
+

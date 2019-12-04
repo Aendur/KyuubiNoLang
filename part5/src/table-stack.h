@@ -18,6 +18,7 @@ struct tablestack {
 
 Tablestack * ts_init(void);
 Table * ts_top(Tablestack * ts);
+Table * ts_bot(Tablestack * ts);
 void ts_free(Tablestack ** ts);
 Table * ts_push(Tablestack * ts, Table * tab);
 Table * ts_pull(Tablestack * ts);

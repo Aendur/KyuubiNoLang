@@ -7,7 +7,6 @@
 #include "node-list.h"
 #include "table.h"
 #include "table-stack.h"
-// #include "actions.h"
 #include "lines.h"
 #include <time.h>
 

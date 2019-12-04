@@ -132,35 +132,35 @@ void tc_evaluate(Node * node) {
 }
 
 
-void tc_arr_decl(Node * node) {
-	if (node == NULL) { fprintf(stderr, "arr decl null node\n"); return; }
+void tc_arr_init(Node * node, Symbol * init) {
+	if (node == NULL) { fprintf(stderr, "%s %d arr decl null node\n", __FILE__, __LINE__); return; }
+	if (init == NULL) { fprintf(stderr, "%s %d arr decl null init\n", __FILE__, __LINE__); return; }
 
-	assert(node->type == ARR_DECL);
+	assert(node->type == ARR_INIT);
 	assert(node->nleaves == 1);
 	Node * leaf1 = node->leaf[0]; 
 	if (leaf1 == NULL) {fprintf(stderr, "null arr decl arg node\n"); return; }
-	Symbol * op1 = leaf1->symbol;
-	if (op1 == NULL) {fprintf(stderr, "null arr decl arg\n"); return; }
+	Symbol * dest = leaf1->symbol;
+	if (dest == NULL) {fprintf(stderr, "null arr decl arg\n"); return; }
 
-	bool error;
-	if (op1->attr->defined == false) {
-		error_cannot_evaluate();
+	bool error = false;
+	int t1 = dest->attr->return_type;
+	int t2 = init->attr->return_type;
+	if (t1 != t2) {
+		error_type2("=", tc_type_str(t1), tc_type_str(t2));
 		error = true;
-	} else {
-		switch(op1->attr->return_type) {
-			case CHAR: error = false; op1->attr->value.ival = (int) op1->attr->value.cval; break;
-			case INT: error = false; break;
-			default: error = true; error_not_integer(); break;
-		}
 	}
 
-	if(!error) {
-		node->symbol->attr->length = op1->attr->value.ival;
-		if(tc_temp_symbol(op1)) {
-			table_remove(ts_top(context_stack), op1->key);
-		}
-		tc_prune(node);
+	if(init->attr->symbol_type != ARRAY) {
+		error_init_array();
+		error = true;
 	}
+
+	if (!error) {
+		gen_unary("mov", dest, init);
+	}
+	
+	tc_prune(node);
 }
 
 // list expr -> include

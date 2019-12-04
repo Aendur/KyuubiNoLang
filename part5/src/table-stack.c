@@ -81,6 +81,10 @@ Table * ts_top(Tablestack * ts) {
 	return ts->top->symbol;
 }
 
+Table * ts_bot(Tablestack * ts) {
+	return ts->bot->symbol;
+}
+
 void ts_printm(Tablestack * ts) {
 	struct selene * sel = ts->top;
 	printf("top:\n");

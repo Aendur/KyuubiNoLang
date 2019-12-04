@@ -22,10 +22,11 @@ void reserve_label(char *prefix, char *suffix);
 void reserve_while(void);
 
 Symbol * add_symbol_var(int type, const char * key, bool is_arg);
-Symbol * add_symbol_arr(int type, const char * key, int size);
+Symbol * add_symbol_arr(int type, const char * key, void* value);
 Symbol * add_symbol_cte(int type, const char * val);
 Symbol * add_symbol(int symbol_type, int data_type, const char * key);
 Symbol * retrieve(Node * node, const char * key, int type);
+Symbol * retrieve_fun(Node * node, const char * key, int type);
 void set_symbol_str_sval(Symbol * symbol, const char * value);
 void set_symbol_str_cval(Symbol * symbol, const char * value);
 void set_symbol_str_ival(Symbol * symbol, const char * value);

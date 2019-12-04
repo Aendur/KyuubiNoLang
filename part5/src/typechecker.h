@@ -29,7 +29,8 @@ void tc_init_else(void);
 void tc_free_if(bool);
 
 // array declaration with size
-void tc_arr_decl(Node * src);
+//void tc_arr_decl(Node * src);
+void tc_arr_init(Node * node, Symbol * init);
 
 // Expressions
 void tc_evaluate(Node * node);
