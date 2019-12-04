@@ -45,6 +45,7 @@ static const int ERROR_MSG_BUFFER = 256;
 "do"		{ update_position(); int t = DO    ; return t; }
 "while"		{ update_position(); int t = WHILE ; return t; }
 "return"	{ update_position(); int t = RETURN; return t; }
+"#reset"    { nline = 0; ncol0 = 0; ncol1 = 0; }
 
 			/* data types */
 "void"		{ update_position(); int t = VOID ; yylval.ival = t; return t; }

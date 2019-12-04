@@ -57,19 +57,24 @@ char * random_label(const char * prefix, int len, const char * suffix) {
 	return label;
 }
 
+// standard_io_library
+#include "stdio_includer.h" 
+
 FILE * cat_files(const char * f1, const char * f2) {
-	FILE * fin1 = fopen(f1, "rb"); if (fin1 == NULL) { return NULL; }
-	FILE * fin2 = fopen(f2, "rb"); if (fin2 == NULL) { fclose(fin1); return NULL; }
-	FILE * fout  = fopen("k.tmp", "wb"); if (fout == NULL) { fclose(fin1); fclose(fin2); return NULL; }
+	(void) f1;
+	//FILE * fin1 = fopen(f1, "rb"); if (fin1 == NULL) { return NULL; }
+	FILE * fin2 = fopen(f2, "rb"); if (fin2 == NULL) { /*fclose(fin1);*/ return NULL; }
+	FILE * fout  = fopen("k.tmp", "wb"); if (fout == NULL) { /*fclose(fin1);*/ fclose(fin2); return NULL; }
 
 	const unsigned int size = 1024;
 	char buffer[size];
 	unsigned int n = 0;
-	while ((n = fread(buffer, sizeof(char), size, fin1)) > 0) { fwrite(buffer, sizeof(char), n, fout); }
+	//while ((n = fread(buffer, sizeof(char), size, fin1)) > 0) { fwrite(buffer, sizeof(char), n, fout); }
+	fwrite(standard_io_library, sizeof(char), sizeof(standard_io_library)-1, fout);
 	while ((n = fread(buffer, sizeof(char), size, fin2)) > 0) { fwrite(buffer, sizeof(char), n, fout); }
 
 	fout = freopen("k.tmp", "r", fout);
-	fclose(fin1);
+	//fclose(fin1);
 	fclose(fin2);
 	fseek(fout, 0, SEEK_SET);
 	return fout;
