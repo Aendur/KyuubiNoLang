@@ -12,113 +12,132 @@
 extern int yynerrs;
 //static const int ERROR_MSG_BUFFER=256;
 extern Tablestack * context_stack;
+extern Tablestack * operation_stack;
 
 
 //////////////////////
 // UNARY OPERATIONS //
 //////////////////////
-bool tc_unary_promotion(Symbol ** tgt, Symbol * src) {
-	if (tc_temp_symbol(src)) {
-		(*tgt) = src;
-	} else {
-		(*tgt) = add_symbol(CONSTANT, src->attr->return_type, NULL);
-		(*tgt)->attr->defined = src->attr->defined;
-	}
-	return src->attr->defined;
+// bool tc_unary_promotion(Symbol ** tgt, Symbol * src) {
+// 	if (tc_temp_symbol(src)) {
+// 		(*tgt) = src;
+// 	} else {
+// 		(*tgt) = add_symbol(CONSTANT, src->attr->return_type, NULL);
+// 		(*tgt)->attr->defined = src->attr->defined;
+// 	}
+// 	return src->attr->defined;
+// }
+
+bool tc_unary_promotion(Symbol * op[2]) {
+	op[1] = ts_pull(operation_stack);
+	
+	assert(op[1]->attr->symbol_type != 0);
+
+	int uuid;
+	if (tc_temp_symbol(op[1])) { table_retire(context_stack->top, op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == context_stack->top->uuid) { --context_stack->top->uuid; }}
+	bool defined = (op[1]->attr->defined);
+
+	char key[40];
+	snprintf(key, 40, "$%d", ++context_stack->top->uuid);
+	printf("%s\n", key);
+	op[0] = add_symbol(defined ? CONSTANT : VARIABLE, op[1]->attr->return_type, key);
+	op[0]->attr->defined = defined;
+	op[0]->attr->temporary = true;
+	ts_push(operation_stack, op[0]);
+
+	return defined;
 }
 
 Symbol * tc_op_neg(Node * src) {
-	Symbol * tgt = NULL;
-
-	// try to evaluate expression at compile time
-	bool promoted = tc_unary_promotion(&tgt, src->symbol);
-
+	Symbol * op[2];
+	bool promoted = tc_unary_promotion(op);
 	bool error = false;
-	int type = src->symbol->attr->return_type;
 	// compile time evaluation
+	// try to evaluate expression at compile time
+	int type = src->symbol->attr->return_type;
 	switch(type) {
-		case INT: tgt->attr->value.ival = -src->symbol->attr->value.ival; break;
-		case CHAR: tgt->attr->value.cval = -src->symbol->attr->value.cval; break;
-		case FLOAT: tgt->attr->value.fval = -src->symbol->attr->value.fval; break;
+		case INT: op[0]->attr->value.ival = -src->symbol->attr->value.ival; break;
+		case CHAR: op[0]->attr->value.cval = -src->symbol->attr->value.cval; break;
+		case FLOAT: op[0]->attr->value.fval = -src->symbol->attr->value.fval; break;
 		default: error = true; error_type1(src->root->name, tc_type_str(type)); break;
 	}
-	// prune this subtree tree if symbol was promoted (CTE)
-	if (promoted) { tc_prune(src->root); }
-	// otherwise,
-	else {
-		// if there was an error, clean up
-		if(error) { if(tc_temp_symbol(tgt)) table_free(&tgt); }
-		// otherwise, generate code for this node (cannot perform CTE)
-		else { gen_unary("minus", tgt, src->symbol); } 
+
+	// generate code for this node (cannot perform CTE)
+	if (!promoted && !error) { 
+		gen_unary("minus", op[0], src->symbol);
 	}
-	return tgt;
+	
+	// if there was an error, clean up
+	if(error) { if(tc_temp_symbol(op[0])) table_free(&op[0]); }
+
+	// cleanup others
+	if(tc_temp_symbol(op[1])) table_free(&op[1]);
+	tc_prune(src->root);
+	return op[0];
 }
 
 Symbol * tc_op_not(Node * src) {
-	Symbol * tgt = NULL;
-
-	// try to evaluate expression at compile time
-	bool promoted = tc_unary_promotion(&tgt, src->symbol);
-
+	Symbol * op[2];
+	bool promoted = tc_unary_promotion(op);
 	bool error = false;
-	int type = src->symbol->attr->return_type;
 	// compile time evaluation
+	// try to evaluate expression at compile time
+	int type = src->symbol->attr->return_type;
 	switch(type) {
-		case INT: tgt->attr->value.ival = !src->symbol->attr->value.ival; break;
-		case CHAR: tgt->attr->value.ival = !src->symbol->attr->value.cval; break;
-		case FLOAT: tgt->attr->value.ival = !src->symbol->attr->value.fval; break;
+		case INT: op[0]->attr->value.ival = !src->symbol->attr->value.ival; break;
+		case CHAR: op[0]->attr->value.ival = !src->symbol->attr->value.cval; break;
+		case FLOAT: op[0]->attr->value.ival = !src->symbol->attr->value.fval; break;
 		default: error = true; error_type1(src->root->name, tc_type_str(type)); break;
 	}
-	tgt->attr->return_type = INT; // bools are ints
-	// prune this subtree tree if symbol was promoted (CTE)
-	if (promoted) { tc_prune(src->root); }
-	// otherwise,
-	else {
-		// if there was an error, clean up
-		if(error) { if(tc_temp_symbol(tgt)) table_free(&tgt); }
-		// otherwise, generate code for this node (cannot perform CTE)
-		else { gen_unary("not", tgt, src->symbol); } 
+	op[0]->attr->return_type = INT; // bools are ints
+
+	// generate code for this node (cannot perform CTE)
+	if (!promoted && !error) { 
+		gen_unary("not", op[0], src->symbol);
 	}
-	return tgt;
+	
+	// if there was an error, clean up
+	if(error) { if(tc_temp_symbol(op[0])) table_free(&op[0]); }
+
+	// cleanup others
+	if(tc_temp_symbol(op[1])) table_free(&op[1]);
+	tc_prune(src->root);
+	return op[0];
 }
 
 Symbol * tc_op_inc(Node * src) {
-	if (src->symbol->attr->symbol_type == CONSTANT) {
-		error_lvalue2(src->root);
-		return NULL;
-	}
-	Symbol * tgt = NULL;
-	int type = src->symbol->attr->return_type;
-	switch(type) {
-		case INT: src->symbol->attr->value.ival += 1; tgt = src->symbol; break;
-		case CHAR: src->symbol->attr->value.cval += 1; tgt = src->symbol; break;
-		case FLOAT: src->symbol->attr->value.fval += 1; tgt = src->symbol; break;
-		default: error_type1(src->root->name, tc_type_str(type)); break;
-	}
-	//if(src->symbol->attr->defined) {
-	//	tc_prune(src->root);
-	//} else {
-	//	//gen_binary
-	//}
-	
-	return tgt;
+	(void) src;
+	// if (src->symbol->attr->symbol_type == CONSTANT) {
+	// 	error_lvalue2(src->root);
+	// 	return NULL;
+	// }
+	// Symbol * op[2];
+	// int type = src->symbol->attr->return_type;
+	// switch(type) {
+	// 	case INT: src->symbol->attr->value.ival += 1; tgt = src->symbol; break;
+	// 	case CHAR: src->symbol->attr->value.cval += 1; tgt = src->symbol; break;
+	// 	case FLOAT: src->symbol->attr->value.fval += 1; tgt = src->symbol; break;
+	// 	default: error_type1(src->root->name, tc_type_str(type)); break;
+	// }
+	return NULL;
 }
 
 Symbol * tc_op_dec(Node * src) {
-	if (src->symbol->attr->symbol_type == CONSTANT) {
-		error_lvalue2(src->root);
-		return NULL;
-	}
-	Symbol * tgt = NULL;
-	int type = src->symbol->attr->return_type;
-	switch(type) {
-		case INT: src->symbol->attr->value.ival -= 1; tgt = src->symbol; break;
-		case CHAR: src->symbol->attr->value.cval -= 1; tgt = src->symbol; break;
-		case FLOAT: src->symbol->attr->value.fval -= 1; tgt = src->symbol; break;
-		default: error_type1(src->root->name, tc_type_str(type)); break;
-	}
-	// tc_cut_tree(src, 0);
-	return tgt;
+	(void) src;
+	// if (src->symbol->attr->symbol_type == CONSTANT) {
+	// 	error_lvalue2(src->root);
+	// 	return NULL;
+	// }
+	// Symbol * op[2];
+	// int type = src->symbol->attr->return_type;
+	// switch(type) {
+	// 	case INT: src->symbol->attr->value.ival -= 1; tgt = src->symbol; break;
+	// 	case CHAR: src->symbol->attr->value.cval -= 1; tgt = src->symbol; break;
+	// 	case FLOAT: src->symbol->attr->value.fval -= 1; tgt = src->symbol; break;
+	// 	default: error_type1(src->root->name, tc_type_str(type)); break;
+	// }
+	// // tc_cut_tree(src, 0);
+	return NULL;
 }
 
 

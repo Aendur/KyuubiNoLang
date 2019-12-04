@@ -126,7 +126,7 @@ init_declarator
 	;
 
 var_declarator
-	: type IDENTIFIER                               { $$ = node_init(VAR_DECL, "var-decl",     ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2); free_label($2); }
+	: type IDENTIFIER                               { $$ = node_init(VAR_DECL, "var-decl", ENDARG); assign_context($$); $$->symbol=add_symbol_var($1,$2,false); free_label($2); }
 	;
 
 arr_declarator

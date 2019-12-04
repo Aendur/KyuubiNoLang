@@ -3214,7 +3214,7 @@ yyreduce:
 
   case 13:
 #line 129 "src/language.y"
-    { (yyval.node) = node_init(VAR_DECL, "var-decl",     ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_var((yyvsp[-1].ival),(yyvsp[0].sval)); free_label((yyvsp[0].sval)); }
+    { (yyval.node) = node_init(VAR_DECL, "var-decl", ENDARG); assign_context((yyval.node)); (yyval.node)->symbol=add_symbol_var((yyvsp[-1].ival),(yyvsp[0].sval),false); free_label((yyvsp[0].sval)); }
 #line 3219 "src/parser.c"
     break;
 

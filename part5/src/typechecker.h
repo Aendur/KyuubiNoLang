@@ -36,7 +36,7 @@ void tc_evaluate(Node * node);
 
 
 // Unary ops
-bool tc_unary_promotion(Symbol ** tgt, Symbol * src);
+bool tc_unary_promotion(Symbol * op[2]);
 // Symbol * tc_op_pos(Node * src);
 Symbol * tc_op_neg(Node * src);
 Symbol * tc_op_not(Node * src);
@@ -45,7 +45,7 @@ Symbol * tc_op_dec(Node * src);
 
 // Binary ops
 Symbol * tc_pull_operand(Symbol * op);
-bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2);
+bool tc_binary_promotion(Symbol * op[3]);
 bool div_by_zero(Symbol * den);
 int tc_who_casts(int type1, int type2);
 void tc_gen_cast(Symbol * op[3]);

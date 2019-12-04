@@ -20,8 +20,8 @@ int ncol1 = 1;
 Node * root = NULL;
 //Nodelist * node_list;
 //Table * symbol_table;
-Tablestack * context_stack;
-Tablestack * operation_stack;
+Tablestack * context_stack = NULL;
+Tablestack * operation_stack = NULL;
 //int no_scope = 0;
 FILE * output = NULL;
 struct lines * output_lines;
@@ -98,8 +98,12 @@ int main(int argc, char** argv) {
 
 	// release resources
 	yylex_destroy();
-	//table_free(&symbol_table);
+	
+	// release operations stack
+	// while(operation_stack->size > 0) { ts_pull(operation_stack); }
+	free(operation_stack);
 	ts_free(&context_stack);
+	
 	// nl_free(&node_list);
 	node_free_recursive(&root);
 	lines_free(&output_lines);

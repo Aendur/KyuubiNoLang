@@ -43,6 +43,7 @@ struct attr {
 	} value;
 	int length;
 	int arg_num;
+	int n_args;
 	struct arg_list * arg_list;
 	struct node * statement_tree;
 };

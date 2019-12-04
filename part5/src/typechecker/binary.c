@@ -15,32 +15,33 @@ extern int yynerrs;
 extern void * kindex;
 //static const int ERROR_MSG_BUFFER=256;
 extern Tablestack * context_stack;
+extern Tablestack * operation_stack;
 
 
 ///////////////////////
 // BINARY OPERATIONS //
 ///////////////////////
 
-Symbol * tc_pull_operand(Symbol * op) {
-	assert(op != NULL);
-	if (tc_temp_symbol(op)) {
-		return table_retire(context_stack->top, op->key);
-	} else {
-		return op;
-	}
-}
+bool tc_binary_promotion(Symbol * op[3]) {
+	op[2] = ts_pull(operation_stack);
+	op[1] = ts_pull(operation_stack);
+	
+	assert(op[1]->attr->symbol_type != 0);
+	assert(op[2]->attr->symbol_type != 0);
 
-bool tc_binary_promotion(Symbol ** tgt, Symbol ** op1, Symbol ** op2) {
-	bool defined = ((*op1)->attr->defined && (*op2)->attr->defined);
-	bool temp2 = tc_temp_symbol(*op2);
-	bool temp1 = tc_temp_symbol(*op1);
-	
-	if (temp2) { (*op2) = table_retire(context_stack->top, (*op2)->key); }
-	if (temp1) { (*op1) = table_retire(context_stack->top, (*op1)->key); }
-	
-	(*tgt) = add_symbol(CONSTANT, (*op1)->attr->return_type, NULL);
-	(*tgt)->attr->defined = defined;
-	
+	int uuid;
+	if (tc_temp_symbol(op[2])) { table_retire(context_stack->top, op[2]->key); sscanf(op[2]->key, "$%d", & uuid); if (uuid == context_stack->top->uuid) { --context_stack->top->uuid; }}
+	if (tc_temp_symbol(op[1])) { table_retire(context_stack->top, op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == context_stack->top->uuid) { --context_stack->top->uuid; }}
+	bool defined = (op[1]->attr->defined && op[2]->attr->defined);
+
+	char key[40];
+	snprintf(key, 40, "$%d", ++context_stack->top->uuid);
+	printf("%s\n", key);
+	op[0] = add_symbol(defined ? CONSTANT : VARIABLE, op[1]->attr->return_type, key);
+	op[0]->attr->defined = defined;
+	op[0]->attr->temporary = true;
+	ts_push(operation_stack, op[0]);
+
 	return defined;
 }
 
@@ -115,8 +116,10 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 		error_lvalue1(node);
 		return NULL;
 	}
-	Symbol * op2 = src2->symbol;
-
+	//Symbol * op2 = src2->symbol;
+	Symbol * op2 = ts_pull(operation_stack);
+	assert(op2 == src2->symbol);
+	
 	int type1 = tgt->attr->return_type;
 	int type2 = op2->attr->return_type;
 	bool error = false;
@@ -143,20 +146,10 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 	}
 
 	// prune this subtree tree if symbol was promoted
-	strcpy(tgt->attr->code, op2->key);
 	gen_set_defined_code(op2);
 	gen_unary("mov", tgt, op2);
-	/*if (op2->attr->defined) {
-		//tgt->attr->defined = true;
-		gen_set_defined_code(op2);
-		
-		strcpy(tgt->attr->code, op2->key);
-		gen_unary("mov", tgt, op2);
-		//if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); }
-	} else {
-		strcpy(tgt->attr->code, op2->key);
-	}*/
 	tc_prune(node);
+	if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); --context_stack->top->uuid; }
 	// clean up if there was an error
 	if (error) { tgt = NULL; }
 	return tgt;
@@ -168,10 +161,13 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 
 Symbol * tc_op_add(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
-	
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
+
 	// perform CTE if possible
 	EVALUATE(OP_ADD);
 	
@@ -182,18 +178,35 @@ Symbol * tc_op_add(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
 
+// Symbol * tc_op_sub(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_mul(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_div(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_mod(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_lt(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_le(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_gt(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_ge(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_eq(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_ne(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_or(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+// Symbol * tc_op_and(Node * src1, Node * src2) { (void) src1; (void) src2; return NULL; }
+
+
 Symbol * tc_op_sub(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
-	
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
+
 	// perform CTE if possible
 	EVALUATE(OP_SUB);
 	
@@ -204,18 +217,21 @@ Symbol * tc_op_sub(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
 
 Symbol * tc_op_mul(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
-	
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
+
 	// perform CTE if possible
 	EVALUATE(OP_MUL);
 	
@@ -226,20 +242,22 @@ Symbol * tc_op_mul(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
 
 Symbol * tc_op_div(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	if (div_by_zero(op[2])) { return NULL; }
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
-	
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
+
 	// perform CTE if possible
 	EVALUATE(OP_DIV);
 	
@@ -250,20 +268,22 @@ Symbol * tc_op_div(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
 
 Symbol * tc_op_mod(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	if (div_by_zero(op[2])) { return NULL; }
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
 	bool error = false;
-	
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
+
 	// perform CTE if possible
 	EVALUATE(OP_MOD);
 	
@@ -274,8 +294,8 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 	}
 	
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
@@ -286,9 +306,12 @@ Symbol * tc_op_mod(Node * src1, Node * src2) {
 
 Symbol * tc_op_and(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_AND);
@@ -300,17 +323,20 @@ Symbol * tc_op_and(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
 
 Symbol * tc_op_or(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_OR);
@@ -322,8 +348,8 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
@@ -334,9 +360,12 @@ Symbol * tc_op_or(Node * src1, Node * src2) {
 
 Symbol * tc_op_lt(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_LT);
@@ -348,8 +377,8 @@ Symbol * tc_op_lt(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
@@ -357,9 +386,12 @@ Symbol * tc_op_lt(Node * src1, Node * src2) {
 
 Symbol * tc_op_le(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_LE);
@@ -371,8 +403,8 @@ Symbol * tc_op_le(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
@@ -380,9 +412,12 @@ Symbol * tc_op_le(Node * src1, Node * src2) {
 
 Symbol * tc_op_ge(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_GE);
@@ -395,17 +430,20 @@ Symbol * tc_op_ge(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
 
 Symbol * tc_op_gt(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_GT);
@@ -418,8 +456,8 @@ Symbol * tc_op_gt(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
@@ -427,9 +465,12 @@ Symbol * tc_op_gt(Node * src1, Node * src2) {
 
 Symbol * tc_op_eq(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_EQ);
@@ -441,8 +482,8 @@ Symbol * tc_op_eq(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }
@@ -450,9 +491,12 @@ Symbol * tc_op_eq(Node * src1, Node * src2) {
 
 Symbol * tc_op_ne(Node * src1, Node * src2) {
 	Node * node = src1->root;
-	Symbol * op[3] = {NULL, src1->symbol, src2->symbol};
-	bool promoted = tc_binary_promotion(&op[0], &op[1], &op[2]);
+	Symbol * op[3];
+	bool promoted = tc_binary_promotion(op);
 	bool error = false;
+
+	assert(op[1] == src1->symbol);
+	assert(op[2] == src2->symbol);
 
 	// perform CTE if possible
 	EVALUATE(OP_NE);
@@ -465,8 +509,8 @@ Symbol * tc_op_ne(Node * src1, Node * src2) {
 	}
 
 	// clean up
-	if(tc_temp_symbol(src1->symbol)) table_free(&(src1->symbol));
-	if(tc_temp_symbol(src2->symbol)) table_free(&(src2->symbol));
+	if (tc_temp_symbol(op[2])) { table_free(&(op[2])); }
+	if (tc_temp_symbol(op[1])) { table_free(&(op[1])); }
 	tc_prune(node);
 	return op[0];
 }

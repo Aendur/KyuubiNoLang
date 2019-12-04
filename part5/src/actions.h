@@ -21,7 +21,7 @@ void add_symbol_args(struct arg_list * args);
 void reserve_label(char *prefix, char *suffix);
 void reserve_while(void);
 
-Symbol * add_symbol_var(int type, const char * key);
+Symbol * add_symbol_var(int type, const char * key, bool is_arg);
 Symbol * add_symbol_arr(int type, const char * key, int size);
 Symbol * add_symbol_cte(int type, const char * val);
 Symbol * add_symbol(int symbol_type, int data_type, const char * key);

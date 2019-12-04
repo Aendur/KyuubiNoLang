@@ -6,7 +6,7 @@
 
 // Initialize a new table with <size> buckets
 Table * table_init (size_t size, const char * key) {
-	//if (key == NULL) { fprintf(stderr, "unable to init table with NULL key\n"); return NULL; }
+	if (key == NULL) { fprintf(stderr, "unable to init table with NULL key\n"); return NULL; }
 
 	if (size < 16) {
 		size = 16;
@@ -22,16 +22,21 @@ Table * table_init (size_t size, const char * key) {
 	tab->below = NULL;
 	tab->uuid = -1;
 	tab->buckets = calloc(size, sizeof(struct bucket));
-
+	
+	// was pair
+	int keylen = strlen(key);
+	tab->key = calloc(keylen+1, sizeof(char));
+	strncpy((char*) tab->key, key, keylen);
+	
 	// was pair
 	// was actions name context
-	if (key == NULL) {
-		tab->key = malloc(40);
-		snprintf((char*) tab->key, 40, "@%lX", (unsigned long) tab << 40 >> 40);
-	} else {
-		tab->key = malloc(strlen(key)+1);
-		strcpy((char*) tab->key, key);
-	}
+	// if (key == NULL) {
+	// 	tab->key = malloc(40);
+	// 	snprintf((char*) tab->key, 40, "@%lX", (unsigned long) tab << 40 >> 40);
+	// } else {
+	// 	tab->key = malloc(strlen(key)+1);
+	// 	strcpy((char*) tab->key, key);
+	// }
 
 	// was pair
 	tab->attr = calloc(1, sizeof(struct attr));
@@ -110,22 +115,22 @@ struct table * table_find_back (struct table * tab, const char* key) {
 }
 
 // Insert (key,val) pair in table
-struct table * table_insert (struct table * tab, const char* key0) {
+struct table * table_insert (struct table * tab, const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to insert on null object\n"); return NULL; }
-
-	const char * key; // = key0;
-	bool temp = false;
-	if (key0 == NULL) {
-		key = malloc(40);
-		snprintf((char*) key, 40, "$%d", ++tab->uuid);
-		temp = true;
-	} else {
-		key = key0;
-	}
+	if (key == NULL) { fprintf(stderr, "Trying to insert with null key\n"); return NULL; }
+	//const char * key; // = key0;
+	//bool temp = false;
+	//if (key0 == NULL) {
+	//	key = malloc(40);
+	//	snprintf((char*) key, 40, "$%d", ++tab->uuid);
+	//	temp = true;
+	//} else {
+	//	key = key0;
+	//}
 
 	struct table * new_pair = table_init(16, key);
-	new_pair->attr->temporary = temp;
-	if(temp) { snprintf(new_pair->attr->code, sizeof(new_pair->attr->code), "%s", key); }
+	//new_pair->attr->temporary = temp;
+	//if(temp) { snprintf(new_pair->attr->code, sizeof(new_pair->attr->code), "%s", key); }
 
 	unsigned long hash = table_hash(new_pair->key);
 	unsigned long index = hash % tab->n_buckets;
@@ -150,7 +155,7 @@ struct table * table_insert (struct table * tab, const char* key0) {
 		}
 	}
 
-	if (key != key0) { free((void*)key); }
+	//if (key != key0) { free((void*)key); }
 	return new_pair;
 }
 
@@ -159,13 +164,12 @@ struct table * table_retire (struct table * tab,  const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to remove from null object\n"); return NULL; }
 	if (key == NULL) { fprintf(stderr, "Trying to remove null key\n"); return NULL; }
 
-	int uuid = -1;
-	int is_uuid = sscanf(key, "$%d", &uuid);
-	if (is_uuid && uuid !=  tab->uuid) {
-		fprintf(stderr, "Can only remove last temp value (last=$%d, current=$%d)\n", tab->uuid, uuid);
-		return NULL;
-	}
-
+	// int uuid = -1;
+	// int is_uuid = sscanf(key, "$%d", &uuid);
+	// if (is_uuid && uuid !=  tab->uuid) {
+	// 	fprintf(stderr, "Can only remove last temp value (last=$%d, current=$%d)\n", tab->uuid, uuid);
+	// 	return NULL;
+	// }
 
 	unsigned long hash = table_hash(key);
 	unsigned long index = hash % tab->n_buckets;
@@ -186,7 +190,7 @@ struct table * table_retire (struct table * tab,  const char* key) {
 				tab->buckets[index].last = NULL;
 				tab->buckets[index].size--;
 				tab->n_keys--;
-				if(is_uuid) { tab->uuid--; }
+				// if(is_uuid) { tab->uuid--; }
 				return pair;
 			} else {
 				if (pair == tab->buckets[index].first) {
@@ -205,7 +209,7 @@ struct table * table_retire (struct table * tab,  const char* key) {
 				}
 				tab->buckets[index].size--;
 				tab->n_keys--;
-				if(is_uuid) { tab->uuid--; }
+				// if(is_uuid) { tab->uuid--; }
 				return pair;
 			}
 		}

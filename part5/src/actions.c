@@ -15,6 +15,7 @@ extern int nline;
 extern int ncol0;
 extern int ncol1;
 extern Tablestack * context_stack;
+extern Tablestack * operation_stack;
 extern int yynerrs;
 
 ////////////////////
@@ -147,37 +148,37 @@ void assign_body(Node * node) {
 // SYMBOL TABLE MANIP //
 ////////////////////////
 void add_symbol_args(struct arg_list * args) {
-	int arg_num = 0;
-	Symbol * symbol;
 	if (args != NULL) {
 		struct arg * arg = args->first;
 		while(arg != NULL) {
 			switch(arg->decl_type) {
-				case ARRAY: {
-					symbol = add_symbol_arr(arg->data_type, arg->name, -1);
-					if(symbol != NULL) {
-						snprintf(symbol->attr->code, sizeof(symbol->attr->code)-1, "#%d", arg_num++);
-						symbol->attr->arg_num = arg_num;
-					}
-				} break;
-				case VARIABLE: {
-					symbol = add_symbol_var(arg->data_type, arg->name)    ;
-					if(symbol != NULL) {
-						snprintf(symbol->attr->code, sizeof(symbol->attr->code)-1, "#%d", arg_num++);
-						symbol->attr->arg_num = arg_num;
-					}
-				} break;
-				default      : fprintf(stderr, "unknown arg decl type\n")   ; break;
+				case ARRAY: add_symbol_arr(arg->data_type, arg->name, -1); break;
+				case VARIABLE: add_symbol_var(arg->data_type, arg->name, true); break;
+				default: fprintf(stderr, "unknown arg decl type\n")   ; break;
 			}
 			arg = arg->next;
 		}
 	}
 }
 
-Symbol * add_symbol_var(int type, const char * key) {
+Symbol * add_symbol_var(int type, const char * key, bool is_arg) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add var with incompatible type %d\n", type); return NULL; }
 	if(key  == NULL) { fprintf(stderr, "add var with null key\n"); return NULL; }
-	return add_symbol(VARIABLE, type, key);	
+
+	Symbol * ret = add_symbol(VARIABLE, type, key);
+	if (ret == NULL) { return NULL; }
+	if (is_arg) {
+		snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", context_stack->top->attr->n_args);
+		ret->attr->arg_num = context_stack->top->attr->n_args++;
+	} else {
+		snprintf(ret->attr->code, sizeof(ret->attr->code), "$%d", ++context_stack->top->uuid);
+	}
+		
+	Symbol * temp = add_symbol(VARIABLE, type, ret->attr->code);
+	if (temp == NULL) { table_free(&ret); return NULL; }
+	else { attr_copy(temp->attr, ret->attr); }
+	
+	return ret;
 }
 
 Symbol * add_symbol_arr(int type, const char * key, int length) {
@@ -192,17 +193,24 @@ Symbol * add_symbol_arr(int type, const char * key, int length) {
 Symbol * add_symbol_cte(int type, const char * val) {
 	if(val == NULL) { fprintf(stderr, "add cte with null val\n"); return NULL; }
 	static void * kindex = 0;
-	char * key = str_ptr("$k", kindex, NULL);
+	char * key = str_ptr("$k", ++kindex, NULL);
 	Symbol * s = NULL;
 	switch(type) {
-		case STRING_LITERAL: s = add_symbol(CONSTANT, STRING, NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_sval(s, val); s->attr->temporary = true; } break;
-		case CONSTANT_FLOAT: s = add_symbol(CONSTANT, FLOAT , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_fval(s, val); s->attr->temporary = true; } break;
-		case CONSTANT_INT  : s = add_symbol(CONSTANT, INT   , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_ival(s, val); s->attr->temporary = true; } break;
-		case CONSTANT_HEX  : s = add_symbol(CONSTANT, INT   , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_hval(s, val); s->attr->temporary = true; } break;
-		case CONSTANT_CHAR : s = add_symbol(CONSTANT, CHAR  , NULL /*key*/); if (s!=NULL) { ++kindex; set_symbol_str_cval(s, val); s->attr->temporary = true; } break;
+		//case STRING_LITERAL: s = add_symbol(CONSTANT, STRING, NULL /*key*/); if (s!=NULL) { set_symbol_str_sval(s, val); s->attr->temporary = true; } break;
+		case CONSTANT_FLOAT: s = add_symbol(CONSTANT, FLOAT , key); if (s!=NULL) { set_symbol_str_fval(s, val); } break;
+		case CONSTANT_INT  : s = add_symbol(CONSTANT, INT   , key); if (s!=NULL) { set_symbol_str_ival(s, val); } break;
+		case CONSTANT_HEX  : s = add_symbol(CONSTANT, INT   , key); if (s!=NULL) { set_symbol_str_hval(s, val); } break;
+		case CONSTANT_CHAR : s = add_symbol(CONSTANT, CHAR  , key); if (s!=NULL) { set_symbol_str_cval(s, val); } break;
 		default: fprintf(stderr, "add cte with incompatible type %d\n", type); break;
 	}
 	free(key);
+
+	if (s != NULL) {
+		s->attr->temporary = false;
+		s->attr->defined = true;
+		strncpy(s->attr->code, val, sizeof(s->attr->code));
+		ts_push(operation_stack, s);
+	}
 	return s;
 }
 
@@ -220,6 +228,7 @@ Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
 		symbol = table_insert(context_stack->top, key);
 		symbol->attr->symbol_type = symbol_type;
 		symbol->attr->return_type = data_type;
+		strncpy(symbol->attr->code, key, sizeof(symbol->attr->code));
 		return symbol;
 	} else {
 		error_redefinition(key);
@@ -262,6 +271,7 @@ Symbol * retrieve(Node * node, const char * key, int type) {
 			return NULL;
 		} else {
 			node->symbol = s;
+			ts_push(operation_stack, s);
 			return s;
 		}
 	}
