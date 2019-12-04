@@ -1,6 +1,5 @@
 .table
 int gx
-char str_xu_z_MKxU[] = "awooo"
 .code
 read_i:
 	scani  $0
@@ -36,14 +35,8 @@ _WRITE_STR_END:
 	println                   // print newline
 	return                    // return
 	return
-main_v:
-	mov gx, 5
-	push gx
-	call write_i, 1
-	mov $1, &str_xu_z_MKxU
-	push $1
-	call write_C, 1
-	return 0
+f_i:
+	return #0
 main:
-	call main_v
+	nop
 

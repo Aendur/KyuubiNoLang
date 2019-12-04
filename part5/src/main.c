@@ -23,6 +23,25 @@ FILE * output = NULL;
 struct lines * output_lines = NULL;
 struct lines * output_table = NULL;
 
+
+Symbol * find_entry_point(void) {
+	Symbol * s = table_find(ts_top(context_stack), "main");
+	if (s == NULL) {
+		yyerror("warning: program entry point not found\n");
+	} else {
+		Symbol * args = NULL;
+		for(unsigned int i = 0; i < s->n_buckets && args == NULL; ++i) {
+			args = s->buckets[i].first;
+			//while(args != NULL) {
+			//	args = args->next;
+			//}
+		}
+		return args;
+	}
+	return NULL;
+}
+
+
 int main(int argc, char** argv) {
 	srand(time(NULL));
 
@@ -74,10 +93,10 @@ int main(int argc, char** argv) {
 	// 	print_tree(root, 0);
 	// }
 
-	printf("------------------------------\n");
-	printf("SYMBOL TABLE\n");
-	printf("------------------------------\n");
-	ts_printf(context_stack);
+	// printf("------------------------------\n");
+	// printf("SYMBOL TABLE\n");
+	// printf("------------------------------\n");
+	// ts_printf(context_stack);
 
 	if (yynerrs == 0) {
 		// printf("------------------------------\n");
@@ -98,7 +117,12 @@ int main(int argc, char** argv) {
 
 		// set program entry point
 		fprintf(output, "main:\n");
-		fprintf(output, "\tcall main_v\n\n");
+		Symbol * entry 	= find_entry_point();
+		if (entry == NULL) {
+			fprintf(output, "\tnop\n\n");
+		} else {
+			fprintf(output, "\tcall %s_%s\n\n", entry->root->key, entry->key);
+		}
 
 		// close output file
 		fclose(output);

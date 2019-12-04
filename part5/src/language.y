@@ -51,7 +51,7 @@
 %token GENERIC_NODE
 
 %type <node> declaration_list declaration init_declarator
-%type <node> initializer_list statement_list
+%type <node> statement_list
 %type <node> compound_statement 
 %type <node> statement conditional_statement iteration_statement return_statement assignment_expression
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
@@ -114,7 +114,6 @@ declaration
 	: function_definition                      { $$ = $1; }
 	| var_declarator ';'                       { $$ = $1; }
 	| error ';'                                { $$ = NULL; }
-	//| error compound_statement               { $$ = NULL; node_free_recursive(&$2); }
 	;
 
 init_declarator
@@ -147,11 +146,6 @@ arr_declarator
 									}
 	;
 
-initializer_list
-	: assignment_expression                      { $$ = $1; }
-	| initializer_list ',' assignment_expression { $$ = node_init(LIST, "initializer-list" , $1, $3, ENDARG); assign_context($$); /*typecheck_lazy($$);*/ }
-	;
-
 function_definition
 	: function_declarator '{' statement_list '}' { $$ = node_init(FUNCTION, "function-body" , $3  , ENDARG); assign_body($$); finish_fun($1); assign_context($$); free_label($1); }
 	| function_declarator '{'                '}' { $$ = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body($$); finish_fun($1); assign_context($$); free_label($1); }
@@ -175,7 +169,7 @@ argument
 
 compound_statement
 	: '{' '}'	                          { $$ = NULL; }
-	| '{' { begin(); } statement_list '}' { $$ = $3; finish(); } // node_init(COMPOUND_STATEMENT, "compound-statement", $3, ENDARG); $$->symbol=finish(); assign_context($$); }
+	| '{' { begin(); } statement_list '}' { $$ = $3; finish(); } 
 	;
 
 statement_list
@@ -274,7 +268,7 @@ unary_expression
 
 postfix_expression
 	: primary_expression                          { $$ = $1; }
-	| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1, ARRAY)   ; free_label($1); }
+	//| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1, ARRAY)       ; free_label($1); tc_evaluate($$); }
 	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve_fun($$, $1, FUNCTION); free_label($1); tc_fcall($$, NULL); }
 	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve_fun($$, $1, FUNCTION); free_label($1); tc_fcall($$, $3); }
 	;
