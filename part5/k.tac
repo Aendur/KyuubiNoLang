@@ -22,25 +22,25 @@ write_f:
 	return
 abs_f:
 	slt $0, #0, 0.000000
-	brz if_yjNLq7zbR_end0, $0
-if_yjNLq7zbR:
+	brz if_aTtoQMss4_end0, $0
+if_aTtoQMss4:
 	minus $1, #0
 	mov #0, $1
-if_yjNLq7zbR_end0:
+if_aTtoQMss4_end0:
 	return #0
 sqrt_f:
 	seq $0, #0, 0.000000
-	brz if_PO_uMgDSl_end0, $0
-if_PO_uMgDSl:
+	brz if_Z3J__r72k_end0, $0
+if_Z3J__r72k:
 	return 0.0
-if_PO_uMgDSl_end0:
+if_Z3J__r72k_end0:
 	seq $1, #0, 1.000000
-	brz if_tteXFSKXr_end0, $1
-if_tteXFSKXr:
+	brz if_h6ZcxRLlG_end0, $1
+if_h6ZcxRLlG:
 	return 0.0
-if_tteXFSKXr_end0:
+if_h6ZcxRLlG_end0:
 	mov $2, 1.500000
-do_w01SDiWnM:
+do_PHmJahvcE:
 	mul $5, $2, $2
 	add $5, $5, #0
 	mul $6, 2.000000, $2
@@ -56,13 +56,13 @@ do_w01SDiWnM:
 	pop $5
 	sleq $6, $5, 0.001000
 	not $6, $6
-	brnz do_w01SDiWnM, $6
+	brnz do_PHmJahvcE, $6
 	return $3
 main_v:
 	mov $0, 0
-while_LH0Xs8d0I:
+while_yV5yqBlHq:
 	sleq $1, $0, 100
-	brz while_LH0Xs8d0I_end, $1
+	brz while_yV5yqBlHq_end, $1
 	inttofl $3, $0
 	mov $2, $3
 	push $0
@@ -77,8 +77,8 @@ while_LH0Xs8d0I:
 	call write_v, 0
 	add $9, $0, 1
 	mov $0, $9
-	jump while_LH0Xs8d0I
-while_LH0Xs8d0I_end:
+	jump while_yV5yqBlHq
+while_yV5yqBlHq_end:
 	push $2
 	call read_f, 1
 	pop $3

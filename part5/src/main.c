@@ -24,16 +24,11 @@ Tablestack * context_stack = NULL;
 Tablestack * operation_stack = NULL;
 //int no_scope = 0;
 FILE * output = NULL;
-struct lines * output_lines;
+struct lines * output_lines = NULL;
+struct lines * output_table = NULL;
 
 int main(int argc, char** argv) {
 	srand(time(NULL));
-	// printf("'%s' ", random_label(NULL, 0, NULL)); printf("'%s' ", random_label(NULL, 1, NULL)); printf("'%s'\n", random_label(NULL, 2, NULL));
-	// printf("'%s' ", random_label("", 0, NULL)); printf("'%s' ", random_label("", 1, NULL)); printf("'%s'\n", random_label("", 2, NULL));
-	// printf("'%s' ", random_label("a", 0, NULL)); printf("'%s' ", random_label("a", 1, NULL)); printf("'%s'\n", random_label("a", 2, NULL));
-	// printf("'%s' ", random_label(NULL, 0, "")); printf("'%s' ", random_label(NULL, 1, "")); printf("'%s'\n", random_label(NULL, 2, ""));
-	// printf("'%s' ", random_label(NULL, 0, "b")); printf("'%s' ", random_label(NULL, 1, "b")); printf("'%s'\n", random_label(NULL, 2, "b"));
-	// return 0;
 
 	// handle cmd line arguments
 	if (argc < 2) {
@@ -41,14 +36,17 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	// open input file
-	yyin = fopen(argv[1], "r");
+	// preprocess input file
+	FILE * fin = append_files("src/stdio.k", argv[1]);
 
 	// check input file validity
-	if (yyin == NULL) {
+	if (fin == NULL) {
 		fprintf(stderr, "Failed to open file %s.\n", argv[1]);
 		return 0;
 	}
+
+	// open input file
+	yyin = fin;
 
 	// initialize context stack with global symbol table
 	context_stack = ts_init();
@@ -57,11 +55,9 @@ int main(int argc, char** argv) {
 	// initialize an empty operation stack
 	operation_stack = ts_init();
 
-	// initialize node list
-	// node_list = nl_init();
-	
-	// Init output text buffer
+	// Init output text buffers
 	output_lines = lines_init();
+	output_table = lines_init();
 	
 	// call GNU Bison
 	yyparse();
@@ -96,17 +92,21 @@ int main(int argc, char** argv) {
 	// close input file
 	fclose(yyin);
 
+	// remove preprocessed file
+	remove("k.tmp");
+
 	// release resources
 	yylex_destroy();
 	
 	// release operations stack
-	// while(operation_stack->size > 0) { ts_pull(operation_stack); }
-	free(operation_stack);
+	while(operation_stack->size > 0) { ts_pull(operation_stack); }
+	ts_free(&operation_stack);
 	ts_free(&context_stack);
 	
 	// nl_free(&node_list);
 	node_free_recursive(&root);
 	lines_free(&output_lines);
+	lines_free(&output_table);
 
 
 	return 0;

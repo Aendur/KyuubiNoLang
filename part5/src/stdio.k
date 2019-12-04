@@ -1,3 +1,4 @@
+// BEGIN STANDARD I/O LIBRARY
 int read (int arg) {
 	int val;
 	asm("	scani  $0");
@@ -25,7 +26,6 @@ void write (char arg) {
 void write (float arg) {
 	asm("	print #0");
 }
-
 // void write (char arg[]) {
 // 	asm("_WRITE_STR:");
 // 	asm("\tmov      $0, 0            // $0 = i");
@@ -40,3 +40,5 @@ void write (float arg) {
 // 	asm("\tprintln                   // print newline");
 // 	asm("\treturn                    // return");
 // }
+// END STANDARD I/O LIBRARY
+
