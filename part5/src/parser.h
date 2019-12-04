@@ -89,18 +89,19 @@ extern int yydebug;
     UNRECOGNIZED_TOKEN = 295,
     INVALID_IDENTIFIER = 296,
     INVALID_CHAR_CONST = 297,
-    LIST = 298,
-    VARIABLE = 299,
-    CONSTANT = 300,
-    ARRAY = 301,
-    ARRAY_INDEX = 302,
-    FUNCTION = 303,
-    FUNCTION_CALL = 304,
-    VAR_DECL = 305,
-    VAR_INIT = 306,
-    ARR_DECL = 307,
-    ARR_INIT = 308,
-    GENERIC_NODE = 309
+    COMPOUND_STATEMENT = 298,
+    LIST = 299,
+    VARIABLE = 300,
+    CONSTANT = 301,
+    ARRAY = 302,
+    ARRAY_INDEX = 303,
+    FUNCTION = 304,
+    FUNCTION_CALL = 305,
+    VAR_DECL = 306,
+    VAR_INIT = 307,
+    ARR_DECL = 308,
+    ARR_INIT = 309,
+    GENERIC_NODE = 310
   };
 #endif
 
@@ -108,14 +109,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 74 "src/language.y"
+#line 76 "src/language.y"
 
 	struct node     *node;
 	int              ival;
 	const  char     *sval;
 	struct arg_list *al;
 
-#line 119 "src/parser.h"
+#line 120 "src/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -128,11 +129,11 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 /* "%code provides" blocks.  */
-#line 81 "src/language.y"
+#line 83 "src/language.y"
 
 	void yyerror (char const *);
 	struct table * add_symbol(int symbol_type, int data_type, const char * key);
 
-#line 137 "src/parser.h"
+#line 138 "src/parser.h"
 
 #endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */

@@ -28,6 +28,16 @@ void gen_context_begin(Symbol * context) {
 	}
 }
 
+void gen_context_end(Symbol * context) {
+	int size = strlen(context->key) + 6;
+	char * label = malloc(size);
+	if (label != NULL) {
+		snprintf(label, size, "%s_end:", context->key);
+		lines_append(output_lines, label);
+		free(label);
+	}
+}
+
 void gen_function_begin(Symbol * args) {
 	char * label = function_label(args);
 	if (label != NULL) {
@@ -128,3 +138,12 @@ void gen_cast(int new_type, Symbol * tgt, Symbol * src) {
 	free(line);
 }
 
+void gen_do(Symbol * ctx, Symbol * expr) {
+	int size = strlen(ctx->key) + strlen(expr->attr->code) + 12;
+	char * instruction = malloc(size);
+	if (instruction != NULL) {
+		snprintf(instruction, size, "\tbrnz %s, %s", ctx->key, expr->attr->code);
+		lines_append(output_lines, instruction);
+		free(instruction);
+	}
+}

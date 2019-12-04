@@ -35,6 +35,7 @@
 %token INVALID_IDENTIFIER
 %token INVALID_CHAR_CONST
 
+%token COMPOUND_STATEMENT
 %token LIST
 %token VARIABLE
 %token CONSTANT
@@ -50,7 +51,8 @@
 %token GENERIC_NODE
 
 %type <node> declaration_list declaration init_declarator
-%type <node> initializer_list compound_statement statement_list
+%type <node> initializer_list statement_list
+%type <node> compound_statement 
 %type <node> statement conditional_statement iteration_statement return_statement assignment_expression
 %type <node> logical_or_expression logical_and_expression equality_expression relational_expression additive_expression
 %type <node> multiplicative_expression postfix_expression primary_expression argument_call_list
@@ -109,7 +111,7 @@ declaration
 	: function_definition                    { $$ = $1; }
 	| init_declarator ';'                    { $$ = $1; }
 	| error ';'                              { $$ = NULL; }
-	| error compound_statement               { $$ = NULL; node_free_recursive(&$2); }
+	//| error compound_statement               { $$ = NULL; node_free_recursive(&$2); }
 	;
 
 init_declarator
@@ -158,7 +160,7 @@ argument
 
 compound_statement
 	: '{' '}'	                              { $$ = NULL; }
-	| '{' { begin(NULL); } statement_list '}' { $$ = $3  ; finish(); }
+	| '{' { begin(NULL); } statement_list '}' { $$ = node_init(COMPOUND_STATEMENT, "compound-statement", $3, ENDARG); $$->symbol=finish(); assign_context($$); }
 	;
 
 statement_list
@@ -182,13 +184,17 @@ inline_asm
 	: ASM '(' STRING_LITERAL ')'   { tc_asm($3); free_label($3); }
 
 conditional_statement
-	: IF '(' assignment_expression ')' compound_statement                          { $$ = node_init(IF  , "if-statement"      , $3, $5,     ENDARG); assign_context($$); } 
-	| IF '(' assignment_expression ')' compound_statement ELSE compound_statement  { $$ = node_init(ELSE, "if-else-statement" , $3, $5, $7, ENDARG); assign_context($$); } 
+	: IF '(' assignment_expression ')' '{'                '}'                               { $$ = node_init(IF  , "if-statement"      , $3,          ENDARG); assign_context($$); } 
+	| IF '(' assignment_expression ')' '{' statement_list '}'                               { $$ = node_init(IF  , "if-statement"      , $3, $6,      ENDARG); assign_context($$); } 
+	| IF '(' assignment_expression ')' '{'                '}' ELSE '{'                '}'   { $$ = node_init(ELSE, "if-else-statement" , $3,          ENDARG); assign_context($$); } 
+	| IF '(' assignment_expression ')' '{'                '}' ELSE '{' statement_list '}'   { $$ = node_init(ELSE, "if-else-statement" , $3, $9,      ENDARG); assign_context($$); } 
+	| IF '(' assignment_expression ')' '{' statement_list '}' ELSE '{'                '}'   { $$ = node_init(ELSE, "if-else-statement" , $3, $6,      ENDARG); assign_context($$); } 
+	| IF '(' assignment_expression ')' '{' statement_list '}' ELSE '{' statement_list '}'   { $$ = node_init(ELSE, "if-else-statement" , $3, $6, $10, ENDARG); assign_context($$); } 
 	;
 
 iteration_statement
-	: WHILE '(' assignment_expression ')' compound_statement          { $$ = node_init(WHILE, "while-statement" , $3, $5, ENDARG); assign_context($$); } 
-	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { $$ = node_init(DO   , "do-statement"    , $2, $5, ENDARG); assign_context($$); } 
+	: WHILE { reserve_label(); } '(' assignment_expression ')' {} compound_statement    { $$ = node_init(WHILE, "while-statement" , $4, $7, ENDARG); assign_context($$); } 
+	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { $$ = NULL; tc_gen_do($2, $5); } //node_init(DO   , "do-statement"    , $2, $5, ENDARG); assign_context($$); } 
 	;
 
 return_statement

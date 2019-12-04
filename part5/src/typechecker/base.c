@@ -253,3 +253,11 @@ Symbol * tc_return(Node * op1) {
 	}
 	return tgt;
 }
+
+void tc_gen_do(Node * node, Node * expr) {
+	if (node == NULL) { return; }
+	if (node->symbol == NULL) { return; }
+	if (expr == NULL) { return; }
+	if (expr->symbol == NULL) { return; }
+	gen_do(node->symbol, expr->symbol);
+}

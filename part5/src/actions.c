@@ -107,6 +107,7 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 Table * finish(void) {
 	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
 	Symbol * new_context = ts_pull(context_stack);
+	gen_context_end(new_context);
 	return  new_context;
 }
 

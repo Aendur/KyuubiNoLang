@@ -25,6 +25,9 @@ Node * node_init(int type, const char * name, ...) {
 	n0->col0 = ncol0;
 	n0->col1 = ncol1;
 	strcpy(n0->name, name);
+	// n0->start = NULL;
+	// n0->next = NULL;
+	// n0->end = NULL;
 
 	// init va
 	va_list argn, args;

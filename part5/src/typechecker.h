@@ -18,6 +18,9 @@ Symbol * tc_return(Node * src);
 // asm
 void tc_asm(const char * str);
 
+// flow control
+void tc_gen_do(Node * node, Node * expr);
+
 // array declaration with size
 void tc_arr_decl(Node * src);
 
