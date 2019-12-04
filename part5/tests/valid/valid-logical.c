@@ -21,3 +21,6 @@ int or(int x, int y) {
 	asm("	// 1 || 1"); return a4;
 	asm("	// x || y"); return x || y;
 }
+
+int main(void) { return 0; }
+

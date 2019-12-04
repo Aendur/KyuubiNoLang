@@ -1,5 +1,5 @@
 int f(void) {
-
+	return -1;
 }
 
 int f(int x) {
@@ -24,4 +24,5 @@ int main(int x) {
 	asm("//f3");
 	f(3, 4, 5);
 	//f(3, 4, 5, 6);
+	return 0;
 }

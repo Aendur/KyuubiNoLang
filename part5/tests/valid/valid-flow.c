@@ -29,3 +29,5 @@ int testdo(int x) {
 	asm("//return 3 * a;");
 	return 3 * a;
 }
+
+int main(void) { return 0; }

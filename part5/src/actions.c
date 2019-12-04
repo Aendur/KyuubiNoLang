@@ -119,7 +119,7 @@ Table * finish_fun(const char * name) {
 	if (context_stack->size < 3) { fprintf(stderr, "stack too short (fun)\n"); return NULL; }
 
 	Symbol * new_context = ts_pull(context_stack);
-	
+			
 	if (new_context->attr->function_returns == false) {
 		gen_function_end(new_context, NULL);
 		if(new_context->attr->return_type != VOID) { warning_no_return(name); }

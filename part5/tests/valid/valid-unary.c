@@ -40,6 +40,4 @@ int not(int x) {
 	return ! ! ! x;
 }
 
-
-	// int c1 = ++ ++ ++ ++ ++ x;
-	// int d1 = -- -- -- -- -- x;
+int main(void) { return 0; }

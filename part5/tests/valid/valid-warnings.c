@@ -1,4 +1,4 @@
-int main(void) {
+int func(void) {
 	char a = 'c';
 	char b = '\0';
 	char c = '\'';

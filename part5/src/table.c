@@ -58,9 +58,6 @@ void table_free (Table** tab) {
 		while (pair != NULL) {
 			next = pair->next;
 			table_free(&pair);
-			// free((char*) pair->key); pair->key = NULL;
-			// free(pair->attr); pair->attr = NULL;
-			// free(pair);
 			pair = next;
 			table->buckets[i].size--;
 		}
@@ -99,13 +96,14 @@ struct table * table_find (struct table * tab, const char* key) {
 	
 	//struct pair * pair = tab->buckets[index].first;
 	struct table * pair = tab->buckets[index].first;
-	while(pair != NULL && strcmp(pair->key, key) != 0) { pair = pair->next; }
+	while(pair != NULL && pair->key != NULL && strcmp(pair->key, key) != 0) { pair = pair->next; }
 	return pair;
 }
 
 // Search for key in all tables from current to root, returns NULL if not found
 struct table * table_find_back (struct table * tab, const char* key) {
 	if (tab == NULL) { fprintf(stderr, "Trying to search on null object\n"); return NULL; }
+	if (key == NULL) { fprintf(stderr, "Trying to search for null key\n"); return NULL; }
 	struct table * pair;
 	do {
 		pair = table_find(tab, key);

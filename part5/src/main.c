@@ -9,7 +9,6 @@
 #include "table-stack.h"
 #include "lines.h"
 #include <time.h>
-
 //#include <getopt.h>
 
 extern int yynerrs;
@@ -32,9 +31,6 @@ Symbol * find_entry_point(void) {
 		Symbol * args = NULL;
 		for(unsigned int i = 0; i < s->n_buckets && args == NULL; ++i) {
 			args = s->buckets[i].first;
-			//while(args != NULL) {
-			//	args = args->next;
-			//}
 		}
 		return args;
 	}
@@ -45,18 +41,9 @@ Symbol * find_entry_point(void) {
 int main(int argc, char** argv) {
 	srand(time(NULL));
 
-	// char * str = "this\nis\x40some\tstring l\\\\iteral";
-	// char * pos = str;
-	// char c = 0;
-	// printf("%s\n", str);
-	// while ((c = lit_to_char(&pos)) != 0) {
-	// 	printf("%d '%c'\n", c, c);
-	// }
-	// getchar();
-
 	// handle cmd line arguments
 	if (argc < 2) {
-		fprintf(stderr, "Missing input file.\n");
+		fprintf(stderr, "Missing input file.\nUsage:    ./kyu <input_file>\n");
 		return 0;
 	}
 
@@ -93,18 +80,18 @@ int main(int argc, char** argv) {
 	// 	print_tree(root, 0);
 	// }
 
-	// printf("------------------------------\n");
-	// printf("SYMBOL TABLE\n");
-	// printf("------------------------------\n");
-	// ts_printf(context_stack);
+	printf("------------------------------\n");
+	printf("SYMBOL TABLE\n");
+	printf("------------------------------\n");
+	ts_printf(context_stack);
 
 	if (yynerrs == 0) {
-		// printf("------------------------------\n");
-		// printf("OUTPUT\n");
-		// printf("------------------------------\n");
+		printf("------------------------------\n");
+		printf("OUTPUT\n");
+		printf("------------------------------\n");
 
 		// open output file
-		printf("output file: k.tac\n");
+		printf("No errors were found.\n\nOUTPUT FILE: k.tac\nRun it with ./tac k.tac\n");
 		output = fopen("k.tac", "w");
 
 		// write out table section
@@ -146,7 +133,6 @@ int main(int argc, char** argv) {
 	node_free_recursive(&root);
 	lines_free(&output_lines);
 	lines_free(&output_table);
-
 
 	return 0;
 }

@@ -38,6 +38,7 @@ bool tc_binary_promotion(Symbol * op[3]) {
 	op[2] = ts_pull(operation_stack);
 	op[1] = ts_pull(operation_stack);
 	
+	if (op[2] == NULL || op[1] == NULL) { return false; }
 	assert(op[1]->attr->symbol_type != 0);
 	assert(op[2]->attr->symbol_type != 0);
 
@@ -125,11 +126,9 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 		error_lvalue1(node);
 		return NULL;
 	}
-	//Symbol * op2 = src2->symbol;
+
 	Symbol * op2 = ts_pull(operation_stack);
-	// pair_print(op2);
-	// pair_print(src2->symbol);
-	assert(op2 == src2->symbol);
+	if (op2 != src2->symbol) { return NULL; }
 	
 	int type1 = tgt->attr->return_type;
 	int type2 = op2->attr->return_type;

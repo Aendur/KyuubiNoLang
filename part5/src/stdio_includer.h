@@ -30,15 +30,14 @@ void write (float arg) { \n\
 } \n\
 void write (char arg[]) { \n\
 	asm(\"	mov      $0, 0            // $0 = i\"); \n\
-	asm(\"_WRITE_STR_BEGIN:\"); \n\
+	asm(\"__write_C_begin:\"); \n\
 	asm(\"	mov      $1, #0[$0]       // $1 = str[i]\"); \n\
 	asm(\"	seq      $2, $1, '\\0'     // $2 = (str[i] == 0)\"); \n\
-	asm(\"	brnz _WRITE_STR_END, $2   // if ($2 != false) goto end\"); \n\
+	asm(\"	brnz __write_C_end, $2   // if ($2 != false) goto end\"); \n\
 	asm(\"	print    $1               // else print str[i]\"); \n\
 	asm(\"	add      $0, $0, 1        // ++i\"); \n\
-	asm(\"	jump _WRITE_STR_BEGIN     // continue\"); \n\
-	asm(\"_WRITE_STR_END:\"); \n\
-	asm(\"	println                   // print newline\"); \n\
+	asm(\"	jump __write_C_begin       // continue\"); \n\
+	asm(\"__write_C_end:\"); \n\
 	asm(\"	return                    // return\"); \n\
 } \n\
 //END STANDARD I/O LIBRARY \n\

@@ -197,6 +197,7 @@ char * tc_fcall_args(Node * list_node, Node * expr_node) {
 
 void tc_fcall(Node * node, Node * args) {
 	if (node == NULL) { fprintf(stderr, "fcall null node\n"); return; }
+	if (node->symbol == NULL) { fprintf(stderr, "fcall null node symbol\n"); return; }
 	assert(node->type == FUNCTION_CALL);
 
 	char * args_key = NULL; 

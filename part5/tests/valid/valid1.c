@@ -1,5 +1,4 @@
 int gvar1;
-int gvar2 = 10;
 
 int func3(int x) {
 	int y = x;
@@ -9,6 +8,7 @@ int func3(int x) {
 	} else {
 		return x + y;
 	}
+	return 0;
 }
 
 int main(void) {
@@ -18,4 +18,5 @@ int main(void) {
 		int a = 1;
 		func3(a);
 	}
+	return 0;
 }

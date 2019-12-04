@@ -63,6 +63,7 @@ int main(void) {
 		int dowhilevar3;
 	} while(0);
 
+	return 0;
 }
 
 int gvar4;

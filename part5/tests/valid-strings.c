@@ -1,9 +1,5 @@
 int gx;
 
-int f(int x) {
-	return x;
-}
-
 int main(int argc) {
 	gx = 5;
 	write(gx);

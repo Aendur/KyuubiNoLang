@@ -11,7 +11,10 @@ int adds (void) {
 	return add(add(a,b),add(c,d));
 }
 
-
 int main(void) {
-	adds();
+	// result = 20
+	write(adds());
+	write();
+	return 0;
 }
+
