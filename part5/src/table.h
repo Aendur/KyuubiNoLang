@@ -28,6 +28,8 @@ struct bucket {
 
 struct attr {
 	char code[40];
+	char *reserved_label;
+	char *reserved_while;
 	int symbol_type;
 	int return_type;
 	bool defined;

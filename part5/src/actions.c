@@ -28,9 +28,10 @@ void yyerror (char const * msg) {
 // SCOPE MANAGERS //
 ////////////////////
 
-Table * begin(const char * key) {
+Table * begin(void) {
 	if (context_stack->top == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
 
+	char * key = context_stack->top->attr->reserved_label;
 	char * name = NULL;
 	Symbol * new_context;
 	// if there is a name, search for it in the current context
@@ -61,7 +62,7 @@ Table * begin(const char * key) {
 		new_context->root = context_stack->top;
 		ts_push(context_stack, new_context);
 
-		gen_context_begin(new_context);
+		//gen_context_begin(new_context);
 
 		return new_context;
 	}
@@ -107,7 +108,7 @@ Table * begin_fun(int type, const char * name, struct arg_list * args) {
 Table * finish(void) {
 	if (context_stack->size < 2) { fprintf(stderr, "stack too short\n"); return NULL; }
 	Symbol * new_context = ts_pull(context_stack);
-	gen_context_end(new_context);
+	// gen_context_end(new_context);
 	return  new_context;
 }
 
@@ -268,4 +269,12 @@ Symbol * retrieve(Node * node, const char * key, int type) {
 	}
 }
 
+// void reserve_label(char *prefix, char *suffix) {
+// 	char * new_label = NULL;
+// 	do {
+// 		free(new_label);
+// 		new_label = random_label(prefix, 9, suffix);
+// 	} while (table_find(context_stack->top, new_label) != NULL);
+// 	context_stack->top->attr->reserved_label = new_label;
+// }
 

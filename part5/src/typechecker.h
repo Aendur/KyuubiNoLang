@@ -3,6 +3,7 @@
 
 #include "node.h"
 #include "table.h"
+#include <stdbool.h>
 
 // tools
 void tc_prune(Node * root);
@@ -19,7 +20,13 @@ Symbol * tc_return(Node * src);
 void tc_asm(const char * str);
 
 // flow control
-void tc_gen_do(Node * node, Node * expr);
+void tc_free_do(Node * expr);
+void tc_init_while(const char * prefix, const char * suffix);
+void tc_jump_while(Node * expr);
+void tc_free_while(void);
+void tc_init_if(Node * expr, const char * prefix, const char * suffix);
+void tc_init_else(void);
+void tc_free_if(bool);
 
 // array declaration with size
 void tc_arr_decl(Node * src);

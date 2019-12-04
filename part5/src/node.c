@@ -25,9 +25,6 @@ Node * node_init(int type, const char * name, ...) {
 	n0->col0 = ncol0;
 	n0->col1 = ncol1;
 	strcpy(n0->name, name);
-	// n0->start = NULL;
-	// n0->next = NULL;
-	// n0->end = NULL;
 
 	// init va
 	va_list argn, args;
@@ -38,7 +35,7 @@ Node * node_init(int type, const char * name, ...) {
 	n0->nleaves = 0;
 	Node * n1;
 	while((n1 = va_arg(argn, Node*)) != ENDARG) {
-		if (n1 != NULL) ++n0->nleaves;
+		if (n1 != NULL) n0->nleaves = n0->nleaves + 1;
 	}
 	va_end(argn);
 
@@ -48,7 +45,7 @@ Node * node_init(int type, const char * name, ...) {
 
 	// append nodes
 	if (n0->nleaves > 0) {
-		n0->leaf = malloc(n0->nleaves * sizeof(Node*));
+		n0->leaf = calloc(n0->nleaves, sizeof(Node*));
 
 		int l = 0;		
 		while(l < n0->nleaves) {

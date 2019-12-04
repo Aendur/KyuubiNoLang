@@ -254,10 +254,118 @@ Symbol * tc_return(Node * op1) {
 	return tgt;
 }
 
-void tc_gen_do(Node * node, Node * expr) {
-	if (node == NULL) { return; }
-	if (node->symbol == NULL) { return; }
-	if (expr == NULL) { return; }
-	if (expr->symbol == NULL) { return; }
-	gen_do(node->symbol, expr->symbol);
+//////////////////
+// FLOW CONTROL //
+//////////////////
+
+#define THROW(msg, ret)                                      \
+	fprintf(stderr, "%s:%d: %s\n", __FILE__, __LINE__, msg); \
+	return ret
+
+void tc_free_do(Node * expr) {
+	if (expr == NULL) { THROW("jump do null expr",); }
+	if (expr->symbol == NULL) { THROW("jump do null expr symbol",); }
+	if (context_stack->top->attr->reserved_while == NULL) { THROW("jump do null label",); }
+	char * label = context_stack->top->attr->reserved_while;
+	gen_jump("brnz", label, expr->symbol);
+	context_stack->top->attr->reserved_while = NULL;
+	free(label);
+}
+
+void tc_init_while(const char * prefix, const char * suffix) {
+	char * new_label = NULL;
+	do {
+		free(new_label);
+		new_label = random_label(prefix, 9, suffix);
+	} while (table_find(context_stack->top, new_label) != NULL);
+
+	table_insert(context_stack->top, new_label);
+	context_stack->top->attr->reserved_while = new_label;
+	gen_label(NULL, new_label, NULL);
+}
+
+void tc_jump_while(Node * expr) {
+	if (expr == NULL) { THROW("jump while null expr",); }
+	if (expr->symbol == NULL) { THROW("jump while null symbol",); }
+	if (context_stack->top->attr->reserved_while == NULL) { THROW("jump while null label",); }
+	
+	const char * label = context_stack->top->attr->reserved_while;
+	int size = 5 + strlen(label);
+	char * label_end = malloc(size);
+	if (label_end != NULL) {
+		snprintf(label_end, size, "%s_end", label);
+		gen_jump("brz", label_end, expr->symbol);
+		free(label_end);
+	}
+}
+
+void tc_free_while(void) {
+	if (context_stack->top->attr->reserved_while == NULL) { THROW("free while null label",); }
+	char * new_label = context_stack->top->attr->reserved_while;
+	gen_jump("jump", new_label, NULL);
+	gen_label(NULL, new_label, "_end");
+	free(new_label);
+	context_stack->top->attr->reserved_while = NULL;
+}
+
+void tc_init_if(Node * expr, const char * prefix, const char * suffix) {
+	if (expr == NULL) { THROW("init if null expr",); }
+	if (expr->symbol == NULL) { THROW("init if null expr symbol",); }
+
+	// reserve a new label
+	char * new_label = NULL;
+	do {
+		free(new_label);
+		new_label = random_label(prefix, 9, suffix);
+	} while (table_find(context_stack->top, new_label) != NULL);
+	table_insert(context_stack->top, new_label);
+	context_stack->top->attr->reserved_while = new_label;
+
+	// create end-if jump
+	int size = 12 + strlen(new_label);
+	char * label_end = malloc(size);
+	if (label_end != NULL) {
+		snprintf(label_end, size, "%s_end0", new_label);
+		gen_jump("brz", label_end, expr->symbol);
+		free(label_end);
+	}
+	gen_label(NULL, new_label, NULL);
+}
+
+void tc_init_else(void) {
+	if (context_stack->top->attr->reserved_while == NULL) { THROW("init else null label",); }
+	char * new_label = context_stack->top->attr->reserved_while;
+
+	// create end-if
+	int size = 12 + strlen(new_label);
+	char * label_end1 = malloc(size);
+	char * label_end2 = malloc(size);
+	if (label_end1 != NULL && label_end2 != NULL) {
+		snprintf(label_end1, size, "%s_end0", new_label);
+		snprintf(label_end2, size, "%s_end1", new_label);
+		gen_jump("jump", label_end2, NULL);
+		gen_label(NULL, label_end1, NULL);
+		free(label_end1);
+		free(label_end2);
+	} else {
+		free(label_end1);
+		free(label_end2);
+	}
+}
+
+void tc_free_if(bool has_else) {
+	if (context_stack->top->attr->reserved_while == NULL) { THROW("free if null label",); }
+	char * new_label = context_stack->top->attr->reserved_while;
+
+	// create end-if
+	int size = 12 + strlen(new_label);
+	char * label_end = malloc(size);
+	if (label_end != NULL) {
+		snprintf(label_end, size, "%s_end%d", new_label, has_else);
+		gen_label(NULL, label_end, NULL);
+		free(label_end);
+	}
+
+	free(new_label);
+	context_stack->top->attr->reserved_while = NULL;
 }

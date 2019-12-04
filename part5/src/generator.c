@@ -47,10 +47,6 @@ void gen_function_begin(Symbol * args) {
 }
 
 void gen_function_end(Symbol * args, Symbol * expr) {
-	//if (expr != NULL && expr->attr->defined)  {
-	//	
-	//}
-
 	char msg[40] = "\treturn";
 	if (args->attr->function_returns) {
 		switch(args->attr->return_type) {
@@ -143,6 +139,38 @@ void gen_do(Symbol * ctx, Symbol * expr) {
 	char * instruction = malloc(size);
 	if (instruction != NULL) {
 		snprintf(instruction, size, "\tbrnz %s, %s", ctx->key, expr->attr->code);
+		lines_append(output_lines, instruction);
+		free(instruction);
+	}
+}
+
+void gen_label(const char *prefix, const char *text, const char *suffix) {
+	int size = 1;
+	size += prefix == NULL ? 0 : strlen(prefix);
+	size += text   == NULL ? 0 : strlen(text)  ;
+	size += suffix == NULL ? 0 : strlen(suffix);
+	char * label = calloc(size+1, sizeof(char));
+	if (label != NULL) {
+		if(prefix != NULL) strncat(label, prefix, size);
+		if(text   != NULL) strncat(label, text  , size);
+		if(suffix != NULL) strncat(label, suffix, size);
+		strncat(label, ":", size);
+		lines_append(output_lines, label);
+		free(label);
+	}
+}
+
+void gen_jump(const char * instr, const char * label, Symbol * expr) {
+	int size = strlen(instr) + strlen(label) + 16;
+	size += expr == NULL ? 0 : strlen(expr->attr->code);
+
+	char * instruction = malloc(size);
+	if (instruction != NULL) {
+		if (expr == NULL) {
+			snprintf(instruction, size, "\t%s %s"    , instr, label);
+		} else {
+			snprintf(instruction, size, "\t%s %s, %s", instr, label, expr->attr->code);
+		}
 		lines_append(output_lines, instruction);
 		free(instruction);
 	}

@@ -65,6 +65,8 @@
 %type <al> argument_list argument
 %type <ival> type
 
+%type <ival> else_statement
+
 %destructor { root = $$; } declaration_list
 %destructor { node_free_recursive(&$$); } <node>
 %destructor { free_label($$); } <sval>
@@ -159,8 +161,8 @@ argument
 	;
 
 compound_statement
-	: '{' '}'	                              { $$ = NULL; }
-	| '{' { begin(NULL); } statement_list '}' { $$ = node_init(COMPOUND_STATEMENT, "compound-statement", $3, ENDARG); $$->symbol=finish(); assign_context($$); }
+	: '{' '}'	                          { $$ = NULL; }
+	| '{' { begin(); } statement_list '}' { $$ = $3; finish(); } // node_init(COMPOUND_STATEMENT, "compound-statement", $3, ENDARG); $$->symbol=finish(); assign_context($$); }
 	;
 
 statement_list
@@ -184,17 +186,21 @@ inline_asm
 	: ASM '(' STRING_LITERAL ')'   { tc_asm($3); free_label($3); }
 
 conditional_statement
-	: IF '(' assignment_expression ')' '{'                '}'                               { $$ = node_init(IF  , "if-statement"      , $3,          ENDARG); assign_context($$); } 
-	| IF '(' assignment_expression ')' '{' statement_list '}'                               { $$ = node_init(IF  , "if-statement"      , $3, $6,      ENDARG); assign_context($$); } 
-	| IF '(' assignment_expression ')' '{'                '}' ELSE '{'                '}'   { $$ = node_init(ELSE, "if-else-statement" , $3,          ENDARG); assign_context($$); } 
-	| IF '(' assignment_expression ')' '{'                '}' ELSE '{' statement_list '}'   { $$ = node_init(ELSE, "if-else-statement" , $3, $9,      ENDARG); assign_context($$); } 
-	| IF '(' assignment_expression ')' '{' statement_list '}' ELSE '{'                '}'   { $$ = node_init(ELSE, "if-else-statement" , $3, $6,      ENDARG); assign_context($$); } 
-	| IF '(' assignment_expression ')' '{' statement_list '}' ELSE '{' statement_list '}'   { $$ = node_init(ELSE, "if-else-statement" , $3, $6, $10, ENDARG); assign_context($$); } 
+	: if_statement else_statement        { $$ = NULL; tc_free_if($2); }
+	;
+
+if_statement
+	: IF '(' assignment_expression ')' { tc_init_if($3, "if_", NULL); } compound_statement { node_free_recursive(&$3); node_free_recursive(&$6); }
+	;
+
+else_statement
+	: ELSE { tc_init_else(); } compound_statement    { $$ = true; node_free_recursive(&$3); }
+	| %empty                                         { $$ = false; }
 	;
 
 iteration_statement
-	: WHILE { reserve_label(); } '(' assignment_expression ')' {} compound_statement    { $$ = node_init(WHILE, "while-statement" , $4, $7, ENDARG); assign_context($$); } 
-	| DO compound_statement WHILE '(' assignment_expression ')' ';'   { $$ = NULL; tc_gen_do($2, $5); } //node_init(DO   , "do-statement"    , $2, $5, ENDARG); assign_context($$); } 
+	: WHILE { tc_init_while("while_", NULL); } '(' assignment_expression ')' { tc_jump_while($4); } compound_statement  { $$ = NULL; tc_free_while(); node_free_recursive(&$4); node_free_recursive(&$7); }
+	| DO    { tc_init_while("do_", NULL)   ; } compound_statement WHILE '(' assignment_expression ')' ';'               { $$ = NULL; tc_free_do($6) ; node_free_recursive(&$3); node_free_recursive(&$6); }
 	;
 
 return_statement
@@ -261,13 +267,13 @@ postfix_expression
 	;
 
 primary_expression
-	: IDENTIFIER 						{ $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); retrieve($$, $$->name, VARIABLE); free_label($1); } // use var
-	| STRING_LITERAL					{ $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(STRING_LITERAL, $1); free_label($1); } // rvalue
-	| CONSTANT_FLOAT					{ $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_FLOAT, $1); free_label($1); } // rvalue
-	| CONSTANT_INT  					{ $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_INT  , $1); free_label($1); } // rvalue
-	| CONSTANT_HEX  					{ $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_HEX  , $1); free_label($1); } // rvalue
-	| CONSTANT_CHAR 					{ $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_CHAR , $1); free_label($1); } // rvalue
-	| '(' assignment_expression ')' 	{ $$ = $2; }
+	: IDENTIFIER                          { $$ = node_init(IDENTIFIER    , $1, ENDARG); assign_context($$); retrieve($$, $$->name, VARIABLE); free_label($1); } // use var
+	| STRING_LITERAL                      { $$ = node_init(STRING_LITERAL, $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(STRING_LITERAL, $1); free_label($1); } // rvalue
+	| CONSTANT_FLOAT                      { $$ = node_init(CONSTANT_FLOAT, $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_FLOAT, $1); free_label($1); } // rvalue
+	| CONSTANT_INT                        { $$ = node_init(CONSTANT_INT  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_INT  , $1); free_label($1); } // rvalue
+	| CONSTANT_HEX                        { $$ = node_init(CONSTANT_HEX  , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_HEX  , $1); free_label($1); } // rvalue
+	| CONSTANT_CHAR                       { $$ = node_init(CONSTANT_CHAR , $1, ENDARG); assign_context($$); $$->symbol = add_symbol_cte(CONSTANT_CHAR , $1); free_label($1); } // rvalue
+	| '(' assignment_expression ')'       { $$ = $2; }
 	;
 
 argument_call_list

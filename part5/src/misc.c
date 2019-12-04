@@ -35,7 +35,7 @@ char * function_label(Symbol * args) {
 	return NULL;
 }
 
-char * random_label(char * prefix, int len, char * suffix) {
+char * random_label(const char * prefix, int len, const char * suffix) {
 	char alphabet[64] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789";
 	const int size = 63;
 	const int siz = 53;

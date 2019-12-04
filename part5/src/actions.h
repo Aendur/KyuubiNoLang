@@ -8,7 +8,7 @@
 void yyerror (char const * msg);
 
 // scope
-Table * begin(const char * name);
+Table * begin(void);
 Table * begin_fun(int type, const char * name, struct arg_list * args);
 Table * finish(void);
 Table * finish_fun(const char * name);
@@ -17,6 +17,10 @@ void assign_body(Node * node);
 
 // symbol table
 void add_symbol_args(struct arg_list * args);
+
+void reserve_label(char *prefix, char *suffix);
+void reserve_while(void);
+
 Symbol * add_symbol_var(int type, const char * key);
 Symbol * add_symbol_arr(int type, const char * key, int size);
 Symbol * add_symbol_cte(int type, const char * val);
