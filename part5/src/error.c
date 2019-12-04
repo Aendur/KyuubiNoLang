@@ -49,7 +49,7 @@ void error_undeclared(const char * name) {
 
 void warning_no_return(const char * name) {
 	char msg[ERROR_MSG_BUFFER];
-	snprintf(msg, ERROR_MSG_BUFFER, "warning: non-void function '%s' does not have a topmost return statement", name);
+	snprintf(msg, ERROR_MSG_BUFFER, "warning: non-void function '%s' does not have a top-level return statement", name);
 	//++yynerrs;
 	yyerror(msg);
 }

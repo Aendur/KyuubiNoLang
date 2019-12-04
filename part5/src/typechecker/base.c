@@ -172,7 +172,7 @@ char * tc_fcall_args(Node * list_node, Node * expr_node) {
 	static char args[128];
 	static char * pos = args;
 
-	Symbol * s;
+	Symbol * s = NULL;
 	if (expr_node != NULL) {
 		s = expr_node->symbol;
 		if (s==NULL) { return args; }
@@ -187,30 +187,36 @@ char * tc_fcall_args(Node * list_node, Node * expr_node) {
 		}
 	}
 
+	if (s != NULL) {
+		gen_nullary("push", s);
+	}
+
 	return args;
 }
 
-void tc_fcall(Node * node) {
+void tc_fcall(Node * node, Node * args) {
 	if (node == NULL) { fprintf(stderr, "fcall null node\n"); return; }
-
 	assert(node->type == FUNCTION_CALL);
+
+	char * args_key = NULL; 
 	Symbol * funct = NULL;
-	char * key = NULL; 
-	if (node->nleaves == 0) {
-		key = tc_fcall_args(NULL, NULL);
-		funct = table_find(node->symbol, key);
-	} else if (node->nleaves == 1) {
-		key = tc_fcall_args(node->leaf[0], NULL);
-		funct = table_find(node->symbol, key);
+	if (args == NULL) {
+		args_key = "v";
+		funct = table_find(node->symbol, args_key);
 	} else {
-		fprintf(stderr, "too many leaves for fcall node\n");
+		assert(node->nleaves == 1);
+		args_key = tc_fcall_args(node->leaf[0], NULL);
+		funct = table_find(node->symbol, args_key);
 	}
 
 	if (funct == NULL) {
-		error_undeclared_fun(node->symbol->key, key);
+		error_undeclared_fun(node->symbol->key, args_key);
 	} else {
-		// node->symbol = funct;
 		node->symbol = add_symbol(CONSTANT, funct->attr->return_type, NULL);
+		gen_call(funct);
+		if(funct->attr->return_type != VOID) {
+			gen_nullary("pop", node->symbol);
+		}
 	}
 }
 
@@ -251,6 +257,7 @@ Symbol * tc_return(Node * op1) {
 			error_type2("return type", tc_type_str(context->attr->return_type), tc_type_str(expr->attr->return_type));
 		}
 	}
+	//tc_prune(op1);
 	return tgt;
 }
 

@@ -262,8 +262,8 @@ unary_expression
 postfix_expression
 	: primary_expression                          { $$ = $1; }
 	| IDENTIFIER '[' assignment_expression ']'    { $$ = node_init(ARRAY_INDEX  , "array-index"  , $3, ENDARG); assign_context($$); retrieve($$, $1, ARRAY)   ; free_label($1); }
-	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1); tc_fcall($$); }
-	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1); tc_fcall($$); }
+	| IDENTIFIER '(' ')'                          { $$ = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1); tc_fcall($$, NULL); }
+	| IDENTIFIER '(' argument_call_list ')'       { $$ = node_init(FUNCTION_CALL, "function-call", $3, ENDARG); assign_context($$); retrieve($$, $1, FUNCTION); free_label($1); tc_fcall($$, $3); }
 	;
 
 primary_expression

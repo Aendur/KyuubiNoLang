@@ -1,31 +1,27 @@
+int f(void) {
 
+}
+
+int f(int x) {
+	return x;
+}
+
+void f(int x, int y) {
+	
+}
+
+int f(int x, int y, int z) {
+	return z * (x + y * z);
+}
 
 int main(int x) {
-	asm("// a");
-	int a = 1 + 2 + 3 + 4 + 5;
-	asm("// b");
-	int b = 1 + 2 + 3 + 4 + a;
-	asm("// c");
-	int c = 1 + 2 + a + 4 + 5;
-	asm("// d");
-	int d = a + 2 + 3 + 4 + 5;
-	asm("// e");
-	int e = a + 2 + a + 4 + a;
-	asm("// f");
-	int f = 1 + a + 3 + a + 5;
-	asm("// ret");
-	//int b = a;
-	//int c = argc;
-	//argc = 5;
-	//argc = a;
-	//argc = argc;
-	return f;
-
-	//1+1;
-	//1+argc;
-	//argc+1;
-	//a+1;
-	//1+a;
-	//a+a;
-	//argc+argc;
+	asm("//f0");
+	f();
+	asm("//f1");
+	f(3);
+	asm("//f2");
+	f(3, 4);
+	asm("//f3");
+	f(3, 4, 5);
+	//f(3, 4, 5, 6);
 }

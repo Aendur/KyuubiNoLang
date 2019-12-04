@@ -163,21 +163,23 @@ void add_symbol_args(struct arg_list * args) {
 
 Symbol * add_symbol_var(int type, const char * key, bool is_arg) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add var with incompatible type %d\n", type); return NULL; }
-	if(key  == NULL) { fprintf(stderr, "add var with null key\n"); return NULL; }
+	if(key == NULL) { fprintf(stderr, "add var with null key\n"); return NULL; }
 
 	Symbol * ret = add_symbol(VARIABLE, type, key);
 	if (ret == NULL) { return NULL; }
-	if (is_arg) {
-		snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", context_stack->top->attr->n_args);
-		ret->attr->arg_num = context_stack->top->attr->n_args++;
-	} else {
-		snprintf(ret->attr->code, sizeof(ret->attr->code), "$%d", ++context_stack->top->uuid);
-	}
-		
-	Symbol * temp = add_symbol(VARIABLE, type, ret->attr->code);
-	if (temp == NULL) { table_free(&ret); return NULL; }
-	else { attr_copy(temp->attr, ret->attr); }
 	
+	Symbol * temp = NULL;
+	if (is_arg) {
+		snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", context_stack->top->attr->n_args++);
+		temp = add_symbol(VARIABLE, type, ret->attr->code);
+		if (temp == NULL) { table_free(&ret); return NULL; }
+		else { attr_copy(temp->attr, ret->attr); }
+	} else {
+		temp = add_symbol(VARIABLE, type, NULL);
+		if (temp == NULL) { table_free(&ret); return NULL; }
+		else { attr_copy(ret->attr, temp->attr); }
+	}
+
 	return ret;
 }
 
@@ -214,24 +216,37 @@ Symbol * add_symbol_cte(int type, const char * val) {
 	return s;
 }
 
-Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
+Symbol * add_symbol(int symbol_type, int data_type, const char * key0) {
 	Symbol * symbol = NULL;
-	if (key != NULL) {
-		if(context_stack->top->root != NULL && strcmp(context_stack->top->root->key, key) == 0) {
-			error_redefinition_vf(key);
-			return NULL;
-		}
-		symbol = table_find(context_stack->top, key);
+	char * key;
+	if (key0 == NULL) {
+		key = malloc(40);
+		snprintf(key, 40, "$%d", context_stack->top->uuid + 1);
+	} else {
+		key = (char*) key0;
 	}
+	
+	if(context_stack->top->root != NULL && strcmp(context_stack->top->root->key, key) == 0) {
+		error_redefinition_vf(key);
+		if (key0 == NULL) { free(key); }
+		return NULL;
+	}
+	
+	symbol = table_find(context_stack->top, key);
 
 	if (symbol == NULL) {
 		symbol = table_insert(context_stack->top, key);
 		symbol->attr->symbol_type = symbol_type;
 		symbol->attr->return_type = data_type;
 		strncpy(symbol->attr->code, key, sizeof(symbol->attr->code));
+		if (key0 == NULL) {
+			free(key);
+			++context_stack->top->uuid;
+		}
 		return symbol;
 	} else {
 		error_redefinition(key);
+		if (key0 == NULL) { free(key); }
 		return NULL;
 	}
 }

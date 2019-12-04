@@ -82,7 +82,17 @@ void gen_set_defined_code(Symbol * symbol) {
 	}
 }
 
+void gen_nullary(const char * instruction, Symbol * src) {
+	gen_set_defined_code(src);
+	int size = strlen(instruction) + strlen(src->attr->code) + 8;
+	char * line = malloc(size);
+	snprintf(line, size, "\t%s %s", instruction, src->attr->code);
+	lines_append(output_lines, line);
+	free(line);	
+}
+
 void gen_unary(const char * instruction, Symbol * tgt, Symbol * src) {
+	gen_set_defined_code(src);
 	int size = strlen(instruction) + strlen(tgt->attr->code) + strlen(src->attr->code) + 8;
 	char * line = malloc(size);
 	snprintf(line, size, "\t%s %s, %s", instruction, tgt->attr->code, src->attr->code);
@@ -132,6 +142,18 @@ void gen_cast(int new_type, Symbol * tgt, Symbol * src) {
 	}
 	if (cast) { lines_append(output_lines, line); }
 	free(line);
+}
+
+void gen_call(Symbol * func) {
+	int size = strlen(func->key) + strlen(func->root->key) + 16;
+	char * line = malloc(size);
+	int n_args = func->attr->n_args;
+	assert((n_args == 0 && func->key[0] == 'v') || (n_args == (int) strlen(func->key)));
+	if (line != NULL) {
+		snprintf(line, size, "\tcall %s_%s, %d", func->root->key, func->key, n_args);
+		lines_append(output_lines, line);
+		free(line);
+	}
 }
 
 void gen_do(Symbol * ctx, Symbol * expr) {
