@@ -26,14 +26,13 @@ float sqrt(float x) {
 
 int main(void) {
 	//write (sqrt(25.0));
-	int i = 0;
-	while (i <= 100) {
+	int i = -1;
+	while (++i <= 100) {
 		float x = i;
 		write(i);
 		write(' ');
 		write(sqrt(x));
 		write();
-		i = i + 1;
 	}
 
 	float f;

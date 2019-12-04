@@ -28,9 +28,6 @@ bool tc_unary_promotion(Symbol * op[2]) {
 	if (tc_temp_symbol(op[1])) { table_retire(ts_top(context_stack), op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == ts_top(context_stack)->uuid) { --(ts_top(context_stack)->uuid); }}
 	bool defined = (op[1]->attr->defined);
 
-	// char key[40];
-	// snprintf(key, 40, "$%d", ++ts_top(context_stack)->uuid);
-	// printf("%s\n", key);
 	op[0] = add_symbol(defined ? CONSTANT : VARIABLE, op[1]->attr->return_type, NULL);
 	op[0]->attr->defined = defined;
 	op[0]->attr->temporary = true;
@@ -97,38 +94,27 @@ Symbol * tc_op_not(Node * src) {
 }
 
 Symbol * tc_op_inc(Node * src) {
-	(void) src;
-	// if (src->symbol->attr->symbol_type == CONSTANT) {
-	// 	error_lvalue2(src->root);
-	// 	return NULL;
-	// }
-	// Symbol * op[2];
-	// int type = src->symbol->attr->return_type;
-	// switch(type) {
-	// 	case INT: src->symbol->attr->value.ival += 1; tgt = src->symbol; break;
-	// 	case CHAR: src->symbol->attr->value.cval += 1; tgt = src->symbol; break;
-	// 	case FLOAT: src->symbol->attr->value.fval += 1; tgt = src->symbol; break;
-	// 	default: error_type1(src->root->name, tc_type_str(type)); break;
-	// }
-	return NULL;
+	if (src->symbol->attr->symbol_type == CONSTANT) {
+		error_lvalue2(src->root);
+		return NULL;
+	}
+	
+	Symbol * op = src->symbol;
+	gen_inc("add", op);
+	tc_prune(src->root);
+	return op;
 }
 
 Symbol * tc_op_dec(Node * src) {
-	(void) src;
-	// if (src->symbol->attr->symbol_type == CONSTANT) {
-	// 	error_lvalue2(src->root);
-	// 	return NULL;
-	// }
-	// Symbol * op[2];
-	// int type = src->symbol->attr->return_type;
-	// switch(type) {
-	// 	case INT: src->symbol->attr->value.ival -= 1; tgt = src->symbol; break;
-	// 	case CHAR: src->symbol->attr->value.cval -= 1; tgt = src->symbol; break;
-	// 	case FLOAT: src->symbol->attr->value.fval -= 1; tgt = src->symbol; break;
-	// 	default: error_type1(src->root->name, tc_type_str(type)); break;
-	// }
-	// // tc_cut_tree(src, 0);
-	return NULL;
+	if (src->symbol->attr->symbol_type == CONSTANT) {
+		error_lvalue2(src->root);
+		return NULL;
+	}
+	
+	Symbol * op = src->symbol;
+	gen_inc("sub", op);
+	tc_prune(src->root);
+	return op;
 }
 
 

@@ -57,7 +57,7 @@ char * random_label(const char * prefix, int len, const char * suffix) {
 	return label;
 }
 
-FILE * append_files(const char * f1, const char * f2) {
+FILE * cat_files(const char * f1, const char * f2) {
 	FILE * fin1 = fopen(f1, "rb"); if (fin1 == NULL) { return NULL; }
 	FILE * fin2 = fopen(f2, "rb"); if (fin2 == NULL) { fclose(fin1); return NULL; }
 	FILE * fout  = fopen("k.tmp", "wb"); if (fout == NULL) { fclose(fin1); fclose(fin2); return NULL; }
@@ -74,3 +74,33 @@ FILE * append_files(const char * f1, const char * f2) {
 	fseek(fout, 0, SEEK_SET);
 	return fout;
 }
+
+char lit_to_char(char ** str) {
+	if (str == NULL) { return 0; }
+	if (*str == NULL) { return 0; }
+	if (strlen(*str) < 1) { return 0; }
+	if ((*str)[0] != '\\') {
+		(*str) = (*str) + 1;
+		return (*str)[0];
+	} else {
+		if (strlen(*str) < 1) { return 0; }
+		else {
+			char c = (*str)[1];
+			int h = 0;
+			switch(c) {
+				case '\\': (*str) = (*str) + 2; return '\\';
+				case '\'': (*str) = (*str) + 2; return '\'';
+				case '0' : (*str) = (*str) + 2; return '\0';
+				case 'n' : (*str) = (*str) + 2; return '\n';
+				case 'r' : (*str) = (*str) + 2; return '\r';
+				case 't' : (*str) = (*str) + 2; return '\t';
+				case 'x' : (*str) = (*str) + sscanf(*str, "\\x%d", &h); return h;
+				default  : fprintf(stderr, "dont know how to convert '%c'\n", c); return 0;
+			}
+		}
+	}
+}
+
+
+
+

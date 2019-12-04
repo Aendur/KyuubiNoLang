@@ -18,17 +18,23 @@ int nline = 1;
 int ncol0 = 1;
 int ncol1 = 1;
 Node * root = NULL;
-//Nodelist * node_list;
-//Table * symbol_table;
 Tablestack * context_stack = NULL;
 Tablestack * operation_stack = NULL;
-//int no_scope = 0;
 FILE * output = NULL;
 struct lines * output_lines = NULL;
 struct lines * output_table = NULL;
 
 int main(int argc, char** argv) {
 	srand(time(NULL));
+
+	// char * str = "this\nis\x40some\tstring l\\\\iteral";
+	// char * pos = str;
+	// char c = 0;
+	// printf("%s\n", str);
+	// while ((c = lit_to_char(&pos)) != 0) {
+	// 	printf("%d '%c'\n", c, c);
+	// }
+	// getchar();
 
 	// handle cmd line arguments
 	if (argc < 2) {
@@ -37,7 +43,7 @@ int main(int argc, char** argv) {
 	}
 
 	// preprocess input file
-	FILE * fin = append_files("src/stdio.k", argv[1]);
+	FILE * fin = cat_files("src/stdio.k", argv[1]);
 
 	// check input file validity
 	if (fin == NULL) {

@@ -114,6 +114,18 @@ void gen_binary(const char * instruction, Symbol * tgt, Symbol * src1, Symbol * 
 	free(line);
 }
 
+void gen_inc(const char * instruction, Symbol * tgt) {
+	int size = strlen(instruction) + 2 * strlen(tgt->attr->code) + 24;
+	char * line = malloc(size);
+	if (tgt->attr->return_type == FLOAT)
+		snprintf(line, size, "\t%s %s, %s, %f", instruction, tgt->attr->code, tgt->attr->code, 1.0f);
+	else
+		snprintf(line, size, "\t%s %s, %s, %d", instruction, tgt->attr->code, tgt->attr->code, 1);
+	lines_append(output_lines, line);
+	free(line);
+}
+
+
 void gen_cast(int new_type, Symbol * tgt, Symbol * src) {
 	int src_type = src->attr->return_type;
 	int size = 20 + strlen(tgt->attr->code) + strlen(src->attr->code);
