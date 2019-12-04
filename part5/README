@@ -1,51 +1,48 @@
 Program usage:
 The program takes one argument which should be a path to the input file.
 
-$ ./a.out <input_file>
+$ ./kyu <input_file>
 
-The program will then output a preliminary version of the symbol table along with the
-annotated syntax tree generated from the input file, if it is part of the language.
-Should there be errors, the program will instead list them along with their
-positions in the text (line and column numbers, where tabs count as 4 columns).
-
+A file named k.tac will be created in the same directory as the program,
+which contains the set of translated instructions from the input file.
+The program will also show the symbol table produced from the input file
+if it is part of the language. Should there be errors, the program will
+instead list them along with their positions in the text and an output
+file will not be created.
 
 
 Compilation instructions
 
 1. (Optional) Generate the lexical analyzer .c source code through FLEX
+
 $ flex language.l
 
 2. (Optional) Generate the syntax analyzer .c source code through GNU Bison
+
 $ bison language.y
 
 3. Compile the program
-$ gcc -std=c18 -m64 -O3 src/main.c src/node.c src/node-list.c src/table.c src/table-stack.c src/arg-list.c src/parser.c src/scanner.c
+
+$ gcc -okyu -std=c18 -m64 -Isrc src/main.c src/node.c src/node-list.c src/table.c \
+    src/table-stack.c src/arg-list.c src/parser.c src/scanner.c src/actions.c \
+	src/typechecker/base.c src/typechecker/unary.c src/typechecker/binary.c \
+	src/misc.c src/lines.c src/error.c src/generator.c 
 
 - Alternatively, a makefile has also been provided which will run all commands
 $ make
 OR
-$ make flex   # for step 1
-$ make bison  # for step 2
-$ make rel    # for step 3
-
-
+$ make flex       # for step 1
+$ make bison      # for step 2
+$ make program    # for step 3
 
 Specs:
-
 Compiler version: gcc (Debian 9.2.1-17) 9.2.1 20191102
 FLEX version: flex 2.6.4
 GNU Bison version: bison (GNU Bison) 3.4.2
 
 
+Sample files:
+Test files with valid and invalid code samples can be found in the "tests" directory.
 
-Attached files:
 
-./a.out       - Precompiled x64 binary
-./language.l  - FLEX definitions file
-./language.y  - BISON definitions file
-./makefile    - 
-
-Folders:
-./src/        - Source code
-./tests/      - Test input files
 

@@ -1,4 +1,4 @@
-default: flex bison dbg
+default: flex bison program
 
 flex:
 	flex src/language.l
@@ -6,8 +6,8 @@ flex:
 bison:
 	bison -Wall src/language.y
 
-dbg:
-	gcc -okyu -std=c18 -m64 -g -Wall -Wextra -Isrc -DDEBUG \
+program:
+	gcc -okyu -std=c18 -m64 -Isrc \
 	src/main.c        \
 	src/node.c        \
 	src/node-list.c   \
@@ -24,26 +24,6 @@ dbg:
 	src/lines.c \
 	src/error.c \
 	src/generator.c \
-
-rel:
-	gcc -okyu -std=c18 -m64 -O3 -Isrc \
-	src/main.c        \
-	src/node.c        \
-	src/node-list.c   \
-	src/table.c       \
-	src/table-stack.c \
-	src/arg-list.c    \
-	src/parser.c      \
-	src/scanner.c     \
-	src/actions.c     \
-	src/typechecker/base.c \
-	src/typechecker/unary.c \
-	src/typechecker/binary.c \
-	src/misc.c \
-	src/lines.c \
-	src/error.c \
-	src/generator.c \
-
 
 test-node:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_NODE \

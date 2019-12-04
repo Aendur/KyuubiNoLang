@@ -1,7 +1,7 @@
 %defines "src/parser.h"
 %output  "src/parser.c"
-%define api.header.include "\"parser.h\""
-%require "3.4.0"
+ //%define api.header.include "\"parser.h\""
+ //%require "3.4.0"
 
 %define parse.error verbose
 %define lr.type canonical-lr
