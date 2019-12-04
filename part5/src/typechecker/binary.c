@@ -22,7 +22,19 @@ extern Tablestack * operation_stack;
 // BINARY OPERATIONS //
 ///////////////////////
 
+// void debug_stack_print(Tablestack * stack) {
+// 	struct selene * elem = stack->top;
+// 	printf("%d\n", stack->size);
+// 	while (elem != stack->bot) {
+// 		printf("%s\n", elem->symbol->key);
+// 		getchar();
+// 		elem = elem->below;
+// 	}
+// }
+
 bool tc_binary_promotion(Symbol * op[3]) {
+	// debug_stack_print(operation_stack);
+	// getchar();
 	op[2] = ts_pull(operation_stack);
 	op[1] = ts_pull(operation_stack);
 	
@@ -30,13 +42,10 @@ bool tc_binary_promotion(Symbol * op[3]) {
 	assert(op[2]->attr->symbol_type != 0);
 
 	int uuid;
-	if (tc_temp_symbol(op[2])) { table_retire(context_stack->top, op[2]->key); sscanf(op[2]->key, "$%d", & uuid); if (uuid == context_stack->top->uuid) { --context_stack->top->uuid; }}
-	if (tc_temp_symbol(op[1])) { table_retire(context_stack->top, op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == context_stack->top->uuid) { --context_stack->top->uuid; }}
+	if (tc_temp_symbol(op[2])) { table_retire(ts_top(context_stack), op[2]->key); sscanf(op[2]->key, "$%d", & uuid); if (uuid == ts_top(context_stack)->uuid) { --(ts_top(context_stack)->uuid); }}
+	if (tc_temp_symbol(op[1])) { table_retire(ts_top(context_stack), op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == ts_top(context_stack)->uuid) { --(ts_top(context_stack)->uuid); }}
 	bool defined = (op[1]->attr->defined && op[2]->attr->defined);
 
-	// char key[40];
-	// snprintf(key, 40, "$%d", ++context_stack->top->uuid);
-	// printf("%s\n", key);
 	op[0] = add_symbol(defined ? CONSTANT : VARIABLE, op[1]->attr->return_type, NULL);
 	op[0]->attr->defined = defined;
 	op[0]->attr->temporary = true;
@@ -118,6 +127,8 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 	}
 	//Symbol * op2 = src2->symbol;
 	Symbol * op2 = ts_pull(operation_stack);
+	// pair_print(op2);
+	// pair_print(src2->symbol);
 	assert(op2 == src2->symbol);
 	
 	int type1 = tgt->attr->return_type;
@@ -146,12 +157,27 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 	}
 
 	// prune this subtree tree if symbol was promoted
-	gen_set_defined_code(op2);
-	gen_unary("mov", tgt, op2);
-	tc_prune(node);
-	if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); --context_stack->top->uuid; }
-	// clean up if there was an error
-	if (error) { tgt = NULL; }
+	if (!error) {
+		gen_set_defined_code(op2);
+		if (type1 != type2) {
+			Symbol * temp = add_symbol(CONSTANT, type1, NULL);
+			gen_cast(type1, temp, op2);
+			gen_unary("mov", tgt, temp);
+			if (tc_temp_symbol(temp)) { table_remove(ts_top(context_stack), temp->key); --ts_top(context_stack)->uuid; }
+		} else {
+			gen_unary("mov", tgt, op2);
+		}
+		// printf("INT %d\n", INT);
+		// printf("CHAR %d\n", CHAR);
+		// printf("FLOAT %d\n", FLOAT);
+		// printf("%d %d\n", type1, type2);
+		// getchar();
+		tc_prune(node);
+		if (tc_temp_symbol(op2)) { table_remove(ts_top(context_stack), op2->key); --ts_top(context_stack)->uuid; }
+	} else {
+		// clean up if there was an error
+		tgt = NULL;
+	}
 	return tgt;
 }
 

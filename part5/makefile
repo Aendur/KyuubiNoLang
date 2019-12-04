@@ -59,7 +59,7 @@ test-hash:
 
 test-tstack:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_TSTACK \
-	src/table.c src/table-stack.c
+	src/table.c src/table-stack.c src/arg-list.c
 
 test-al:
 	gcc -std=c18 -m64 -Wall -Wextra -Wpedantic -g -DUNIT_TEST_ALIST \

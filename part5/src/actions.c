@@ -30,15 +30,15 @@ void yyerror (char const * msg) {
 ////////////////////
 
 Table * begin(void) {
-	if (context_stack->top == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
+	if (ts_top(context_stack) == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
 
-	char * key = context_stack->top->attr->reserved_label;
+	char * key = ts_top(context_stack)->attr->reserved_label;
 	char * name = NULL;
 	Symbol * new_context;
 	// if there is a name, search for it in the current context
 	if (key != NULL) {
 		name = (char*) key;
-		new_context = table_find(context_stack->top, name);
+		new_context = table_find(ts_top(context_stack), name);
 		
 		// if it exists, error
 		if (new_context != NULL) {
@@ -47,11 +47,11 @@ Table * begin(void) {
 		}
 	} else {
 		// create a unique random name if arg is NULL
-		do { free(name); name = random_label(NULL, 9, NULL); } while (table_find(context_stack->top, name) != NULL);
+		do { free(name); name = random_label(NULL, 9, NULL); } while (table_find(ts_top(context_stack), name) != NULL);
 	}
 
 	// if there is not a name, or it does not exist, create a new context
-	new_context = table_insert(context_stack->top, name);
+	new_context = table_insert(ts_top(context_stack), name);
 	if (key == NULL) { free(name); }
 
 	if (new_context == NULL) {
@@ -60,8 +60,8 @@ Table * begin(void) {
 		return NULL;
 	} else {
 		// otherwise push it into the stack
-		new_context->root = context_stack->top;
-		new_context->uuid = context_stack->top->uuid;
+		new_context->root = ts_top(context_stack);
+		new_context->uuid = ts_top(context_stack)->uuid;
 		ts_push(context_stack, new_context);
 
 		//gen_context_begin(new_context);
@@ -71,31 +71,31 @@ Table * begin(void) {
 }
 
 Table * begin_fun(int type, const char * name, struct arg_list * args) {
-	if (context_stack->top == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
+	if (ts_top(context_stack) == NULL) { fprintf(stderr, "begin: stack is empty\n"); return NULL; }
 	if (name == NULL) { fprintf(stderr, "function name is null\n"); return NULL; }
 
 	char * key = al_key(args);
-	Symbol * new_context = table_find(context_stack->top, name);
+	Symbol * new_context = table_find(ts_top(context_stack), name);
 	if (new_context == NULL) {
-		new_context = table_insert(context_stack->top, name);
+		new_context = table_insert(ts_top(context_stack), name);
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = VOID; //type;
 	}
 
 	if (new_context->root == NULL) {
-		new_context->root = context_stack->top;
-	} else if (new_context->root != context_stack->top) {
+		new_context->root = ts_top(context_stack);
+	} else if (new_context->root != ts_top(context_stack)) {
 		fprintf(stderr, "context error\n");
 	}
 	ts_push(context_stack, new_context);
 
-	new_context = table_find(context_stack->top, key);
+	new_context = table_find(ts_top(context_stack), key);
 	if (new_context == NULL) {
-		new_context = table_insert(context_stack->top, key);
+		new_context = table_insert(ts_top(context_stack), key);
 		new_context->attr->symbol_type = FUNCTION;
 		new_context->attr->return_type = type;
 		new_context->attr->arg_list = args;
-		new_context->root = context_stack->top;
+		new_context->root = ts_top(context_stack);
 		ts_push(context_stack, new_context);
 		add_symbol_args(args);
 		gen_function_begin(new_context);		
@@ -129,18 +129,18 @@ Table * finish_fun(const char * name) {
 }
 
 void assign_context(Node * node) {
-	if (context_stack->top == NULL) {
+	if (ts_top(context_stack) == NULL) {
 		fprintf(stderr, "assign context: stack is empty\n");
 	} else {
-		node->context = context_stack->top;
+		node->context = ts_top(context_stack);
 	}
 }
 
 void assign_body(Node * node) {
-	if (context_stack->top == NULL) {
+	if (ts_top(context_stack) == NULL) {
 		fprintf(stderr, "assign body: stack is empty\n");
 	} else {
-		context_stack->top->attr->statement_tree = node;
+		ts_top(context_stack)->attr->statement_tree = node;
 	}
 }
 
@@ -170,7 +170,7 @@ Symbol * add_symbol_var(int type, const char * key, bool is_arg) {
 	
 	Symbol * temp = NULL;
 	if (is_arg) {
-		snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", context_stack->top->attr->n_args++);
+		snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", ts_top(context_stack)->attr->n_args++);
 		temp = add_symbol(VARIABLE, type, ret->attr->code);
 		if (temp == NULL) { table_free(&ret); return NULL; }
 		else { attr_copy(temp->attr, ret->attr); }
@@ -221,27 +221,27 @@ Symbol * add_symbol(int symbol_type, int data_type, const char * key0) {
 	char * key;
 	if (key0 == NULL) {
 		key = malloc(40);
-		snprintf(key, 40, "$%d", context_stack->top->uuid + 1);
+		snprintf(key, 40, "$%d", ts_top(context_stack)->uuid + 1);
 	} else {
 		key = (char*) key0;
 	}
 	
-	if(context_stack->top->root != NULL && strcmp(context_stack->top->root->key, key) == 0) {
+	if(ts_top(context_stack)->root != NULL && strcmp(ts_top(context_stack)->root->key, key) == 0) {
 		error_redefinition_vf(key);
 		if (key0 == NULL) { free(key); }
 		return NULL;
 	}
 	
-	symbol = table_find(context_stack->top, key);
+	symbol = table_find(ts_top(context_stack), key);
 
 	if (symbol == NULL) {
-		symbol = table_insert(context_stack->top, key);
+		symbol = table_insert(ts_top(context_stack), key);
 		symbol->attr->symbol_type = symbol_type;
 		symbol->attr->return_type = data_type;
 		strncpy(symbol->attr->code, key, sizeof(symbol->attr->code));
 		if (key0 == NULL) {
 			free(key);
-			++context_stack->top->uuid;
+			++(ts_top(context_stack)->uuid);
 		}
 		return symbol;
 	} else {
@@ -286,7 +286,8 @@ Symbol * retrieve(Node * node, const char * key, int type) {
 			return NULL;
 		} else {
 			node->symbol = s;
-			ts_push(operation_stack, s);
+			if (type != FUNCTION)
+				ts_push(operation_stack, s);
 			return s;
 		}
 	}

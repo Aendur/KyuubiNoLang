@@ -66,35 +66,35 @@ int main(int argc, char** argv) {
 	// call GNU Bison
 	yyparse();
 
+	// if (yynerrs == 0) {
+	// 	printf("------------------------------\n");
+	// 	printf("SYNTAX TREE\n");
+	// 	printf("------------------------------\n");
+	// 	print_tree(root, 0);
+	// }
+
+	// printf("------------------------------\n");
+	// printf("SYMBOL TABLE\n");
+	// printf("------------------------------\n");
+	// ts_printf(context_stack);
+
 	if (yynerrs == 0) {
-		printf("------------------------------\n");
-		printf("SYNTAX TREE\n");
-		printf("------------------------------\n");
-		print_tree(root, 0);
-	}
-
-	printf("------------------------------\n");
-	printf("SYMBOL TABLE\n");
-	printf("------------------------------\n");
-	ts_printf(context_stack);
-
-
-	bool output_is_stdout = true;
-	if (yynerrs == 0) {
-		printf("------------------------------\n");
-		printf("OUTPUT\n");
-		printf("------------------------------\n");
+		// printf("------------------------------\n");
+		// printf("OUTPUT\n");
+		// printf("------------------------------\n");
 		// Open output file
-		if (output_is_stdout)
-			output = stdout;
-		else output = fopen("k.tac", "w");
+		
+		printf("output file: k.tac\n");
+		output = fopen("k.tac", "w");
+		fprintf(output, ".code\n");
 		lines_write(output, output_lines);
+		fprintf(output, "main:\n");
+		fprintf(output, "\tcall main_v\n\n");
+		fclose(output);
 	}
 
 	// close input file
 	fclose(yyin);
-	// close output file;
-	if (!output_is_stdout) { fclose(output); }
 
 	// release resources
 	yylex_destroy();

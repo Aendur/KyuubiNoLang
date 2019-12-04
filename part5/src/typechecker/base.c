@@ -12,6 +12,7 @@
 
 extern int yynerrs;
 extern Tablestack * context_stack;
+extern Tablestack * operation_stack;
 
 ///////////
 // Tools //
@@ -156,7 +157,7 @@ void tc_arr_decl(Node * node) {
 	if(!error) {
 		node->symbol->attr->length = op1->attr->value.ival;
 		if(tc_temp_symbol(op1)) {
-			table_remove(context_stack->top, op1->key);
+			table_remove(ts_top(context_stack), op1->key);
 		}
 		tc_prune(node);
 	}
@@ -217,11 +218,18 @@ void tc_fcall(Node * node, Node * args) {
 		if(funct->attr->return_type != VOID) {
 			gen_nullary("pop", node->symbol);
 		}
+		//ts_pull(operation_stack);
+		ts_push(operation_stack, node->symbol);
 	}
 }
 
 Symbol * tc_return(Node * op1) {
-	Symbol * context = context_stack->top;
+	Symbol * inner_context = ts_top(context_stack);
+	if (inner_context == NULL) { error_no_context(); return NULL; }
+	Symbol * context = inner_context;
+	while(context != NULL && context->attr->symbol_type != FUNCTION) {
+		context = context->root;
+	}
 	if (context == NULL) { error_no_context(); return NULL; }
 	
 	Symbol * tgt = NULL;
@@ -238,11 +246,12 @@ Symbol * tc_return(Node * op1) {
 		Symbol * expr = op1->symbol;
 
 		if (context->attr->return_type == expr->attr->return_type) {
-			context->attr->function_returns = true;
+			if (context == inner_context)
+				context->attr->function_returns = true;
 			
 			if(expr->attr->defined == true) {
 				char * tgt_key = NULL;
-				do { free(tgt_key); tgt_key = random_label("ret.", 9, NULL); } while (table_find(context_stack->top, tgt_key) != NULL);
+				do { free(tgt_key); tgt_key = random_label("ret.", 9, NULL); } while (table_find(ts_top(context_stack), tgt_key) != NULL);
 				tgt = add_symbol(CONSTANT, expr->attr->return_type, tgt_key);
 				free(tgt_key);
 				attr_copy(tgt->attr, expr->attr);
@@ -257,7 +266,9 @@ Symbol * tc_return(Node * op1) {
 			error_type2("return type", tc_type_str(context->attr->return_type), tc_type_str(expr->attr->return_type));
 		}
 	}
-	//tc_prune(op1);
+	
+	// pair_print(tgt);
+	// getchar();
 	return tgt;
 }
 
@@ -272,10 +283,10 @@ Symbol * tc_return(Node * op1) {
 void tc_free_do(Node * expr) {
 	if (expr == NULL) { THROW("jump do null expr",); }
 	if (expr->symbol == NULL) { THROW("jump do null expr symbol",); }
-	if (context_stack->top->attr->reserved_while == NULL) { THROW("jump do null label",); }
-	char * label = context_stack->top->attr->reserved_while;
+	if (ts_top(context_stack)->attr->reserved_while == NULL) { THROW("jump do null label",); }
+	char * label = ts_top(context_stack)->attr->reserved_while;
 	gen_jump("brnz", label, expr->symbol);
-	context_stack->top->attr->reserved_while = NULL;
+	ts_top(context_stack)->attr->reserved_while = NULL;
 	free(label);
 }
 
@@ -284,19 +295,19 @@ void tc_init_while(const char * prefix, const char * suffix) {
 	do {
 		free(new_label);
 		new_label = random_label(prefix, 9, suffix);
-	} while (table_find(context_stack->top, new_label) != NULL);
+	} while (table_find(ts_top(context_stack), new_label) != NULL);
 
-	table_insert(context_stack->top, new_label);
-	context_stack->top->attr->reserved_while = new_label;
+	table_insert(ts_top(context_stack), new_label);
+	ts_top(context_stack)->attr->reserved_while = new_label;
 	gen_label(NULL, new_label, NULL);
 }
 
 void tc_jump_while(Node * expr) {
 	if (expr == NULL) { THROW("jump while null expr",); }
 	if (expr->symbol == NULL) { THROW("jump while null symbol",); }
-	if (context_stack->top->attr->reserved_while == NULL) { THROW("jump while null label",); }
+	if (ts_top(context_stack)->attr->reserved_while == NULL) { THROW("jump while null label",); }
 	
-	const char * label = context_stack->top->attr->reserved_while;
+	const char * label = ts_top(context_stack)->attr->reserved_while;
 	int size = 5 + strlen(label);
 	char * label_end = malloc(size);
 	if (label_end != NULL) {
@@ -307,12 +318,12 @@ void tc_jump_while(Node * expr) {
 }
 
 void tc_free_while(void) {
-	if (context_stack->top->attr->reserved_while == NULL) { THROW("free while null label",); }
-	char * new_label = context_stack->top->attr->reserved_while;
+	if (ts_top(context_stack)->attr->reserved_while == NULL) { THROW("free while null label",); }
+	char * new_label = ts_top(context_stack)->attr->reserved_while;
 	gen_jump("jump", new_label, NULL);
 	gen_label(NULL, new_label, "_end");
 	free(new_label);
-	context_stack->top->attr->reserved_while = NULL;
+	ts_top(context_stack)->attr->reserved_while = NULL;
 }
 
 void tc_init_if(Node * expr, const char * prefix, const char * suffix) {
@@ -324,9 +335,9 @@ void tc_init_if(Node * expr, const char * prefix, const char * suffix) {
 	do {
 		free(new_label);
 		new_label = random_label(prefix, 9, suffix);
-	} while (table_find(context_stack->top, new_label) != NULL);
-	table_insert(context_stack->top, new_label);
-	context_stack->top->attr->reserved_while = new_label;
+	} while (table_find(ts_top(context_stack), new_label) != NULL);
+	table_insert(ts_top(context_stack), new_label);
+	ts_top(context_stack)->attr->reserved_while = new_label;
 
 	// create end-if jump
 	int size = 12 + strlen(new_label);
@@ -340,8 +351,8 @@ void tc_init_if(Node * expr, const char * prefix, const char * suffix) {
 }
 
 void tc_init_else(void) {
-	if (context_stack->top->attr->reserved_while == NULL) { THROW("init else null label",); }
-	char * new_label = context_stack->top->attr->reserved_while;
+	if (ts_top(context_stack)->attr->reserved_while == NULL) { THROW("init else null label",); }
+	char * new_label = ts_top(context_stack)->attr->reserved_while;
 
 	// create end-if
 	int size = 12 + strlen(new_label);
@@ -361,8 +372,8 @@ void tc_init_else(void) {
 }
 
 void tc_free_if(bool has_else) {
-	if (context_stack->top->attr->reserved_while == NULL) { THROW("free if null label",); }
-	char * new_label = context_stack->top->attr->reserved_while;
+	if (ts_top(context_stack)->attr->reserved_while == NULL) { THROW("free if null label",); }
+	char * new_label = ts_top(context_stack)->attr->reserved_while;
 
 	// create end-if
 	int size = 12 + strlen(new_label);
@@ -374,5 +385,5 @@ void tc_free_if(bool has_else) {
 	}
 
 	free(new_label);
-	context_stack->top->attr->reserved_while = NULL;
+	ts_top(context_stack)->attr->reserved_while = NULL;
 }

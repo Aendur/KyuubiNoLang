@@ -41,14 +41,16 @@ Table * ts_push(Tablestack * ts, Table * tab) {
 	if (ts == NULL) { fprintf(stderr, "trying to push into a null obj\n"); return NULL; }
 	if (tab == NULL) { fprintf(stderr, "trying to push a null obj\n"); return NULL; }
 
+	struct selene * sel = sel_init(tab);
+
 	if (ts->size == 0) {
-		ts->bot = tab;
-		ts->top = tab;
+		ts->bot = sel;
+		ts->top = sel;
 		ts->size = 1;
 		return tab;
 	} else {
-		tab->below = ts->top;
-		ts->top = tab;
+		sel->below = ts->top;
+		ts->top = sel;
 		ts->size++;
 		return tab;
 	}
@@ -58,52 +60,78 @@ Table * ts_push(Tablestack * ts, Table * tab) {
 Table * ts_pull(Tablestack * ts) {
 	if (ts == NULL) { fprintf(stderr, "trying to pull from a null obj\n"); return NULL; }
 	if (ts->size == 0) { fprintf(stderr, "trying to pull from an empty stack\n"); return NULL; }
-	else {
-		Table * tab = ts->top;
-		ts->top = tab->below;
+	
+	struct selene * sel = ts->top;
+	Table * tab = sel->symbol;
+
+	if (ts->size == 1) {
+		ts->top = NULL;
+		ts->bot = NULL;
+		ts->size = 0;
+	} else {
+		ts->top = sel->below;
 		ts->size--;
-		if (ts->size == 0) { ts->bot = NULL; }
-		tab->below = NULL;
-		return tab;
 	}
+
+	sel_free(&sel);
+	return tab;
+}
+
+Table * ts_top(Tablestack * ts) {
+	return ts->top->symbol;
 }
 
 void ts_printm(Tablestack * ts) {
-	Table * tab = ts->top;
+	struct selene * sel = ts->top;
 	printf("top:\n");
-	while (tab != NULL) {
-		printf("%p (%lu)\n", (void*) tab, ts->size);
-		tab = tab->below;
+	while (sel != NULL) {
+		printf("%p (%lu)\n", (void*) sel, ts->size);
+		sel = sel->below;
 	}
 	printf("=====\n");
-	tab = ts->top;
-	while (tab != NULL) {
-		printf("%p (%lu)\n", (void*) tab, ts->size);
-		table_printm(tab);
-		tab = tab->below;
+	sel = ts->top;
+	while (sel != NULL) {
+		printf("%p (%lu)\n", (void*) sel, ts->size);
+		table_printm(sel->symbol);
+		sel = sel->below;
 		printf("-----\n");
 	}
 }
 
 void ts_printf(Tablestack * ts) {
-	Table * tab = ts->top;
+	struct selene * sel = ts->top;
 	printf("top:\n");
-	while (tab != NULL) {
-		printf("%p (%lu)\n", (void*) tab, ts->size);
-		tab = tab->below;
+	while (sel != NULL) {
+		printf("%p (%lu)\n", (void*) sel, ts->size);
+		sel = sel->below;
 	}
 	printf("=====\n");
-	tab = ts->top;
-	while (tab != NULL) {
-		printf("%p (%lu)\n", (void*) tab, ts->size);
-		table_printf(tab, 0);
-		tab = tab->below;
+	sel = ts->top;
+	while (sel != NULL) {
+		printf("%p (%lu)\n", (void*) sel, ts->size);
+		table_printf(sel->symbol, 0);
+		sel = sel->below;
 		printf("-----\n");
 	}
 }
 
 void ts_printt(Tablestack * ts) {
 	printf("%p %lu\n", (void*) ts->top, ts->size);
+}
+
+
+struct selene * sel_init(Table * tab) {
+	struct selene * sel = malloc(sizeof(struct selene));
+	sel->below = NULL;
+	sel->symbol = tab;
+	return sel;
+}
+
+void sel_free(struct selene ** sel) {
+	if (sel == NULL) { return; }
+	//if (*sel == NULL) { return; }
+	free(*sel);
+	*sel = NULL;
 }
 
 

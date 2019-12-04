@@ -14,7 +14,7 @@ struct table {
 	unsigned long n_buckets;
 	unsigned long n_keys;
 	struct table  * root;
-	struct table  * below;
+	//struct table  * below;
 	struct bucket * buckets;
 
 	int uuid;

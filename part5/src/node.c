@@ -55,7 +55,7 @@ Node * node_init(int type, const char * name, ...) {
 			if (n1 == ENDARG) {
 				fprintf(stderr, "%s (%d): init endarg child\n", __FILE__, __LINE__);
 			} else if (n1 == NULL) {
-				fprintf(stderr, "%s (%d): init null child\n", __FILE__, __LINE__);
+				// fprintf(stderr, "%s (%d): init null child\n", __FILE__, __LINE__);
 			} else {
 				//fprintf(stderr, "%s (%d): init valid child\n", __FILE__, __LINE__);
 				n0->leaf[l++] = n1;

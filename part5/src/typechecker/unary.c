@@ -25,11 +25,11 @@ bool tc_unary_promotion(Symbol * op[2]) {
 	assert(op[1]->attr->symbol_type != 0);
 
 	int uuid;
-	if (tc_temp_symbol(op[1])) { table_retire(context_stack->top, op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == context_stack->top->uuid) { --context_stack->top->uuid; }}
+	if (tc_temp_symbol(op[1])) { table_retire(ts_top(context_stack), op[1]->key); sscanf(op[1]->key, "$%d", & uuid); if (uuid == ts_top(context_stack)->uuid) { --(ts_top(context_stack)->uuid); }}
 	bool defined = (op[1]->attr->defined);
 
 	// char key[40];
-	// snprintf(key, 40, "$%d", ++context_stack->top->uuid);
+	// snprintf(key, 40, "$%d", ++ts_top(context_stack)->uuid);
 	// printf("%s\n", key);
 	op[0] = add_symbol(defined ? CONSTANT : VARIABLE, op[1]->attr->return_type, NULL);
 	op[0]->attr->defined = defined;

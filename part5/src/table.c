@@ -19,7 +19,7 @@ Table * table_init (size_t size, const char * key) {
 	tab->n_buckets = size;
 	tab->n_keys = 0;
 	tab->root = NULL;
-	tab->below = NULL;
+	// tab->below = NULL;
 	tab->uuid = -1;
 	tab->buckets = calloc(size, sizeof(struct bucket));
 	
