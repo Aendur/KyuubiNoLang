@@ -21,6 +21,7 @@ Node * root = NULL;
 //Nodelist * node_list;
 //Table * symbol_table;
 Tablestack * context_stack;
+Tablestack * operation_stack;
 //int no_scope = 0;
 FILE * output = NULL;
 struct lines * output_lines;
@@ -52,6 +53,9 @@ int main(int argc, char** argv) {
 	// initialize context stack with global symbol table
 	context_stack = ts_init();
 	ts_push(context_stack, table_init(16, ":global.scope:"));
+
+	// initialize an empty operation stack
+	operation_stack = ts_init();
 
 	// initialize node list
 	// node_list = nl_init();

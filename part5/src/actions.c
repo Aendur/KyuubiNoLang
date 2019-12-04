@@ -60,6 +60,7 @@ Table * begin(void) {
 	} else {
 		// otherwise push it into the stack
 		new_context->root = context_stack->top;
+		new_context->uuid = context_stack->top->uuid;
 		ts_push(context_stack, new_context);
 
 		//gen_context_begin(new_context);
@@ -206,9 +207,6 @@ Symbol * add_symbol_cte(int type, const char * val) {
 }
 
 Symbol * add_symbol(int symbol_type, int data_type, const char * key) {
-	//switch (data_type) { case VOID: case INT: case CHAR: case FLOAT: case STRING: break; default: fprintf(stderr, "undefined type\n"); return NULL; }
-	//if(key  == NULL) { fprintf(stderr, "add symbol with null key\n"); return NULL; }
-
 	Symbol * symbol = NULL;
 	if (key != NULL) {
 		if(context_stack->top->root != NULL && strcmp(context_stack->top->root->key, key) == 0) {
@@ -268,13 +266,3 @@ Symbol * retrieve(Node * node, const char * key, int type) {
 		}
 	}
 }
-
-// void reserve_label(char *prefix, char *suffix) {
-// 	char * new_label = NULL;
-// 	do {
-// 		free(new_label);
-// 		new_label = random_label(prefix, 9, suffix);
-// 	} while (table_find(context_stack->top, new_label) != NULL);
-// 	context_stack->top->attr->reserved_label = new_label;
-// }
-

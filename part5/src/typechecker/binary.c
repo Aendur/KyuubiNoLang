@@ -143,15 +143,20 @@ Symbol * tc_op_assign(Node * tgt1, Node * src2) {
 	}
 
 	// prune this subtree tree if symbol was promoted
-	if (op2->attr->defined) {
-		tgt->attr->defined = true;
-		gen_set_defined_code(tgt);
-		if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); }
-		tc_prune(node);
+	strcpy(tgt->attr->code, op2->key);
+	gen_set_defined_code(op2);
+	gen_unary("mov", tgt, op2);
+	/*if (op2->attr->defined) {
+		//tgt->attr->defined = true;
+		gen_set_defined_code(op2);
+		
+		strcpy(tgt->attr->code, op2->key);
+		gen_unary("mov", tgt, op2);
+		//if (tc_temp_symbol(op2)) { table_remove(context_stack->top, op2->key); }
 	} else {
-		strcpy(tgt->attr->code, op2->attr->code);
-	}
-
+		strcpy(tgt->attr->code, op2->key);
+	}*/
+	tc_prune(node);
 	// clean up if there was an error
 	if (error) { tgt = NULL; }
 	return tgt;

@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// static unsigned int table_uuid = 0;
-
 // Initialize a new table with <size> buckets
 Table * table_init (size_t size, const char * key) {
 	//if (key == NULL) { fprintf(stderr, "unable to init table with NULL key\n"); return NULL; }
