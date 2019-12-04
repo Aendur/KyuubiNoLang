@@ -8,6 +8,7 @@
 #include <string.h>
 
 extern struct lines * output_lines;
+extern struct lines * output_table;
 
 void gen_asm(const char * str) {
 	int size = strlen(str);
@@ -208,4 +209,17 @@ void gen_jump(const char * instr, const char * label, Symbol * expr) {
 		lines_append(output_lines, instruction);
 		free(instruction);
 	}
+}
+
+void gen_global_var(Symbol * var) {
+	int size = sizeof(var->attr->code) + 8;
+	char * line = malloc(size);
+	switch(var->attr->return_type) {
+		case INT: snprintf(line, size, "int %s", var->attr->code); break;
+		case CHAR: snprintf(line, size, "char %s", var->attr->code); break;
+		case FLOAT: snprintf(line, size, "float %s", var->attr->code); break;
+		default: break;
+	}
+	lines_append(output_table, line);
+	free(line);
 }

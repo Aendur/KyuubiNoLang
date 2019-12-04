@@ -165,19 +165,25 @@ Symbol * add_symbol_var(int type, const char * key, bool is_arg) {
 	switch (type) { case INT: case CHAR: case FLOAT: break; default: fprintf(stderr, "add var with incompatible type %d\n", type); return NULL; }
 	if(key == NULL) { fprintf(stderr, "add var with null key\n"); return NULL; }
 
+	bool is_global = strcmp(ts_top(context_stack)->key, ":WORLD:") == 0;
+	
 	Symbol * ret = add_symbol(VARIABLE, type, key);
 	if (ret == NULL) { return NULL; }
 	
 	Symbol * temp = NULL;
-	if (is_arg) {
-		snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", ts_top(context_stack)->attr->n_args++);
-		temp = add_symbol(VARIABLE, type, ret->attr->code);
-		if (temp == NULL) { table_free(&ret); return NULL; }
-		else { attr_copy(temp->attr, ret->attr); }
+	if (is_global) {
+		gen_global_var(ret);
 	} else {
-		temp = add_symbol(VARIABLE, type, NULL);
-		if (temp == NULL) { table_free(&ret); return NULL; }
-		else { attr_copy(ret->attr, temp->attr); }
+		if (is_arg) {
+			snprintf(ret->attr->code, sizeof(ret->attr->code), "#%d", ts_top(context_stack)->attr->n_args++);
+			temp = add_symbol(VARIABLE, type, ret->attr->code);
+			if (temp == NULL) { table_free(&ret); return NULL; }
+			else { attr_copy(temp->attr, ret->attr); }
+		} else {
+			temp = add_symbol(VARIABLE, type, NULL);
+			if (temp == NULL) { table_free(&ret); return NULL; }
+			else { attr_copy(ret->attr, temp->attr); }
+		}
 	}
 
 	return ret;

@@ -21,5 +21,7 @@ void gen_do(Symbol * ctx, Symbol * expr);
 void gen_jump(const char * instr, const char * label, Symbol * expr);
 void gen_label(const char *prefix, const char *text, const char *suffix);
 
+void gen_global_var(Symbol * var);
+
 #endif
 

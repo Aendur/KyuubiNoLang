@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 
 	// initialize context stack with global symbol table
 	context_stack = ts_init();
-	ts_push(context_stack, table_init(16, ":global.scope:"));
+	ts_push(context_stack, table_init(16, ":WORLD:"));
 
 	// initialize an empty operation stack
 	operation_stack = ts_init();
@@ -75,23 +75,33 @@ int main(int argc, char** argv) {
 	// 	print_tree(root, 0);
 	// }
 
-	// printf("------------------------------\n");
-	// printf("SYMBOL TABLE\n");
-	// printf("------------------------------\n");
-	// ts_printf(context_stack);
+	printf("------------------------------\n");
+	printf("SYMBOL TABLE\n");
+	printf("------------------------------\n");
+	ts_printf(context_stack);
 
 	if (yynerrs == 0) {
 		// printf("------------------------------\n");
 		// printf("OUTPUT\n");
 		// printf("------------------------------\n");
-		// Open output file
-		
+
+		// open output file
 		printf("output file: k.tac\n");
 		output = fopen("k.tac", "w");
+
+		// write out table section
+		fprintf(output, ".table\n");
+		lines_write(output, output_table);
+
+		// write out code section
 		fprintf(output, ".code\n");
 		lines_write(output, output_lines);
+
+		// set program entry point
 		fprintf(output, "main:\n");
 		fprintf(output, "\tcall main_v\n\n");
+
+		// close output file
 		fclose(output);
 	}
 

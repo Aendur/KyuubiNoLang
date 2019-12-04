@@ -111,7 +111,7 @@ declaration_list
 
 declaration
 	: function_definition                    { $$ = $1; }
-	| init_declarator ';'                    { $$ = $1; }
+	| var_declarator ';'                     { $$ = $1; }
 	| error ';'                              { $$ = NULL; }
 	//| error compound_statement               { $$ = NULL; node_free_recursive(&$2); }
 	;
