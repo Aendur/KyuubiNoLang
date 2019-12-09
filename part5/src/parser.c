@@ -86,7 +86,111 @@
 # define YYERROR_VERBOSE 1
 #endif
 
-#include "parser.h"
+/* Use api.header.include to #include this header
+   instead of duplicating it here.  */
+#ifndef YY_YY_SRC_PARSER_H_INCLUDED
+# define YY_YY_SRC_PARSER_H_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
+#if YYDEBUG
+extern int yydebug;
+#endif
+
+/* Token type.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+  enum yytokentype
+  {
+    VOID = 258,
+    INT = 259,
+    FLOAT = 260,
+    CHAR = 261,
+    STRING = 262,
+    UNDEFINED = 263,
+    IDENTIFIER = 264,
+    STRING_LITERAL = 265,
+    CONSTANT_FLOAT = 266,
+    CONSTANT_INT = 267,
+    CONSTANT_HEX = 268,
+    CONSTANT_CHAR = 269,
+    IF = 270,
+    ELSE = 271,
+    WHILE = 272,
+    DO = 273,
+    RETURN = 274,
+    ASM = 275,
+    OP_ASSIGN = 276,
+    OP_OR = 277,
+    OP_AND = 278,
+    OP_EQ = 279,
+    OP_NE = 280,
+    OP_LT = 281,
+    OP_LE = 282,
+    OP_GE = 283,
+    OP_GT = 284,
+    OP_ADD = 285,
+    OP_SUB = 286,
+    OP_MUL = 287,
+    OP_DIV = 288,
+    OP_MOD = 289,
+    OP_POS = 290,
+    OP_NEG = 291,
+    OP_NOT = 292,
+    OP_INC = 293,
+    OP_DEC = 294,
+    UNRECOGNIZED_TOKEN = 295,
+    INVALID_IDENTIFIER = 296,
+    INVALID_CHAR_CONST = 297,
+    COMPOUND_STATEMENT = 298,
+    LIST = 299,
+    VARIABLE = 300,
+    CONSTANT = 301,
+    ARRAY = 302,
+    ARRAY_INDEX = 303,
+    FUNCTION = 304,
+    FUNCTION_CALL = 305,
+    VAR_DECL = 306,
+    VAR_INIT = 307,
+    ARR_DECL = 308,
+    ARR_INIT = 309,
+    GENERIC_NODE = 310
+  };
+#endif
+
+/* Value type.  */
+#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+union YYSTYPE
+{
+#line 78 "src/language.y"
+
+	struct node     *node;
+	int              ival;
+	const  char     *sval;
+	struct arg_list *al;
+
+#line 174 "src/parser.c"
+
+};
+typedef union YYSTYPE YYSTYPE;
+# define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
+#endif
+
+
+extern YYSTYPE yylval;
+
+int yyparse (void);
+/* "%code provides" blocks.  */
+#line 85 "src/language.y"
+
+	void yyerror (char const *);
+	struct table * add_symbol(int symbol_type, int data_type, const char * key);
+
+#line 192 "src/parser.c"
+
+#endif /* !YY_YY_SRC_PARSER_H_INCLUDED  */
 
 /* Second part of user prologue.  */
 #line 91 "src/language.y"
@@ -105,7 +209,7 @@ int yylex (void);
 void free_label(const char ** str);
 extern Node * root;
 
-#line 109 "src/parser.c"
+#line 213 "src/parser.c"
 
 
 #ifdef short
@@ -2014,193 +2118,193 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
     case 9: /* IDENTIFIER  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2018 "src/parser.c"
+#line 2122 "src/parser.c"
         break;
 
     case 10: /* STRING_LITERAL  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2024 "src/parser.c"
+#line 2128 "src/parser.c"
         break;
 
     case 11: /* CONSTANT_FLOAT  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2030 "src/parser.c"
+#line 2134 "src/parser.c"
         break;
 
     case 12: /* CONSTANT_INT  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2036 "src/parser.c"
+#line 2140 "src/parser.c"
         break;
 
     case 13: /* CONSTANT_HEX  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2042 "src/parser.c"
+#line 2146 "src/parser.c"
         break;
 
     case 14: /* CONSTANT_CHAR  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2048 "src/parser.c"
+#line 2152 "src/parser.c"
         break;
 
     case 74: /* declaration_list  */
 #line 70 "src/language.y"
       { root = ((*yyvaluep).node); }
-#line 2054 "src/parser.c"
+#line 2158 "src/parser.c"
         break;
 
     case 75: /* declaration  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2060 "src/parser.c"
+#line 2164 "src/parser.c"
         break;
 
     case 76: /* init_declarator  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2066 "src/parser.c"
+#line 2170 "src/parser.c"
         break;
 
     case 77: /* var_declarator  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2072 "src/parser.c"
+#line 2176 "src/parser.c"
         break;
 
     case 78: /* arr_declarator  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2078 "src/parser.c"
+#line 2182 "src/parser.c"
         break;
 
     case 79: /* function_definition  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2084 "src/parser.c"
+#line 2188 "src/parser.c"
         break;
 
     case 80: /* function_declarator  */
 #line 72 "src/language.y"
       { free_label(&((*yyvaluep).sval)); }
-#line 2090 "src/parser.c"
+#line 2194 "src/parser.c"
         break;
 
     case 81: /* argument_list  */
 #line 73 "src/language.y"
       { al_free(&((*yyvaluep).al)); }
-#line 2096 "src/parser.c"
+#line 2200 "src/parser.c"
         break;
 
     case 82: /* argument  */
 #line 73 "src/language.y"
       { al_free(&((*yyvaluep).al)); }
-#line 2102 "src/parser.c"
+#line 2206 "src/parser.c"
         break;
 
     case 83: /* compound_statement  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2108 "src/parser.c"
+#line 2212 "src/parser.c"
         break;
 
     case 85: /* statement_list  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2114 "src/parser.c"
+#line 2218 "src/parser.c"
         break;
 
     case 86: /* statement  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2120 "src/parser.c"
+#line 2224 "src/parser.c"
         break;
 
     case 88: /* conditional_statement  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2126 "src/parser.c"
+#line 2230 "src/parser.c"
         break;
 
     case 93: /* iteration_statement  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2132 "src/parser.c"
+#line 2236 "src/parser.c"
         break;
 
     case 97: /* return_statement  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2138 "src/parser.c"
+#line 2242 "src/parser.c"
         break;
 
     case 98: /* assignment_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2144 "src/parser.c"
+#line 2248 "src/parser.c"
         break;
 
     case 99: /* logical_or_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2150 "src/parser.c"
+#line 2254 "src/parser.c"
         break;
 
     case 100: /* logical_and_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2156 "src/parser.c"
+#line 2260 "src/parser.c"
         break;
 
     case 101: /* equality_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2162 "src/parser.c"
+#line 2266 "src/parser.c"
         break;
 
     case 102: /* relational_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2168 "src/parser.c"
+#line 2272 "src/parser.c"
         break;
 
     case 103: /* additive_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2174 "src/parser.c"
+#line 2278 "src/parser.c"
         break;
 
     case 104: /* multiplicative_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2180 "src/parser.c"
+#line 2284 "src/parser.c"
         break;
 
     case 105: /* unary_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2186 "src/parser.c"
+#line 2290 "src/parser.c"
         break;
 
     case 106: /* postfix_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2192 "src/parser.c"
+#line 2296 "src/parser.c"
         break;
 
     case 107: /* primary_expression  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2198 "src/parser.c"
+#line 2302 "src/parser.c"
         break;
 
     case 108: /* argument_call_list  */
 #line 71 "src/language.y"
       { node_free_recursive(&((*yyvaluep).node)); }
-#line 2204 "src/parser.c"
+#line 2308 "src/parser.c"
         break;
 
       default:
@@ -2466,43 +2570,43 @@ yyreduce:
   case 2:
 #line 109 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2470 "src/parser.c"
+#line 2574 "src/parser.c"
     break;
 
   case 3:
 #line 110 "src/language.y"
     { (yyval.node) = node_init(LIST, "declaration-list" , (yyvsp[-1].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); }
-#line 2476 "src/parser.c"
+#line 2580 "src/parser.c"
     break;
 
   case 4:
 #line 114 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2482 "src/parser.c"
+#line 2586 "src/parser.c"
     break;
 
   case 5:
 #line 115 "src/language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2488 "src/parser.c"
+#line 2592 "src/parser.c"
     break;
 
   case 6:
 #line 116 "src/language.y"
     { (yyval.node) = NULL; }
-#line 2494 "src/parser.c"
+#line 2598 "src/parser.c"
     break;
 
   case 7:
 #line 120 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2500 "src/parser.c"
+#line 2604 "src/parser.c"
     break;
 
   case 8:
 #line 121 "src/language.y"
     { (yyval.node) = node_init(VAR_INIT, "var-init", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2506 "src/parser.c"
+#line 2610 "src/parser.c"
     break;
 
   case 9:
@@ -2513,7 +2617,7 @@ yyreduce:
 															tc_arr_init((yyval.node), add_symbol_arr(CHAR, NULL, (void*) (yyvsp[0].sval)));
 															free_label(&(yyvsp[0].sval));
 														}
-#line 2517 "src/parser.c"
+#line 2621 "src/parser.c"
     break;
 
   case 10:
@@ -2524,7 +2628,7 @@ yyreduce:
 										(yyval.node)->symbol=add_symbol_var((yyvsp[-1].ival),(yyvsp[0].sval),false);
 										free_label(&(yyvsp[0].sval));
 									}
-#line 2528 "src/parser.c"
+#line 2632 "src/parser.c"
     break;
 
   case 11:
@@ -2536,491 +2640,491 @@ yyreduce:
 										assign_context((yyval.node));
 										free_label(&(yyvsp[-2].sval));
 									}
-#line 2540 "src/parser.c"
+#line 2644 "src/parser.c"
     break;
 
   case 12:
 #line 150 "src/language.y"
     { (yyval.node) = node_init(FUNCTION, "function-body" , (yyvsp[-1].node)  , ENDARG); assign_body((yyval.node)); finish_fun((yyvsp[-3].sval)); assign_context((yyval.node)); free_label(&(yyvsp[-3].sval)); }
-#line 2546 "src/parser.c"
+#line 2650 "src/parser.c"
     break;
 
   case 13:
 #line 151 "src/language.y"
     { (yyval.node) = node_init(FUNCTION, "function-body" , NULL, ENDARG); assign_body((yyval.node)); finish_fun((yyvsp[-2].sval)); assign_context((yyval.node)); free_label(&(yyvsp[-2].sval)); }
-#line 2552 "src/parser.c"
+#line 2656 "src/parser.c"
     break;
 
   case 14:
 #line 155 "src/language.y"
     { (yyval.sval) = (yyvsp[-3].sval); begin_fun((yyvsp[-4].ival), (yyvsp[-3].sval), (yyvsp[-1].al));   }
-#line 2558 "src/parser.c"
+#line 2662 "src/parser.c"
     break;
 
   case 15:
 #line 156 "src/language.y"
     { (yyval.sval) = (yyvsp[-3].sval); begin_fun((yyvsp[-4].ival), (yyvsp[-3].sval), NULL); }
-#line 2564 "src/parser.c"
+#line 2668 "src/parser.c"
     break;
 
   case 16:
 #line 157 "src/language.y"
     { (yyval.sval) = NULL; free_label(&(yyvsp[-3].sval)); }
-#line 2570 "src/parser.c"
+#line 2674 "src/parser.c"
     break;
 
   case 17:
 #line 161 "src/language.y"
     { (yyval.al) = (yyvsp[0].al); }
-#line 2576 "src/parser.c"
+#line 2680 "src/parser.c"
     break;
 
   case 18:
 #line 162 "src/language.y"
     { (yyval.al) = al_link((yyvsp[-2].al), &(yyvsp[0].al)); }
-#line 2582 "src/parser.c"
+#line 2686 "src/parser.c"
     break;
 
   case 19:
 #line 166 "src/language.y"
     { (yyval.al) = al_init((yyvsp[-1].ival), VARIABLE, (yyvsp[0].sval)); free_label(&(yyvsp[0].sval)); }
-#line 2588 "src/parser.c"
+#line 2692 "src/parser.c"
     break;
 
   case 20:
 #line 167 "src/language.y"
     { (yyval.al) = al_init((yyvsp[-3].ival), ARRAY   , (yyvsp[-2].sval)); free_label(&(yyvsp[-2].sval)); }
-#line 2594 "src/parser.c"
+#line 2698 "src/parser.c"
     break;
 
   case 21:
 #line 171 "src/language.y"
     { (yyval.node) = NULL; }
-#line 2600 "src/parser.c"
+#line 2704 "src/parser.c"
     break;
 
   case 22:
 #line 172 "src/language.y"
     { begin(); }
-#line 2606 "src/parser.c"
+#line 2710 "src/parser.c"
     break;
 
   case 23:
 #line 172 "src/language.y"
     { (yyval.node) = (yyvsp[-1].node); finish(); }
-#line 2612 "src/parser.c"
+#line 2716 "src/parser.c"
     break;
 
   case 24:
 #line 176 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2618 "src/parser.c"
+#line 2722 "src/parser.c"
     break;
 
   case 25:
 #line 177 "src/language.y"
     { (yyval.node) = node_init(LIST, "statement-list" , (yyvsp[-1].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); }
-#line 2624 "src/parser.c"
+#line 2728 "src/parser.c"
     break;
 
   case 26:
 #line 181 "src/language.y"
     { (yyval.node) = NULL; }
-#line 2630 "src/parser.c"
+#line 2734 "src/parser.c"
     break;
 
   case 27:
 #line 182 "src/language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2636 "src/parser.c"
+#line 2740 "src/parser.c"
     break;
 
   case 28:
 #line 183 "src/language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2642 "src/parser.c"
+#line 2746 "src/parser.c"
     break;
 
   case 29:
 #line 184 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2648 "src/parser.c"
+#line 2752 "src/parser.c"
     break;
 
   case 30:
 #line 185 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2654 "src/parser.c"
+#line 2758 "src/parser.c"
     break;
 
   case 31:
 #line 186 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2660 "src/parser.c"
+#line 2764 "src/parser.c"
     break;
 
   case 32:
 #line 187 "src/language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2666 "src/parser.c"
+#line 2770 "src/parser.c"
     break;
 
   case 33:
 #line 188 "src/language.y"
     { (yyval.node) = NULL; }
-#line 2672 "src/parser.c"
+#line 2776 "src/parser.c"
     break;
 
   case 34:
 #line 189 "src/language.y"
     { (yyval.node) = NULL; }
-#line 2678 "src/parser.c"
+#line 2782 "src/parser.c"
     break;
 
   case 35:
 #line 193 "src/language.y"
     { tc_asm((yyvsp[-1].sval)); free_label(&(yyvsp[-1].sval)); }
-#line 2684 "src/parser.c"
+#line 2788 "src/parser.c"
     break;
 
   case 36:
 #line 196 "src/language.y"
     { (yyval.node) = NULL; tc_free_if((yyvsp[0].ival)); }
-#line 2690 "src/parser.c"
+#line 2794 "src/parser.c"
     break;
 
   case 37:
 #line 200 "src/language.y"
     { tc_init_if((yyvsp[-1].node), "if_", NULL); }
-#line 2696 "src/parser.c"
+#line 2800 "src/parser.c"
     break;
 
   case 38:
 #line 200 "src/language.y"
     { node_free_recursive(&(yyvsp[-3].node)); node_free_recursive(&(yyvsp[0].node)); }
-#line 2702 "src/parser.c"
+#line 2806 "src/parser.c"
     break;
 
   case 39:
 #line 204 "src/language.y"
     { tc_init_else(); }
-#line 2708 "src/parser.c"
+#line 2812 "src/parser.c"
     break;
 
   case 40:
 #line 204 "src/language.y"
     { (yyval.ival) = true; node_free_recursive(&(yyvsp[0].node)); }
-#line 2714 "src/parser.c"
+#line 2818 "src/parser.c"
     break;
 
   case 41:
 #line 205 "src/language.y"
     { (yyval.ival) = false; }
-#line 2720 "src/parser.c"
+#line 2824 "src/parser.c"
     break;
 
   case 42:
 #line 209 "src/language.y"
     { tc_init_while("while_", NULL); }
-#line 2726 "src/parser.c"
+#line 2830 "src/parser.c"
     break;
 
   case 43:
 #line 209 "src/language.y"
     { tc_jump_while((yyvsp[-1].node)); }
-#line 2732 "src/parser.c"
+#line 2836 "src/parser.c"
     break;
 
   case 44:
 #line 209 "src/language.y"
     { (yyval.node) = NULL; tc_free_while(); node_free_recursive(&(yyvsp[-3].node)); node_free_recursive(&(yyvsp[0].node)); }
-#line 2738 "src/parser.c"
+#line 2842 "src/parser.c"
     break;
 
   case 45:
 #line 210 "src/language.y"
     { tc_init_while("do_", NULL)   ; }
-#line 2744 "src/parser.c"
+#line 2848 "src/parser.c"
     break;
 
   case 46:
 #line 210 "src/language.y"
     { (yyval.node) = NULL; tc_free_do((yyvsp[-2].node)) ; node_free_recursive(&(yyvsp[-5].node)); node_free_recursive(&(yyvsp[-2].node)); }
-#line 2750 "src/parser.c"
+#line 2854 "src/parser.c"
     break;
 
   case 47:
 #line 214 "src/language.y"
     { (yyval.node) = node_init(RETURN, "return-statement",     ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2756 "src/parser.c"
+#line 2860 "src/parser.c"
     break;
 
   case 48:
 #line 215 "src/language.y"
     { (yyval.node) = node_init(RETURN, "return-statement", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2762 "src/parser.c"
+#line 2866 "src/parser.c"
     break;
 
   case 49:
 #line 219 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2768 "src/parser.c"
+#line 2872 "src/parser.c"
     break;
 
   case 50:
 #line 220 "src/language.y"
     { (yyval.node) = node_init(OP_ASSIGN, "=", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2774 "src/parser.c"
+#line 2878 "src/parser.c"
     break;
 
   case 51:
 #line 224 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2780 "src/parser.c"
+#line 2884 "src/parser.c"
     break;
 
   case 52:
 #line 225 "src/language.y"
     { (yyval.node) = node_init(OP_OR, "||", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2786 "src/parser.c"
+#line 2890 "src/parser.c"
     break;
 
   case 53:
 #line 229 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2792 "src/parser.c"
+#line 2896 "src/parser.c"
     break;
 
   case 54:
 #line 230 "src/language.y"
     { (yyval.node) = node_init(OP_AND, "&&", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2798 "src/parser.c"
+#line 2902 "src/parser.c"
     break;
 
   case 55:
 #line 234 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2804 "src/parser.c"
+#line 2908 "src/parser.c"
     break;
 
   case 56:
 #line 235 "src/language.y"
     { (yyval.node) = node_init(OP_EQ, "==", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node));  tc_evaluate((yyval.node)); }
-#line 2810 "src/parser.c"
+#line 2914 "src/parser.c"
     break;
 
   case 57:
 #line 236 "src/language.y"
     { (yyval.node) = node_init(OP_NE, "!=", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node));  tc_evaluate((yyval.node)); }
-#line 2816 "src/parser.c"
+#line 2920 "src/parser.c"
     break;
 
   case 58:
 #line 240 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2822 "src/parser.c"
+#line 2926 "src/parser.c"
     break;
 
   case 59:
 #line 241 "src/language.y"
     { (yyval.node) = node_init(OP_LT, "<" , (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2828 "src/parser.c"
+#line 2932 "src/parser.c"
     break;
 
   case 60:
 #line 242 "src/language.y"
     { (yyval.node) = node_init(OP_GT, ">" , (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2834 "src/parser.c"
+#line 2938 "src/parser.c"
     break;
 
   case 61:
 #line 243 "src/language.y"
     { (yyval.node) = node_init(OP_LE, "<=", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2840 "src/parser.c"
+#line 2944 "src/parser.c"
     break;
 
   case 62:
 #line 244 "src/language.y"
     { (yyval.node) = node_init(OP_GE, ">=", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2846 "src/parser.c"
+#line 2950 "src/parser.c"
     break;
 
   case 63:
 #line 248 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2852 "src/parser.c"
+#line 2956 "src/parser.c"
     break;
 
   case 64:
 #line 249 "src/language.y"
     { (yyval.node) = node_init(OP_ADD, "+", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2858 "src/parser.c"
+#line 2962 "src/parser.c"
     break;
 
   case 65:
 #line 250 "src/language.y"
     { (yyval.node) = node_init(OP_SUB, "-", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2864 "src/parser.c"
+#line 2968 "src/parser.c"
     break;
 
   case 66:
 #line 254 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2870 "src/parser.c"
+#line 2974 "src/parser.c"
     break;
 
   case 67:
 #line 255 "src/language.y"
     { (yyval.node) = node_init(OP_MUL, "*", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2876 "src/parser.c"
+#line 2980 "src/parser.c"
     break;
 
   case 68:
 #line 256 "src/language.y"
     { (yyval.node) = node_init(OP_DIV, "/", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2882 "src/parser.c"
+#line 2986 "src/parser.c"
     break;
 
   case 69:
 #line 257 "src/language.y"
     { (yyval.node) = node_init(OP_MOD, "%", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2888 "src/parser.c"
+#line 2992 "src/parser.c"
     break;
 
   case 70:
 #line 261 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2894 "src/parser.c"
+#line 2998 "src/parser.c"
     break;
 
   case 71:
 #line 262 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2900 "src/parser.c"
+#line 3004 "src/parser.c"
     break;
 
   case 72:
 #line 263 "src/language.y"
     { (yyval.node) = node_init(OP_NEG, "-",  (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2906 "src/parser.c"
+#line 3010 "src/parser.c"
     break;
 
   case 73:
 #line 264 "src/language.y"
     { (yyval.node) = node_init(OP_NOT, "!",  (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2912 "src/parser.c"
+#line 3016 "src/parser.c"
     break;
 
   case 74:
 #line 265 "src/language.y"
     { (yyval.node) = node_init(OP_INC, "++", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2918 "src/parser.c"
+#line 3022 "src/parser.c"
     break;
 
   case 75:
 #line 266 "src/language.y"
     { (yyval.node) = node_init(OP_DEC, "--", (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_evaluate((yyval.node)); }
-#line 2924 "src/parser.c"
+#line 3028 "src/parser.c"
     break;
 
   case 76:
 #line 270 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); }
-#line 2930 "src/parser.c"
+#line 3034 "src/parser.c"
     break;
 
   case 77:
 #line 272 "src/language.y"
     { (yyval.node) = node_init(FUNCTION_CALL, "function-call",     ENDARG); assign_context((yyval.node)); retrieve_fun((yyval.node), (yyvsp[-2].sval), FUNCTION); free_label(&(yyvsp[-2].sval)); tc_fcall((yyval.node), NULL); }
-#line 2936 "src/parser.c"
+#line 3040 "src/parser.c"
     break;
 
   case 78:
 #line 273 "src/language.y"
     { (yyval.node) = node_init(FUNCTION_CALL, "function-call", (yyvsp[-1].node), ENDARG); assign_context((yyval.node)); retrieve_fun((yyval.node), (yyvsp[-3].sval), FUNCTION); free_label(&(yyvsp[-3].sval)); tc_fcall((yyval.node), (yyvsp[-1].node)); }
-#line 2942 "src/parser.c"
+#line 3046 "src/parser.c"
     break;
 
   case 79:
 #line 277 "src/language.y"
     { (yyval.node) = node_init(IDENTIFIER    , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); retrieve((yyval.node), (yyval.node)->name, VARIABLE); free_label(&(yyvsp[0].sval)); }
-#line 2948 "src/parser.c"
+#line 3052 "src/parser.c"
     break;
 
   case 80:
 #line 278 "src/language.y"
     { (yyval.node) = node_init(STRING_LITERAL, (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol_arr(CHAR, NULL, (void*) (yyvsp[0].sval)); free_label(&(yyvsp[0].sval)); }
-#line 2954 "src/parser.c"
+#line 3058 "src/parser.c"
     break;
 
   case 81:
 #line 279 "src/language.y"
     { (yyval.node) = node_init(CONSTANT_FLOAT, (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol_cte(CONSTANT_FLOAT, (yyvsp[0].sval)); free_label(&(yyvsp[0].sval)); }
-#line 2960 "src/parser.c"
+#line 3064 "src/parser.c"
     break;
 
   case 82:
 #line 280 "src/language.y"
     { (yyval.node) = node_init(CONSTANT_INT  , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol_cte(CONSTANT_INT  , (yyvsp[0].sval)); free_label(&(yyvsp[0].sval)); }
-#line 2966 "src/parser.c"
+#line 3070 "src/parser.c"
     break;
 
   case 83:
 #line 281 "src/language.y"
     { (yyval.node) = node_init(CONSTANT_HEX  , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol_cte(CONSTANT_HEX  , (yyvsp[0].sval)); free_label(&(yyvsp[0].sval)); }
-#line 2972 "src/parser.c"
+#line 3076 "src/parser.c"
     break;
 
   case 84:
 #line 282 "src/language.y"
     { (yyval.node) = node_init(CONSTANT_CHAR , (yyvsp[0].sval), ENDARG); assign_context((yyval.node)); (yyval.node)->symbol = add_symbol_cte(CONSTANT_CHAR , (yyvsp[0].sval)); free_label(&(yyvsp[0].sval)); }
-#line 2978 "src/parser.c"
+#line 3082 "src/parser.c"
     break;
 
   case 85:
 #line 283 "src/language.y"
     { (yyval.node) = (yyvsp[-1].node); }
-#line 2984 "src/parser.c"
+#line 3088 "src/parser.c"
     break;
 
   case 86:
 #line 287 "src/language.y"
     { (yyval.node) = (yyvsp[0].node); tc_fcall_args(NULL, (yyvsp[0].node)); }
-#line 2990 "src/parser.c"
+#line 3094 "src/parser.c"
     break;
 
   case 87:
 #line 288 "src/language.y"
     { (yyval.node) = node_init(LIST, "argument-list", (yyvsp[-2].node), (yyvsp[0].node), ENDARG); assign_context((yyval.node)); tc_fcall_args((yyvsp[-2].node), (yyvsp[0].node)); }
-#line 2996 "src/parser.c"
+#line 3100 "src/parser.c"
     break;
 
   case 88:
 #line 292 "src/language.y"
     { (yyval.ival) = (yyvsp[0].ival); }
-#line 3002 "src/parser.c"
+#line 3106 "src/parser.c"
     break;
 
   case 89:
 #line 293 "src/language.y"
     { (yyval.ival) = (yyvsp[0].ival); }
-#line 3008 "src/parser.c"
+#line 3112 "src/parser.c"
     break;
 
   case 90:
 #line 294 "src/language.y"
     { (yyval.ival) = (yyvsp[0].ival); }
-#line 3014 "src/parser.c"
+#line 3118 "src/parser.c"
     break;
 
   case 91:
 #line 295 "src/language.y"
     { (yyval.ival) = (yyvsp[0].ival); }
-#line 3020 "src/parser.c"
+#line 3124 "src/parser.c"
     break;
 
 
-#line 3024 "src/parser.c"
+#line 3128 "src/parser.c"
 
       default: break;
     }
