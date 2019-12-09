@@ -1,5 +1,5 @@
 a.out
-*.zip
+#*.zip
 *.synctex(busy)
 
 result.log
