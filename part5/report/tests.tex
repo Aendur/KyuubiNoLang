@@ -10,13 +10,18 @@ Eight sample test files are provided in the folder ./tests.
 \paragraph{valid5.c} is valid, tests mostly for multiple function declarations and scope resolution.
 
 \subsubsection{Invalid input files}
-\paragraph{error1.c} is invalid and contain the following errors: \\
+\paragraph{error1.c} is invalid and contain the following errors:
+
+\begin{tabular}{l}
 Line 1, column 25: syntax error, unexpected '*', expecting IDENTIFIER \\
 Line 4, column 22: lexical error, unrecognized token: '?' \\
 Line 4, column 26: lexical error, unrecognized token: ':' \\
 Line 4, column 28: lexical error, invalid character constant. \\
+\end{tabular}
 
-\paragraph{error2.c} is invalid and contain the following errors: \\
+\paragraph{error2.c} is invalid and contain the following errors:
+
+\begin{tabular}{l}
 Line 1, column 1: lexical error, unrecognized token: '\#' \\
 Line 1, column 1: syntax error, unexpected UNRECOGNIZED\_TOKEN, ... \\
 Line 1, column 16: lexical error, unrecognized token: '.' \\
@@ -28,14 +33,19 @@ Line 10, column 17: warning (lexical), identifier exceeds 32 characters. \\
 Line 10, column 57: semantic error: redefinition of 'abcde' \\
 Line 13, column 14: lexical error, invalid character constant. \\
 Line 13, column 14: syntax error, unexpected INVALID\_CHAR\_CONST \\
+\end{tabular}
 
-\paragraph{error3.c} is invalid and contain the following errors: \\
+
+\paragraph{error3.c} is invalid and contain the following errors:
+
+\begin{tabular}{l}
 Line 3, column 14: semantic error: redefinition of 'x' \\
 Line 4, column 14: semantic error: redefinition of 'y' \\
 Line 16, column 7: semantic error: undeclared symbol 'a' \\
 Line 22, column 5: semantic error: redefinition of 'min' with parameters 'int,int' \\
 Line 23, column 7: semantic error: undeclared symbol 'c' \\
 Line 25, column 20: semantic error: undeclared symbol 'max' \\
+\end{tabular}
 
 
 Lines and columns are 1-indexed and the columns should point to where the error begins.

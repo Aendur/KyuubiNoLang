@@ -6,13 +6,13 @@
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{Tabbing}
-\usepackage{biblatex}
-\usepackage[affil-it]{authblk}
+\usepackage[sorting=none]{biblatex}
+%\usepackage[affil-it]{authblk}
 \usepackage{lmodern}
 \usepackage{titlesec}
 \usepackage[skip=2pt,font=footnotesize]{caption}
 \usepackage{ulem}
-%\usepackage{titlesec}
+\usepackage{graphicx}
 
 
 \titlespacing{\paragraph}{\parindent}{0.5em}{0.5em}
@@ -22,18 +22,57 @@
 
 \begin{document}
 
-%\title{\normalsize\begin{CJK}{UTF8}{min}九\hspace{0.6cm}尾\hspace{0.6cm}狐\hspace{0.6cm}の\hspace{0.6cm}語%\end{CJK}\\\huge K Language\\\normalsize Polymorphism in a C-like\\ programming language}
+%\frontmatter
+\begin{titlepage}
+   \begin{center}
+
+	\large
+	\textit{University of Brasília} \\
+	
+    \vfill
+	\includegraphics[width=0.27\linewidth]{../slides/kyu.png} \\
+	
+	\vspace*{0.3cm}
+	\small
+	\begin{CJK}{UTF8}{min}
+		九\hspace{0.57cm}尾\hspace{0.57cm}狐\hspace{0.57cm}の\hspace{0.57cm}語
+	\end{CJK} \\
+	
+	\huge K Language \vspace*{0.3cm} \\
+	\normalsize
+	Polymorphism in a C-like \\
+	programming language \\
+
+	\vspace*{3cm}
+	\large
+	Diogo César Ferreira\\
+	\vspace*{0.3cm}
+	11/0027931 \\
+	
+	\vfill
+	\normalsize
+	\today
+   \end{center}
+\end{titlepage}
+
+
+%\title{
+%	\vfill
+%	\includegraphics[width=0.25\linewidth]{../slides/kyu.png} \\
+%	\small
+%	\begin{CJK}{UTF8}{min}九\hspace{0.55cm}尾\hspace{0.55cm}狐\hspace{0.55cm}の\hspace{0.55cm}語\end{CJK}\\
+%	\huge K Language\\\normalsize Polymorphism in a C-like \\ programming language
+%	\vfill
+%}
 %\author{Diogo César Ferreira\\11/0027931}
 %\affil{University of Brasília}
+%\maketitle
 
-\title{\small\begin{CJK}{UTF8}{min}九\hspace{0.55cm}尾\hspace{0.55cm}狐\hspace{0.55cm}の\hspace{0.55cm}語\end{CJK}\\\huge K Language\\\normalsize Polymorphism in a C-like \\ programming language}
-\author{Diogo César Ferreira\\11/0027931}
-\affil{University of Brasília}
+\clearpage
+\tableofcontents
 
-\maketitle
-
-%\tableofcontents
-%\clearpage
+\clearpage
+%\mainmatter
 
 % section 1 - introduction
 \input{introduction.tex} 
@@ -59,6 +98,8 @@
 % reserve ownership of the allocated tree nodes to a vector that stores every node as they
 % are allocated (\texttt{Nodelist * node\_list} in \texttt{main.c}).
 
-\printbibliography
+\printbibliography[heading=bibnumbered]
+
+%\bibliography{refs.bib}
 
 \end{document}

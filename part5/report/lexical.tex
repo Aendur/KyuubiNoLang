@@ -1,25 +1,26 @@
 \subsection{Lexical features}
 The following table summarizes what word patterns are part of the language we are designing.
 These patterns should be recognized by the scanner, and therefore are provided as an input file
-for the FLEX \cite{FLEX} scanner generator (see attached file ``language.l''):
+for the FLEX \cite{FLEX} scanner generator (see attached file ``src/language.l''):
 
+\vspace{0.5cm}
 %\paragraph{}
 {
 \small
 %\vfill
 \begin{tabular}{lccccccccc}
 \textbf{Data types}                      & void & char & int & float &         &      &      &   &   \\
-\textbf{Keywords}                        & if   & else & do  & while & return  &      &      &   &   \\
+\textbf{Keywords}                        & if   & else & do  & while & return  & asm  &      &   &   \\
 \textbf{Arithmetical operators}          & $+$  & $-$  & $*$ & $/$   & $\%$    & $++$ & $--$ &   &   \\
-\textbf{Comparison operators}            & <    & >    & <=  & >=    & ==      & !=   &      &   &   \\
-\textbf{Logical operators}               & \&\& & ||   & !   &       &         &      &      &   &   \\
-\textbf{Assignment operator}             & =    &      &     &       &         &      &      &   &   \\
-\textbf{Character/string delimiters}     & '    & "    &     &       &         &      &      &   &   \\
-\textbf{Array indexers}                  & [    & ]    &     &       &         &      &      &   &   \\
-\textbf{Scope delims./init lists}        & \{   & \}   &     &       &         &      &      &   &   \\
-\textbf{End of statement mark}           & ;    &      &     &       &         &      &      &   &   \\
-\textbf{Function args/calls}             & (    & )    &     &       &         &      &      &   &   \\
-\textbf{List element separator}          & ,    &      &     &       &         &      &      &   &   \\
+\textbf{Comparison operators}            & $<$  & $>$  & $<=$& $>=$  & $==$    & $!=$ &      &   &   \\
+\textbf{Logical operators}               &$\&\&$& $||$ & $!$ &       &         &      &      &   &   \\
+\textbf{Assignment operator}             & $=$  &      &     &       &         &      &      &   &   \\
+\textbf{Character/string delimiters}     &  '   &  ''  &     &       &         &      &      &   &   \\
+\textbf{Array indexers}                  & $[$  & $]$  &     &       &         &      &      &   &   \\
+\textbf{Scope delims./init lists}        & $\{$ & $\}$ &     &       &         &      &      &   &   \\
+\textbf{End of statement mark}           & $;$  &      &     &       &         &      &      &   &   \\
+\textbf{Function args/calls}             & $($  & $)$  &     &       &         &      &      &   &   \\
+\textbf{List element separator}          & $,$  &      &     &       &         &      &      &   &   \\
 \textbf{Comment delimiters}              & /*   & */   & //  &       &         &      &      &   &   \\
 \end{tabular}
 

@@ -4,68 +4,35 @@ Our language's grammar contains elements taken from the one presented by \textci
 which is a compilation from the many versions of the C grammar specified by the ISO C Standard
 along the years. Our grammar follows the general structure of the C language's grammar.
 We aim to provide a simplified version of the C language with support for polymorphic function
-definitions, that is, which allows the programmer to define multiple function with the same name
+definitions, that is, which allows the programmer to define multiple functions with the same name
 but different argument types. The following grammar is also provided as an input file for the
-GNU Bison \cite{BISON} parser generator (see attached file ``language.y''). Strikenthrough
-rules are the ones that have been removed or changed from the previous version of our grammar.
+GNU Bison \cite{BISON} parser generator (see attached file ``src/language.y'').
 
 \small
 \begin{enumerate}
-\item \begin{tabbing} start \= $\rightarrow$ \= declaration-list \\
-\end{tabbing}
-
 \item \begin{tabbing} declaration-list \= $\rightarrow$ \= declaration \\
 	\> \hspace*{0.05cm} | \> declaration-list declaration \\
 \end{tabbing}
 
-\item \begin{tabbing} declaration \= $\rightarrow$ \= \sout{function-declarator \textbf{;}} \\
-	\> \hspace*{0.05cm} | \> \sout{function-declarator compound-statement} \\
-	\> \hspace*{0.05cm} | \> function-definition \\
+\item \begin{tabbing} declaration \= $\rightarrow$ \=  function-definition \\
 	\> \hspace*{0.05cm} | \> init-declarator \textbf{;} \\
 \end{tabbing}
 
-\item \begin{tabbing} init-declarator \= $\rightarrow$ \= \sout{declarator} \\
-	\> \hspace*{0.05cm} | \> \sout{declarator \textbf{=} initializer} \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER}                                                                                                 \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{=} assignment-expression                                                              \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}                                                 \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{\}}               \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{,} \textbf{\}}  \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{STRING-LITERAL}                                  \\
+\item \begin{tabbing} init-declarator \= $\rightarrow$ \= var-declarator        \\
+	\> \hspace*{0.05cm} | \> var-declarator \textbf{=} assignment-expression    \\
+	\> \hspace*{0.05cm} | \> arr-declarator \textbf{=} \textbf{STRING-LITERAL}  \\
 \end{tabbing}
 
+\item \begin{tabbing} var-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER} \end{tabbing}
 
-\item \begin{tabbing} \sout{declarator} \= $\rightarrow$ \= \sout{type \textbf{IDENTIFIER}} \\
-	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{[} \textbf{]}} \\
-	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}}\\
+\item \begin{tabbing} arr-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \end{tabbing}
+
+\item \begin{tabbing} function-definition \= $\rightarrow$ \= function-declarator \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  function-declarator \textbf{\{}  \textbf{\}}   \\
 \end{tabbing}
 
-\item \begin{tabbing} \sout{initializer} \= $\rightarrow$ \= \sout{assignment-expression} \\
-	\> \hspace*{0.05cm} | \> \sout{\textbf{\{} initializer-list \textbf{\}}} \\
-	\> \hspace*{0.05cm} | \> \sout{\textbf{\{} initializer-list \textbf{,} \textbf{\}}} \\
-\end{tabbing}
-
-\item \begin{tabbing} initializer-list \= $\rightarrow$ \= \sout{initializer} \\
-	\> \hspace*{0.05cm} | \> \sout{initializer-list \textbf{,} initializer} \\
-	\> \hspace*{0.05cm} | \> assignment-expression \\
-	\> \hspace*{0.05cm} | \> initializer-list \textbf{,} assignment-expression \\
-\end{tabbing}
-
-\item \begin{tabbing} \sout{function-declarator} \= $\rightarrow$ \= \sout{type \textbf{IDENTIFIER} \textbf{(} parameter-list \textbf{)}} \\
-	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{(} \textbf{)} } \\
-	\> \hspace*{0.05cm} | \> \sout{type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}} \\
-\end{tabbing}
-
-\item \begin{tabbing} function-definition \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{} statement-list \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{} statement-list \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{} statement-list \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{}                \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{}                \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{}                \textbf{\}}   \\
-\end{tabbing}
-
-\item \begin{tabbing} \sout{parameter-list} \= $\rightarrow$ \= \sout{declarator} \\
-	\> \hspace*{0.05cm} | \> \sout{parameter-list \textbf{,} declarator} \\
+\item \begin{tabbing} function-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}                              \\
 \end{tabbing}
 
 \item \begin{tabbing} argument-list \= $\rightarrow$ \= argument \\
@@ -91,10 +58,17 @@ rules are the ones that have been removed or changed from the previous version o
 	\> \hspace*{0.05cm} | \> iteration-statement \\
 	\> \hspace*{0.05cm} | \> compound-statement \\
 	\> \hspace*{0.05cm} | \> return-statement \textbf{;} \\
+	\> \hspace*{0.05cm} | \> inline-asm \textbf{;} \\
 \end{tabbing}
 
-\item \begin{tabbing} conditional-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \\
-	\> \hspace*{0.05cm} | \> \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \textbf{ELSE} compound-statement \\
+\item \begin{tabbing} inline-asm \= $\rightarrow$ \= \textbf{ASM} \textbf{(} \textbf{STRING-LITERAL} \textbf{)} \end{tabbing}
+
+\item \begin{tabbing} conditional-statement \= $\rightarrow$ \= if-statement else-statement \end{tabbing}
+
+\item \begin{tabbing} if-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \end{tabbing}
+
+\item \begin{tabbing} else-statement \= $\rightarrow$ \= \textbf{ELSE} compound-statement \\
+	\> \hspace*{0.05cm} | \> $\varepsilon$ \\
 \end{tabbing}
 
 \item \begin{tabbing} iteration-statement \= $\rightarrow$ \= \textbf{WHILE} \textbf{(} assignment-expression \textbf{)} compound-statement \\
@@ -134,10 +108,10 @@ rules are the ones that have been removed or changed from the previous version o
 	\> \hspace*{0.05cm} | \> additive-expression \textbf{--} multiplicative-expression \\
 \end{tabbing}
 
-\item \begin{tabbing} multiplicative-expression \= $\rightarrow$ \= \sout{postfix-expression} unary-expression \\
-	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{*}   \sout{postfix-expression} unary-expression \\
-	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{/}   \sout{postfix-expression} unary-expression \\
-	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{\%}  \sout{postfix-expression} unary-expression \\
+\item \begin{tabbing} multiplicative-expression \= $\rightarrow$ \= unary-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{*}   unary-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{/}   unary-expression \\
+	\> \hspace*{0.05cm} | \> multiplicative-expression \textbf{\%}  unary-expression \\
 \end{tabbing}
 
 \item \begin{tabbing} unary-expression \= $\rightarrow$ \= postfix-expression \\
@@ -148,11 +122,8 @@ rules are the ones that have been removed or changed from the previous version o
 \end{tabbing}
 
 \item \begin{tabbing} postfix-expression \= $\rightarrow$ \= primary-expression \\
-	\> \hspace*{0.05cm} | \> \sout{postfix-expression} \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]} \\
-	\> \hspace*{0.05cm} | \> \sout{postfix-expression} \textbf{IDENTIFIER} \textbf{(} \textbf{)} \\
-	\> \hspace*{0.05cm} | \> \sout{postfix-expression} \textbf{IDENTIFIER} \textbf{(} argument-call-list \textbf{)} \\
-	\> \hspace*{0.05cm} | \> \sout{postfix-expression \textbf{++}} \\
-	\> \hspace*{0.05cm} | \> \sout{postfix-expression \textbf{-- --}} \\
+	\> \hspace*{0.05cm} | \> \textbf{IDENTIFIER} \textbf{(} \textbf{)} \\
+	\> \hspace*{0.05cm} | \> \textbf{IDENTIFIER} \textbf{(} argument-call-list \textbf{)} \\
 \end{tabbing}
 
 \item \begin{tabbing} primary-expression \= $\rightarrow$ \= \textbf{IDENTIFIER} \\
@@ -178,45 +149,95 @@ rules are the ones that have been removed or changed from the previous version o
 \normalsize
 
 \subsubsection{Grammar changes}
-\paragraph{Rule 3:} the removed productions were replaced by the \textit{function-definition} variable.
-Function declaration without definition has been removed in this version due to implementation issues,
-but might be added once again in a future version.
+\paragraph{Rule 1:} \textit{declaration-list} is the start symbol once more. We now use Bison's \texttt{\%destructor}
+to capture the syntax tree's root.
 
-\paragraph{Rules 4, 5 and 6:} the \textit{declarator} and \textit{initializer} variables have been
-removed, but their productions (rules 5 and 6) are now part of rule 4. This was done because
-of changes in the underlying data structures used to hold token data.
+\paragraph{Rules 3, 4 and 5:} the \textit{init-declarator} has been broken down into rules 4 and 5 to avoid
+the need to write many possible combinations of variables in these rules. Initializer lists were removed
+from this because integer and float arrays have not yet been implemented (the only implemented arrays are strings).
+Previous version:
 
-\paragraph{Rules 8 and 9:} \textit{function-declarator} (rule 8) was removed and replaced by
-\textit{function-definition} (rule 9). The previous version used the variable
-\textit{compound-statement} for the function body, but this resulted in difficulties
-to implement scope resolution.
+\begin{tabbing} init-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER}                                                                \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{=} assignment-expression                                                      \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}                                           \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{\}}             \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{,} \textbf{\}}  \\
+	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{STRING-LITERAL}                              \\
+\end{tabbing}
 
-\paragraph{Rules 10, 11 and 12:} the variable \textit{parameter-list} (rule 10) has been
-refactored into \textit{argument-list} (rule 11) and \textit{argument} (rule 12). This part of
-the grammar is now handled by a specific data structure used to hold a function's argument list.
 
-\paragraph{Rules 25 and 26:} unary operators were introduced, mainly to allow the negation
-of a value.
 
-\paragraph{Rule 27:} postfix increment and decrement operators were moved to rule 26 as unary prefix
-operators. The other productions in this rule were changed to allow only identifiers on their left-hand
-side, since these productions represent either array indexing or function calls, and are now handled
-by specific functions and no longer require the \textit{postfix-expression} variable to be resolved
-beforehand (an expression instead of an identifier here would be invalid anyway).
+\paragraph{Rules 6 and 7:} \textit{function-definition} was broken down into rules
+6 and 7 to avoid the need to write many possible combinations of variables in these rules.
+Function without arguments now need to be declared with ``void'' as the sole argument.
+Previous version:
+
+\begin{tabbing} function-definition \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{} statement-list \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{}                \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{}                \textbf{\}}   \\
+	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{}                \textbf{\}}   \\
+\end{tabbing}
+
+\paragraph{Rules 12 and 13:} new statement \textit{inline-asm} (rule 13) was created and
+included in the list of possible \textit{statement}s (rule 12). That new rule allows for
+direct translation of string literals into the generated code (see Section \ref{section:asm}).
+
+\paragraph{Rules 14, 15 and 16:} \textit{conditional-statement} has been broken down into its
+\textit{if-statement} and \textit{else-statement} counterparts. This was done to resolve a
+reduce/reduce type conflict that would arise due to a mid-rule action. The \textit{else-statement}
+also produces the empty string ($\varepsilon$), so that it is still possible to use an \textit{if}
+without an \textit{else}. Previous version:
+
+\begin{tabbing} conditional-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \\
+	\> \hspace*{0.05cm} | \> \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \textbf{ELSE} compound-statement \\
+\end{tabbing}
+
+\paragraph{Rule 27:} postfix array indexing operator has been left out from this version since
+array indexing are not yet implemented. Removed production:
+
+\begin{tabbing} postfix-expression \= $\rightarrow$ \= \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]} \end{tabbing}
 
 \subsubsection{Input / output}
-Input and output operations are not specified in our language's grammar. However, these will be provided
-in the form of special polymorphic functions available to the user, akin to a small built-in
-\texttt{stdio.h} library. The available functions will have the following signatures:
+Input and output operations are not specified in our language's grammar. However, these are be provided
+in the form of a small standard I/O library composed of special polymorphic functions which are always
+available to the user. The available functions have the following signatures:
 
 \begin{lstlisting}[language=C]
-void write(int i);    //
-void write(char c);   // output values to the standard output
-void write(char[] s); //
-void write(float f);  //
+void write(int i){...}    // outputs an integer to the standard output
+void write(char c){...}   // outputs a character to the standard output
+void write(char[] s){...} // outputs a string to the standard output
+void write(float f){...}  // outputs a float to the standard output
+void write(void){...}     // outputs a new line to the standard output
 
-void read(int i);    //
-void read(char c);   // receives values from the standard input
-void read(char[] s); //
-void read(float f);  //
+int read(int i){...}     // reads an integer from the standard input and returns it
+char read(char c){...}   // reads a character from the standard input and returns it
+float read(float f){...} // reads a float from the standard input and returns it
 \end{lstlisting}
+
+The \texttt{write} functions output the value provided to them as argument. They do not
+otherwise modify the provided value. Example use:
+
+\begin{lstlisting}[language=C]
+// output 3 to the standard output
+write(3);
+\end{lstlisting}
+
+Since there are no pointers in the language, the \texttt{read} functions require an argument
+in order to resolve which data type will be read and returned (that is, which function
+will be used to read from the standard input). However they do not in any way use or modify the
+provided argument. Example use:
+
+\begin{lstlisting}[language=C]
+// read an integer from the standard input and
+// store it in variable a. The value of a is
+// not used within the function read.
+int a = read(a);
+\end{lstlisting}
+
+As with any other function, \texttt{read} and \texttt{write} are polymorphic and the users are
+allowed to define their own versions of these functions, provided that they do not have the same parameters
+as the ones already defined. We simulate linking of the library to user code by creating a temporary file
+in which the library is concatenated with the input file.
+

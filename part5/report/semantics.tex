@@ -47,8 +47,9 @@ Our language is comprised of five basic types:
 and pointers in the form of arrays of one of the basic types:
 \texttt{char[]} (strings),
 \texttt{int[]} (arrays of integers),
-\texttt{float[]} (arrays of floating point numbers).
- The rules for conversions are as follows:
+\texttt{float[]} (arrays of floating point numbers). Notice however, that among the array types,
+only strings have been implemented in this version (see Section \ref{section:strings}).
+The rules for conversions are as follows:
 
 \begin{itemize}
  \item \textbf{Same type} when values are of the same type, no conversion is needed;
@@ -67,10 +68,10 @@ resolved. However, types are not implicitly converted on the arguments of a func
 
 Since there are no casts in the language, there can be no explicit type conversion.
 
-\subsubsection{Expressions}
+\subsubsection{Expressions and static evaluation}
 
 Most of the language's operators are left-associative with the exception of unary operators
 and the assignment operator, which are right-associative. Expressions are type checked
-for incompatibilities and if possible, statically evaluated. However static evaluation of
-expressions has not been implemented in this version.
+for incompatibilities and if they are composed only of constants, they will be statically evaluated.
+
 
