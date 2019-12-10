@@ -22,7 +22,7 @@ most grammar productions, building the syntax tree (Listings \ref{lst:promnode} 
 
 \begin{lstlisting}[caption={Example of parser rules where nodes are promoted.
 This procedure is preformed for productions in which there is no need to create a
-new node, since no new information would be gained indoing so.},label={lst:promnode},captionpos=b]
+new node, since no new information would be gained in doing so.},label={lst:promnode},captionpos=b]
 declaration
 	: function_definition                    { $$ = $1; }
 	| init_declarator ';'                    { $$ = $1; }
@@ -50,15 +50,9 @@ are actual symbols derived from identifiers, while others are surrogate symbols 
 each node's current state. Currently, these symbols are only being used to store the annotations
 in the tree, but in the future they will used as actually temporary symbols for the production
 of the 3-address code. Most of the annotations are currently being done by the type checker,
-as will be shown in Section \ref{section:tc}.
-
-
-
-
-
-
-
-
-
+as will be shown in Section \ref{section:tc}. It is importante to note, however, that the
+type-checker prunes the nodes it has already analyzed from the tree. Therefore, while it is still
+possible to visualize the tree after the program has finished processing the input, it will not
+reflect the actual structure of the input text anymore.
 
 

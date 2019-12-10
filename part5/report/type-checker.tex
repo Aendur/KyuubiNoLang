@@ -1,39 +1,51 @@
-
 \subsection{Type checker}
 \label{section:tc}
 
-When a node in the tree is created, sometimes it is also type-checked
-(See Listing \ref{lst:newnode} for example). Type-checking is done by the functions
+Every time the parser performs a reduction for a statement rule and
+creates a node in the tree, it is also type-checked
+(See Listing \ref{lst:newnode} for example).
+Type-checking is performed by the functions declared
+in the header ``typechecker.h'', and it is responsible
+for the following actions:
 
-\begin{lstlisting}
-Symbol * typecheck_lazy(Node * node);
-\end{lstlisting}
-and
-\begin{lstlisting}
-void resolve_types(Symbol * tgt, Symbol * src);
-\end{lstlisting}
+\begin{enumerate}
+ \item Verify whether operations and operands have compatible types;
+ \item If possible, perform static evaluation: if all operands in an expression are constants, evaluate it;
+ \item If not possible to perform static evaluation, genereate the corresponding code;
+\end{enumerate}
+
+The rules for type convertion during either static evaluation
+or code generation are the same as the ones presented in Section
+\ref{section:types}:
+\texttt{char} can be promoted to \texttt{int},
+\texttt{int} can be promoted to \texttt{float} and other types cannot
+be part of expressions. In the middle of expressions, if either operand
+is able to be promoted it will be so. Therefore, unless the user tries
+to perform an operation with a \texttt{void} type or array, type errors
+will only be reported on assignments and function calls (arguments of
+function calls are never converted).
 
 
-The function \texttt{typecheck\_lazy} is a recursive function that lazily evaluates a node's
-type. It is lazy because, if the node's type has already been set, then it does nothing.
-If, however the node's type is still not defined, then it recursively evaluates its children
-nodes. If the node has more than one child, \texttt{resolve\_types} is called to perform implicit
-type conversion or otherwise throw semantic errors. When the type checker returns, it links
-the node it just analyzed to an entry in the symbol table, setting its attributes accordingly.
+The type checker links the node it just analyzed to an entry in the symbol table,
+setting its attributes accordingly. However, in order to release resources,
+the type checker also prunes a node's children from the tree after it has been successfuly analyzed,
+because we no longer requre the data held by the children at this point: either they have
+been statically evaluated or the corresponding code has already been generated.
 
-We can use a lazy type checker here because it is being called in the same pass as the parsing, 
-and because the tree is built bottom-up. In the current version of the compiler, however,
-the type checker has not yet been fully implemented as only expressions are being type checked.
-The type checking of some statement nodes, such as \texttt{if} and \texttt{while} nodes will
-require implementing additional auxiliary routines. This is the reason why the tree is not yet
-fully annotated.
+\subsection{Static evaluation}
 
-Although the lazy type checker was implemented in such a way that it can also be used from the
-root of the tree, top-down, it does not currently addresses handling of nodes with different
-semantic meaning, which caused some annotations to be incorrectly assigned when we tried to
-perform the type checking on a second pass. Moreover, since the nodes do not remember the
-line and column in the input text file where they were created, using two passes also caused
-the semantic error messages related to types to display an incorrect position in the source
-file. Therefore, we decided for this phase of the project that it would be better that the
-annotations in the tree should remain incomplete, though correct.
+Static evaluation is performed by the functions expanded from the
+preprocessor macros defined in the header ``evaluator.h''. These
+macros define the expected behavior and appropriate type convertions
+for each arithmetic, logical and relational operators present in the
+language. The evaluator also sets flags for type errors that still
+may occur inside expressions, such as operations with \texttt{void} or
+arrays.
 
+The program uses an internal operation stack for static evaluation.
+The operands are popped from the stack and, if both are constans,
+the operation is evaluated and the result is pushed back into the
+stack, which will then be available for the next time the parser
+reduces a rule and calls the type checker again.
+
+\subsection{Code generation}

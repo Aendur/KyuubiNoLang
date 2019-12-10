@@ -71,7 +71,8 @@ Since there are no casts in the language, there can be no explicit type conversi
 \subsubsection{Expressions and static evaluation}
 
 Most of the language's operators are left-associative with the exception of unary operators
-and the assignment operator, which are right-associative. Expressions are type checked
-for incompatibilities and if they are composed only of constants, they will be statically evaluated.
+and the assignment operator, which are right-associative. Expressions are first type checked
+for incompatibilities. If no type errors are found and the expressions
+are composed only of constants, then they will be statically evaluated.
 
 

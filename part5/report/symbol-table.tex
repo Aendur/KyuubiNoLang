@@ -41,14 +41,14 @@ int min(int x, int y, int z) {}
 Would generate the following entries in the symbol table:
 
 \begin{lstlisting}
-min  <s_type=FUNCTION,r_type=int,args=void>                   # function name
-   int,int  <s_type=FUNCTION,r_type=int,args=int,int>         # arg types for min(int,int)
-      x  <s_type=VARIABLE,r_type=int,args=void>               # arg 1 of min(int,int)
-      y  <s_type=VARIABLE,r_type=int,args=void>               # arg 2 of min(int,int)
-   int,int,int  <s_type=FUNCTION,r_type=int,args=int,int,int> # arg types for min(int,int,int)
-      x  <s_type=VARIABLE,r_type=int,args=void>               # arg 1 of min(int,int,int)
-      y  <s_type=VARIABLE,r_type=int,args=void>               # arg 2 of min(int,int,int)
-      z  <s_type=VARIABLE,r_type=int,args=void>               # arg 3 of min(int,int,int)
+min  [ s_type=FUNCTION, r_type=void, value=(void), code=, temp=0, args=v ]  # function name
+   iii  [ s_type=FUNCTION, r_type=int, value=0, code=, temp=0, args=iii ]   # arg types
+      a  [ s_type=VARIABLE, r_type=int, value=0, code=#0, temp=0, args=v ]  # arg 1
+      b  [ s_type=VARIABLE, r_type=int, value=0, code=#1, temp=0, args=v ]  # arg 2
+      c  [ s_type=VARIABLE, r_type=int, value=0, code=#2, temp=0, args=v ]  # arg 3
+   ii  [ s_type=FUNCTION, r_type=int, value=0, code=, temp=0, args=ii ]     # arg types
+      a  [ s_type=VARIABLE, r_type=int, value=0, code=#0, temp=0, args=v ]  # arg 1
+      b  [ s_type=VARIABLE, r_type=int, value=0, code=#1, temp=0, args=v ]  # arg 2
 \end{lstlisting}
 
 

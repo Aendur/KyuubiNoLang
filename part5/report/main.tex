@@ -6,14 +6,13 @@
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{Tabbing}
-\usepackage[sorting=none]{biblatex}
+\usepackage[sorting=none,backend=biber]{biblatex}
 %\usepackage[affil-it]{authblk}
 \usepackage{lmodern}
 \usepackage{titlesec}
 \usepackage[skip=2pt,font=footnotesize]{caption}
 \usepackage{ulem}
 \usepackage{graphicx}
-
 
 \titlespacing{\paragraph}{\parindent}{0.5em}{0.5em}
 \addbibresource{refs.bib}
@@ -55,19 +54,6 @@
    \end{center}
 \end{titlepage}
 
-
-%\title{
-%	\vfill
-%	\includegraphics[width=0.25\linewidth]{../slides/kyu.png} \\
-%	\small
-%	\begin{CJK}{UTF8}{min}九\hspace{0.55cm}尾\hspace{0.55cm}狐\hspace{0.55cm}の\hspace{0.55cm}語\end{CJK}\\
-%	\huge K Language\\\normalsize Polymorphism in a C-like \\ programming language
-%	\vfill
-%}
-%\author{Diogo César Ferreira\\11/0027931}
-%\affil{University of Brasília}
-%\maketitle
-
 \clearpage
 \tableofcontents
 
@@ -80,7 +66,7 @@
 \input{syntax.tex} 
 \input{semantics.tex} 
 \input{use-cases.tex} 
-\clearpage
+%\clearpage
 
 % section 2 - the compiler
 \input{compiler.tex}

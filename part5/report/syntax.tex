@@ -224,10 +224,11 @@ otherwise modify the provided value. Example use:
 write(3);
 \end{lstlisting}
 
-Since there are no pointers in the language, the \texttt{read} functions require an argument
-in order to resolve which data type will be read and returned (that is, which function
-will be used to read from the standard input). However they do not in any way use or modify the
-provided argument. Example use:
+Because parameters are not passed by reference in the language, the \texttt{read} functions
+must return the value read from the standard input. In order to resolve which data type
+will be read (that is, which function will be used to read from the standard input), a
+variable of the same type is required to be passed as an argument to the \texttt{read}
+functions. However they do not in any way use or modify the provided argument. Example use:
 
 \begin{lstlisting}[language=C]
 // read an integer from the standard input and
@@ -237,7 +238,7 @@ int a = read(a);
 \end{lstlisting}
 
 As with any other function, \texttt{read} and \texttt{write} are polymorphic and the users are
-allowed to define their own versions of these functions, provided that they do not have the same parameters
-as the ones already defined. We simulate linking of the library to user code by creating a temporary file
+allowed to define their own versions of these functions as long as they do not use the same parameter
+types as the ones already defined. We simulate linking of the library to user code by creating a temporary file
 in which the library is concatenated with the input file.
 
