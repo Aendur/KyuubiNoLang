@@ -1,0 +1,58 @@
+// BEGIN STANDARD I/O LIBRARY 
+int read (int arg) { 
+	int val; 
+	asm("	scani  $0"); 
+	return val; 
+} 
+char read (char arg) { 
+	char val; 
+	asm("	scanc  $0"); 
+	return val; 
+} 
+float read (float arg) { 
+	float val; 
+	asm("	scanf  $0"); 
+	return val; 
+} 
+void write (void) { 
+	asm("	println"); 
+} 
+void write (int arg) { 
+	asm("	print #0"); 
+} 
+void write (char arg) { 
+	asm("	print #0"); 
+} 
+void write (float arg) { 
+	asm("	print #0"); 
+} 
+void write (char arg[]) { 
+	asm("	mov      $0, 0            // $0 = i"); 
+	asm("__write_C_begin:"); 
+	asm("	mov      $1, #0[$0]       // $1 = str[i]"); 
+	asm("	seq      $2, $1, '\0'     // $2 = (str[i] == 0)"); 
+	asm("	brnz __write_C_end, $2   // if ($2 != false) goto end"); 
+	asm("	print    $1               // else print str[i]"); 
+	asm("	add      $0, $0, 1        // ++i"); 
+	asm("	jump __write_C_begin       // continue"); 
+	asm("__write_C_end:"); 
+	asm("	return                    // return"); 
+} 
+//END STANDARD I/O LIBRARY 
+#reset 
+float div(float x) {
+	float div = 0.0;
+	float a1 = 1 / div;
+	float a2 = x / div;
+	float a3 = 1 / 0;
+	float a4 = x / 0;
+}
+
+float mod(float x) {
+	float mod = 0.0;
+	float a1 = 1 % mod;
+	float a2 = x % mod;
+	float a3 = 1 % 0;
+	float a4 = x % 0;
+}
+

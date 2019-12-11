@@ -1,5 +1,6 @@
-int min(int a, int b) {}
-int min(int a, int b, int c) {}
-
+float f(int x) {
+	float y = 2.0*(x-1);
+	return ++y;
+}
 
 

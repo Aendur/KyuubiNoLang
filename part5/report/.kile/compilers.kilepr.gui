@@ -1,8 +1,8 @@
 [General]
 kile_livePreviewEnabled=true
-kile_livePreviewStatusUserSpecified=false
+kile_livePreviewStatusUserSpecified=true
 kile_livePreviewTool=LivePreview-PDFLaTeX
-lastDocument=main.tex
+lastDocument=type-checker.tex
 
 [document-settings,item:compiler.tex]
 Bookmarks=
@@ -131,7 +131,7 @@ Mode=LaTeX
 Mode Set By User=false
 
 [item:compiler.tex]
-open=true
+open=false
 order=3
 
 [item:compilers.kilepr]
@@ -140,10 +140,10 @@ order=-1
 
 [item:error-handling.tex]
 open=false
-order=2
+order=3
 
 [item:introduction.tex]
-open=true
+open=false
 order=2
 
 [item:lexical.tex]
@@ -160,11 +160,11 @@ order=-1
 
 [item:refs.bib]
 open=true
-order=4
+order=1
 
 [item:semantics.tex]
 open=false
-order=0
+order=7
 
 [item:symbol-table.tex]
 open=false
@@ -172,19 +172,19 @@ order=-1
 
 [item:syntax-tree.tex]
 open=false
-order=-1
+order=5
 
 [item:syntax.tex]
-open=true
-order=1
+open=false
+order=6
 
 [item:tests.tex]
 open=false
-order=-1
+order=4
 
 [item:type-checker.tex]
-open=false
-order=-1
+open=true
+order=2
 
 [item:use-cases.tex]
 open=false
@@ -198,32 +198,32 @@ TextFolding=[]
 ViMarks=.,1,94,[,2,0,],-1,-1
 
 [view-settings,view=0,item:error-handling.tex]
-CursorColumn=7
-CursorLine=2
+CursorColumn=13
+CursorLine=27
 JumpList=
 TextFolding=[]
-ViMarks=.,93,17,[,93,16,],93,17
+ViMarks=.,12,24,[,12,24,],12,24
 
 [view-settings,view=0,item:introduction.tex]
-CursorColumn=71
-CursorLine=9
+CursorColumn=0
+CursorLine=25
 JumpList=
 TextFolding=[]
-ViMarks=
+ViMarks=.,24,0,[,25,0,],-1,-1
 
 [view-settings,view=0,item:lexical.tex]
+CursorColumn=64
+CursorLine=3
+JumpList=
+TextFolding=[]
+ViMarks=.,3,64,[,3,64,],3,64
+
+[view-settings,view=0,item:main.tex]
 CursorColumn=0
 CursorLine=0
 JumpList=
 TextFolding=[]
-ViMarks=.,26,12,[,26,12,],26,12
-
-[view-settings,view=0,item:main.tex]
-CursorColumn=0
-CursorLine=23
-JumpList=
-TextFolding=[]
-ViMarks=.,23,0,[,23,0,],23,0
+ViMarks=.,8,24,[,8,11,],8,24
 
 [view-settings,view=0,item:part1.tex]
 CursorColumn=0
@@ -233,19 +233,19 @@ TextFolding=[]
 ViMarks=
 
 [view-settings,view=0,item:refs.bib]
-CursorColumn=17
-CursorLine=34
+CursorColumn=0
+CursorLine=52
 JumpList=
 TextFolding=[]
-ViMarks=.,34,16,[,34,15,],34,16
+ViMarks=.,52,0,[,52,0,],52,0
 
 [view-settings,view=0,item:semantics.tex]
-CursorColumn=11
-CursorLine=61
+CursorColumn=55
+CursorLine=50
 Dynamic Word Wrap=false
 JumpList=
 TextFolding=[]
-ViMarks=.,61,0,[,61,0,],61,10
+ViMarks=.,50,83,[,50,83,],50,83
 
 [view-settings,view=0,item:symbol-table.tex]
 CursorColumn=7
@@ -262,26 +262,26 @@ TextFolding=[]
 ViMarks=.,24,84,[,24,84,],24,84
 
 [view-settings,view=0,item:syntax.tex]
-CursorColumn=59
-CursorLine=185
+CursorColumn=0
+CursorLine=190
 Dynamic Word Wrap=false
 JumpList=
 TextFolding=[]
-ViMarks=.,185,55,[,185,55,],185,58
+ViMarks=.,182,94,[,182,88,],182,94
 
 [view-settings,view=0,item:tests.tex]
-CursorColumn=73
-CursorLine=41
+CursorColumn=57
+CursorLine=106
 JumpList=
 TextFolding=[]
-ViMarks=.,41,72,[,41,67,],41,72
+ViMarks=.,106,57,[,106,57,],106,57
 
 [view-settings,view=0,item:type-checker.tex]
-CursorColumn=21
-CursorLine=16
+CursorColumn=61
+CursorLine=59
 JumpList=
 TextFolding=[]
-ViMarks=.,38,0,[,38,0,],-1,-1
+ViMarks=.,59,60,[,59,60,],59,60
 
 [view-settings,view=0,item:use-cases.tex]
 CursorColumn=21

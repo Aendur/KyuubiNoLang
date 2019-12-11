@@ -6,7 +6,7 @@ along the years. Our grammar follows the general structure of the C language's g
 We aim to provide a simplified version of the C language with support for polymorphic function
 definitions, that is, which allows the programmer to define multiple functions with the same name
 but different argument types. The following grammar is also provided as an input file for the
-GNU Bison \cite{BISON} parser generator (see attached file ``src/language.y'').
+GNU Bison \cite{BISON} parser generator (see attached file ``language.y'').
 
 \small
 \begin{enumerate}
@@ -155,49 +155,48 @@ to capture the syntax tree's root.
 \paragraph{Rules 3, 4 and 5:} the \textit{init-declarator} has been broken down into rules 4 and 5 to avoid
 the need to write many possible combinations of variables in these rules. Initializer lists were removed
 from this because integer and float arrays have not yet been implemented (the only implemented arrays are strings).
-Previous version:
-
-\begin{tabbing} init-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER}                                                                \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{=} assignment-expression                                                      \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}                                           \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{\}}             \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{,} \textbf{\}}  \\
-	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{STRING-LITERAL}                              \\
-\end{tabbing}
-
+%Previous version:
+%\begin{tabbing} init-declarator \= $\rightarrow$ \= type \textbf{IDENTIFIER}                                                                \\
+%	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{=} assignment-expression                                                      \\
+%	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]}                                           \\
+%	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{\}}             \\
+%	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{\{} initializer-list \textbf{,} \textbf{\}}  \\
+%	\> \hspace*{0.05cm} | \> type \textbf{IDENTIFIER} \textbf{[} \textbf{]} \textbf{=} \textbf{STRING-LITERAL}                              \\
+%\end{tabbing}
 
 
 \paragraph{Rules 6 and 7:} \textit{function-definition} was broken down into rules
 6 and 7 to avoid the need to write many possible combinations of variables in these rules.
 Function without arguments now need to be declared with ``void'' as the sole argument.
-Previous version:
+%Previous version:
 
-\begin{tabbing} function-definition \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{} statement-list \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{} statement-list \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{} statement-list \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{}                \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{}                \textbf{\}}   \\
-	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{}                \textbf{\}}   \\
-\end{tabbing}
+%\begin{tabbing} function-definition \= $\rightarrow$ \= type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{} statement-list \textbf{\}}   \\
+%	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{} statement-list \textbf{\}}   \\
+%	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{} statement-list \textbf{\}}   \\
+%	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} argument-list \textbf{)} \textbf{\{}                \textbf{\}}   \\
+%	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{VOID} \textbf{)}          \textbf{\{}                \textbf{\}}   \\
+%	\> \hspace*{0.05cm} 	|\>  type \textbf{IDENTIFIER} \textbf{(} \textbf{)}               \textbf{\{}                \textbf{\}}   \\
+%\end{tabbing}
 
 \paragraph{Rules 12 and 13:} new statement \textit{inline-asm} (rule 13) was created and
 included in the list of possible \textit{statement}s (rule 12). That new rule allows for
-direct translation of string literals into the generated code (see Section \ref{section:asm}).
+direct translation of string literals into the generated code (see Section \ref{section:codegen}).
 
 \paragraph{Rules 14, 15 and 16:} \textit{conditional-statement} has been broken down into its
 \textit{if-statement} and \textit{else-statement} counterparts. This was done to resolve a
 reduce/reduce type conflict that would arise due to a mid-rule action. The \textit{else-statement}
 also produces the empty string ($\varepsilon$), so that it is still possible to use an \textit{if}
-without an \textit{else}. Previous version:
+without an \textit{else}.
+%Previous version:
 
-\begin{tabbing} conditional-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \\
-	\> \hspace*{0.05cm} | \> \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \textbf{ELSE} compound-statement \\
-\end{tabbing}
+%\begin{tabbing} conditional-statement \= $\rightarrow$ \= \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \\
+%	\> \hspace*{0.05cm} | \> \textbf{IF} \textbf{(} assignment-expression \textbf{)} compound-statement \textbf{ELSE} compound-statement \\
+%\end{tabbing}
 
 \paragraph{Rule 27:} postfix array indexing operator has been left out from this version since
-array indexing are not yet implemented. Removed production:
-
-\begin{tabbing} postfix-expression \= $\rightarrow$ \= \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]} \end{tabbing}
+array indexing are not yet implemented.
+%Removed production:
+%\begin{tabbing} postfix-expression \= $\rightarrow$ \= \textbf{IDENTIFIER} \textbf{[} assignment-expression \textbf{]} \end{tabbing}
 
 \subsubsection{Input / output}
 Input and output operations are not specified in our language's grammar. However, these are be provided
@@ -224,11 +223,10 @@ otherwise modify the provided value. Example use:
 write(3);
 \end{lstlisting}
 
-Because parameters are not passed by reference in the language, the \texttt{read} functions
-must return the value read from the standard input. In order to resolve which data type
-will be read (that is, which function will be used to read from the standard input), a
-variable of the same type is required to be passed as an argument to the \texttt{read}
-functions. However they do not in any way use or modify the provided argument. Example use:
+Since there are no pointers in the language, the \texttt{read} functions require an argument
+in order to resolve which data type will be read and returned (that is, which function
+will be used to read from the standard input). However they do not in any way use or modify the
+provided argument. Example use:
 
 \begin{lstlisting}[language=C]
 // read an integer from the standard input and
@@ -238,7 +236,7 @@ int a = read(a);
 \end{lstlisting}
 
 As with any other function, \texttt{read} and \texttt{write} are polymorphic and the users are
-allowed to define their own versions of these functions as long as they do not use the same parameter
-types as the ones already defined. We simulate linking of the library to user code by creating a temporary file
+allowed to define their own versions of these functions, provided that they do not have the same parameters
+as the ones already defined. We simulate linking of the library to user code by creating a temporary file
 in which the library is concatenated with the input file.
 

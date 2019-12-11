@@ -11,10 +11,10 @@ for the following actions:
 \begin{enumerate}
  \item Verify whether operations and operands have compatible types;
  \item If possible, perform static evaluation: if all operands in an expression are constants, evaluate it;
- \item If not possible to perform static evaluation, genereate the corresponding code;
+ \item If not possible to perform static evaluation, generate the corresponding code;
 \end{enumerate}
 
-The rules for type convertion during either static evaluation
+The rules for type conversion during either static evaluation
 or code generation are the same as the ones presented in Section
 \ref{section:types}:
 \texttt{char} can be promoted to \texttt{int},
@@ -28,24 +28,252 @@ function calls are never converted).
 
 The type checker links the node it just analyzed to an entry in the symbol table,
 setting its attributes accordingly. However, in order to release resources,
-the type checker also prunes a node's children from the tree after it has been successfuly analyzed,
-because we no longer requre the data held by the children at this point: either they have
-been statically evaluated or the corresponding code has already been generated.
+the type checker also prunes a node's children from the tree after it has been
+successfully analyzed, because we no longer require the data held by the children
+at this point: either they have been statically evaluated or the corresponding
+code has already been generated.
 
 \subsection{Static evaluation}
 
 Static evaluation is performed by the functions expanded from the
 preprocessor macros defined in the header ``evaluator.h''. These
-macros define the expected behavior and appropriate type convertions
+macros define the expected behavior and appropriate type conversions
 for each arithmetic, logical and relational operators present in the
 language. The evaluator also sets flags for type errors that still
 may occur inside expressions, such as operations with \texttt{void} or
 arrays.
 
 The program uses an internal operation stack for static evaluation.
-The operands are popped from the stack and, if both are constans,
+The operands are popped from the stack and, if both are constants,
 the operation is evaluated and the result is pushed back into the
 stack, which will then be available for the next time the parser
 reduces a rule and calls the type checker again.
 
 \subsection{Code generation}
+\label{section:codegen}
+Our compiler's target language is the 3-address-code (TAC) implemented by
+\textcite{TAC} which is itself an intermediate code based on the one
+presented by \textcite{Aho2007}. Code is generated every time an
+operation cannot be statically evaluated, such as flow control
+statements or when variables are involved, because the compiler
+performs only a single pass through the input. Code generation for expressions
+also uses the same operation stack used by static evaluation, to assist in the
+management and reuse of temporaries created throughout the
+expression. We'll now present how each statement translates from our
+language to TAC instructions. 
+
+\vfill
+
+\begin{tabular}{l l l}
+\textbf{Statement} & \textbf{K Lang code} & \textbf{TAC} \\ \\
+
+\parbox{5cm}{\textbf{Inline assembler} is copied directly into the output} &
+\begin{lstlisting}
+asm("// copy me");
+\end{lstlisting} &
+\begin{lstlisting}
+// copy me
+\end{lstlisting} \\ \\
+
+\parbox{5cm}{\textbf{Global variables} are added to the TAC's symbol table uninitialized with the same name as the variable} &
+\begin{lstlisting}
+int globalvar;
+\end{lstlisting} &
+\begin{lstlisting}
+.table
+int globalvar
+\end{lstlisting} \\ \\
+
+\parbox{5cm}{\textbf{Strings} are added to the TAC's symbol table initialized with a unique name.} &
+\begin{lstlisting}
+char string[] = "awooo";
+\end{lstlisting} &
+\begin{lstlisting}
+.table
+char str_tNkEFwgQ1[] = "awooo"
+\end{lstlisting} \\ \\
+
+\parbox{5cm}{\textbf{Function definition} creates a label with the function's name and parameters.} &
+\begin{lstlisting}
+int f(int x) {
+	asm("// function body");
+	return x;
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_i:
+// function body
+	return #0
+\end{lstlisting} \\ \\
+
+\end{tabular}
+
+\begin{tabular}{l l l}
+\textbf{Statement} & \textbf{K Lang code} & \textbf{TAC} \\ \\
+
+\parbox{5cm}{\textbf{Function parameters} are assigned to a parameter identifier in the order in which they are declared} &
+\begin{lstlisting}
+int f(int a, int b) {
+	return a;
+	return b;
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_ii:
+	return #0
+	return #1
+\end{lstlisting} \\ \\
+
+\parbox{5cm}{\textbf{Variable declaration} the next available temporary in the scope is reserved to the variable} &
+\begin{lstlisting}
+void f(void) {
+	asm("// reserve $0 to a");
+	int a;
+	asm("// reserve $1 to b");
+	int b;
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_v:
+// reserve $0 to a
+// reserve $1 to b
+	return
+\end{lstlisting} \\ \\
+
+
+\parbox{5cm}{\textbf{Initialization and assignment} moves value to the reserved temporary.} &
+\begin{lstlisting}
+void f(void) {
+	int a = 10;
+	int b = 20;
+	a = 30
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_v:
+	mov $0, 10
+	mov $1, 20
+	mov $0, 30
+	return
+\end{lstlisting} \\ \\
+
+
+\parbox{5cm}{\textbf{Function call} push parameters, calls function and pops return value into a new temporary.} &
+\begin{lstlisting}
+int x = f(1, 2);
+\end{lstlisting} &
+\begin{lstlisting}
+	push 1
+	push 2
+	call f_ii, 2
+	pop $1
+	mov $0, $1
+\end{lstlisting} \\ \\
+
+
+\parbox{5cm}{\textbf{Expressions} performs type conversion, if needed, then apply the equivalent corresponding.} &
+\begin{lstlisting}
+float f(int x) {
+	float y = 2.0*(x-1);
+	return ++y;
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_i:
+	sub $1, #0, 1
+	inttofl $1, $1
+	mul $1, 2.000000, $1
+	mov $0, $1
+	add $0, $0, 1.000000
+	return $0
+\end{lstlisting} \\ \\
+
+\parbox{5cm}{\textbf{if} creates two new unique labels and sets branch to the exit label if condition is false} &
+\begin{lstlisting}
+void f(int condition) {
+	if (condition) {
+		asm("// if-body");
+	}
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_i:
+	brz if_ZcM_XRpED_end0, #0
+if_ZcM_XRpED:
+// if-body
+if_ZcM_XRpED_end0:
+	return
+\end{lstlisting} \\ \\
+
+
+\parbox{5cm}{\textbf{if-else} creates three new unique labels and sets branch to the else label if condition is false. Also set jump to the exit label at the end of the if block} &
+\begin{lstlisting}
+void f(int condition) {
+	if (condition) {
+		asm("// if-body");
+	} else {
+		asm("// else-body");
+	}
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_i:
+	brz if_V6d_jeoe__end0, #0
+if_V6d_jeoe_:
+// if-body
+	jump if_V6d_jeoe__end1
+if_V6d_jeoe__end0:
+// else-body
+if_V6d_jeoe__end1:
+	return
+\end{lstlisting} \\ \\
+
+\end{tabular}
+\clearpage
+\begin{tabular}{l l l}
+\textbf{Statement} & \textbf{K Lang code} & \textbf{TAC} \\ \\
+
+\parbox{5cm}{\textbf{while} creates two new unique labels and sets branch to the exit label if condition is false. Also sets jump back to the start label at the end of the block.} &
+\begin{lstlisting}
+void f(int condition) {
+	while (condition) {
+		asm("// while-body");
+	}
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_i:
+while_U0rdyI0Bj:
+	brz while_U0rdyI0Bj_end, #0
+// while-body
+	jump while_U0rdyI0Bj
+while_U0rdyI0Bj_end:
+	return
+\end{lstlisting} \\ \\
+
+
+
+\parbox{5cm}{\textbf{do-while} creates a new unique label and sets branch back to it if condition is true at the end of the block.} &
+\begin{lstlisting}
+void f(int condition) {
+	do {
+		asm("// do-body");
+	} while (condition);
+}
+\end{lstlisting} &
+\begin{lstlisting}
+f_i:
+do_F46jXJJv2:
+// do-body
+	brnz do_F46jXJJv2, #0
+	return
+\end{lstlisting} \\ \\
+
+
+\end{tabular}
+% \end{table}
+
+
+
+
+

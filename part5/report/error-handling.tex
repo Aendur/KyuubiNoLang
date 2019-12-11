@@ -5,11 +5,12 @@ sent to \texttt{stderr} indicating the position (line and column) in the text wh
 and whether it was detected by the scanner, the parser or the semantic analyzer.
 
 
-\subsubsection{Lexical errors}
+\subsubsection{Lexical errors and warnings}
 If the scanner finds an error, it outputs a message and returns a special error token to the parser.
 Following suggestions, identifiers with more than 32 characters are no longer considered an error
-and only output a warning if they are found, which does not block compilation.
-The scanner recognizes the following errors (Table \ref{tab:scanner-errors}).
+and only output a warning if they are found, which does not block compilation. There is also a warning
+if an identifier begins with double underscores, as such identifiers are reserved for the compiler
+and may cause conflicts. The scanner recognizes the following errors (Table \ref{tab:scanner-errors}).
 
 \begin{table}[h]
 \centering
@@ -69,13 +70,13 @@ function_definition
 \end{itemize}
 
 
-\subsubsection{Semantic errors}
+\subsubsection{Semantic errors and warnings}
 Semantic errors are thrown from the semantic analyzer when there are constructs
 in the input text that violate the language's semantics as described in the Section
 \ref{section:semantics}. These errors do not abort the compilation process before
 the parser has finished, as most of the semantic analysis is performed
 simultaneously with the parsing. Semantic errors are handled by the functions
-defined in the file ``\texttt{actions.c}''.
+declared in the header ``error.h''.
 
 \paragraph{Re-declaration of variable:} This error is issued if a variable is
 declared or initialized more than once with the same name in a given scope.
@@ -103,6 +104,20 @@ in any of the previous definitions of that function.
 
 \paragraph{Incompatible types:} This error is issued if there is an expression
 with operands of incompatible types, as described on Section \ref{section:types}.
+
+\paragraph{Assignment to lvalue:} This error is issued if the user tries to assign
+a value to a constant.
+
+\paragraph{Integer division by zero:} This error is issued if the user tries to assign
+perform an integer division by zero.
+
+\paragraph{Function without return (warning):} This warning is issued if the user does not
+define a top-level return statement inside a non-void function. A return instruction with
+a default value (0 for integers and characters, 0.0 for floats) is included in such case.
+
+\paragraph{Program without main function (warning):} This warning is issued if the user does not
+define any function with the name ``main'' in the program. The program will compile but the entry
+point will be undefined.
 
 \subsubsection{Remarks about error handling}
 These strategies allows us to display a reasonable amount of errors before the program is unable

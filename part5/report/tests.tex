@@ -3,50 +3,140 @@
 Eight sample test files are provided in the folder ./tests.
 
 \subsubsection{Valid input files}
-\paragraph{valid1.c} is valid, tests for most recognized keywords and punctuation;
-\paragraph{valid2.c} is valid, tests for numerical values and loops;
-\paragraph{valid3.c} is valid, tests for character and string literals;
-\paragraph{valid4.c} is valid, tests for a slightly more complex program containing several language features;
-\paragraph{valid5.c} is valid, tests mostly for multiple function declarations and scope resolution.
+The folder ./tests/valid contains valid code that was used mostly for debugging during development.
+These files do not produce meaningful output, but can be used to verify the symbol table and generated
+TAC.
+
+The other valid files are:
+
+\paragraph{./tests/valid-sqrt.c} numeric method to calculate the square root of positive numbers;
+\paragraph{./tests/valid-strings.c} tests for string initialization and output;
+\paragraph{./tests/valid-sums.c} tests for polymorphic function definition and function calls;
+
 
 \subsubsection{Invalid input files}
 \paragraph{error1.c} is invalid and contain the following errors:
 
 \begin{tabular}{l}
 Line 1, column 25: syntax error, unexpected '*', expecting IDENTIFIER \\
+Line 4, column 17: semantic error: undeclared symbol 'argc' \\
 Line 4, column 22: lexical error, unrecognized token: '?' \\
-Line 4, column 26: lexical error, unrecognized token: ':' \\
-Line 4, column 28: lexical error, invalid character constant. \\
+Line 4, column 22: syntax error, unexpected UNRECOGNIZED\_TOKEN  \\
+Line 4, column 26: lexical error, unrecognized token: ':'  \\
+Line 4, column 28: lexical error, invalid character constant.  \\
 \end{tabular}
 
 \paragraph{error2.c} is invalid and contain the following errors:
 
 \begin{tabular}{l}
 Line 1, column 1: lexical error, unrecognized token: '\#' \\
-Line 1, column 1: syntax error, unexpected UNRECOGNIZED\_TOKEN, ... \\
-Line 1, column 16: lexical error, unrecognized token: '.' \\
-Line 6, column 9: warning (lexical), identifier exceeds 32 characters. \\
-Line 6, column 52: warning (lexical), identifier exceeds 32 characters. \\
-Line 6, column 92: semantic error: undeclared symbol 'a234567890b234567890... \\
-Line 7, column 22: semantic error: undeclared symbol 'abcde' \\
-Line 10, column 17: warning (lexical), identifier exceeds 32 characters. \\
-Line 10, column 57: semantic error: redefinition of 'abcde' \\
-Line 13, column 14: lexical error, invalid character constant. \\
-Line 13, column 14: syntax error, unexpected INVALID\_CHAR\_CONST \\
+Line 1, column 1: syntax error, unexpected UNRECOGNIZED\_TOKEN  \\
+Line 1, column 16: lexical error, unrecognized token: '.'  \\
+Line 6, column 9: warning, identifier exceeds 32 characters.  \\
+Line 6, column 52: warning, identifier exceeds 32 characters.  \\
+Line 8, column 9: warning, identifiers beginning in '\_\_' (double underscore) are reserved and may cause conflicts.  \\
+Line 11, column 15: semantic error: redefinition of 'abcde'  \\
+Line 11, column 17: warning, identifier exceeds 32 characters.  \\
+Line 11, column 57: semantic error: undeclared symbol 'a234567890b234567890c234567890d234567890'  \\
+Line 14, column 14: lexical error, invalid character constant.  \\
+Line 14, column 14: syntax error, unexpected INVALID\_CHAR\_CONST  \\
+Line 15, column 13: semantic error: incompatible types, 'void' return type 'int'  \\
 \end{tabular}
 
 
 \paragraph{error3.c} is invalid and contain the following errors:
 
 \begin{tabular}{l}
-Line 3, column 14: semantic error: redefinition of 'x' \\
-Line 4, column 14: semantic error: redefinition of 'y' \\
-Line 16, column 7: semantic error: undeclared symbol 'a' \\
-Line 22, column 5: semantic error: redefinition of 'min' with parameters 'int,int' \\
-Line 23, column 7: semantic error: undeclared symbol 'c' \\
-Line 25, column 20: semantic error: undeclared symbol 'max' \\
+Line 3, column 11: semantic error: redefinition of 'x' \\
+Line 4, column 11: semantic error: redefinition of 'y'  \\
+Line 16, column 7: semantic error: undeclared symbol 'a'  \\
+Line 19, column 1: warning: non-void function 'min' does not have a top-level return statement  \\
+Line 21, column 23: semantic error: redefinition of 'min' with argument types 'ii'  \\
+Line 23, column 7: semantic error: undeclared symbol 'c'  \\
+Line 25, column 20: semantic error: undeclared symbol 'max'  \\
+Line 26, column 20: semantic error: there is no definition of 'min' with argument types 'iiii'  \\
 \end{tabular}
+
+This file may also cause a segmentation fault while trying to release memory at the end of the program.
+
+
+\paragraph{error4.c} is invalid and contain the following errors:
+
+\begin{tabular}{l}
+Line 9, column 10: semantic error: cannot implicitly cast from 'int' to 'char' \\
+Line 10, column 10: semantic error: cannot implicitly cast from 'float' to 'char'  \\
+Line 12, column 10: semantic error: cannot implicitly cast from 'float' to 'int'  \\
+Line 19, column 13: semantic error: incompatible types, 'char' return type 'int'  \\
+Line 23, column 1: warning: non-void function 'main' does not have a top-level return statement  \\
+\end{tabular}
+
+
+\paragraph{error5.c} is because it contains integer divisions by zero and invalid declarations, however
+the program is unable to finish parsing the file due to a segmentation fault.
 
 
 Lines and columns are 1-indexed and the columns should point to where the error begins.
 Note, however, that tabs (\textbackslash t) count as if they had a width of four characters.
+
+
+\subsection{Known issues}
+
+\begin{itemize}
+\item “return” inside “if” or “else” causes the returned value to be 0
+\begin{lstlisting}
+if (...) { return 1; } // actually returns 0
+else { return 2; } // actually returns 0
+\end{lstlisting}
+
+\textbf{Workaround:}
+\begin{lstlisting}
+int ret;
+if (...) { ret = 1; }
+else { ret = 2; }
+return ret;
+\end{lstlisting}
+
+
+\item Function call as the last parameter of another function call causes the the function not to be correctly identified in the symbol table
+\begin{lstlisting}
+f(a, b, c, g(x));
+\end{lstlisting}
+
+\textbf{Workaround:}
+\begin{lstlisting}
+int y = g(x); // assign the call to an auxiliary variable
+f(a, b, c, y);
+\end{lstlisting}
+
+
+\item Function call not at the beginning of an expression causes an assertion error (which, if removed will cause a segfault)
+\begin{lstlisting}
+int x = expr + func2(...);
+\end{lstlisting}
+
+\textbf{Workaround:}
+\begin{lstlisting}
+int x = func2(...) + expr;
+\end{lstlisting}
+
+
+\item Comparison between different types causes an assertion error (which, if removed will cause a segfault)
+\begin{lstlisting}
+int x = 1;
+float y = 2.0;
+x < y;
+\end{lstlisting}
+\textbf{Workaround:}
+\begin{lstlisting}
+int x = 1;
+float y = 2.0;
+float xf = x; // declare an auxiliary variable of the correct type before comparison
+x < y;
+\end{lstlisting}
+
+\item Some syntax errors might cause a segfault at the end of the program
+\item Division by zero semantic error causes a segfault during evaluation
+
+\end{itemize}
+
+

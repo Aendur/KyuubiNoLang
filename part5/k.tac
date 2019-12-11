@@ -33,10 +33,13 @@ __write_C_begin:
 __write_C_end:
 	return                    // return
 	return
-min_ii:
-	return 0
-min_iii:
-	return 0
+f_i:
+	sub $1, #0, 1
+	inttofl $1, $1
+	mul $1, 2.000000, $1
+	mov $0, $1
+	add $0, $0, 1.000000
+	return $0
 main:
 	nop
 
